@@ -37,8 +37,9 @@ package com.ofnodesandedges.y2010.graphics{
 			this.x = stage.stageWidth/2;
 			this.y = stage.stageHeight/2;
 			_graphGraphics = new GraphGraphics(_main.graph);
-			_graphGraphics.circularize(1000,0,0);
-			//_graphGraphics.refreshEdges();
+			//_graphGraphics.circularize();
+			_graphGraphics.random(200,200);
+			_graphGraphics.refreshEdges();
 			processRescaling();
 			drawGraph();
 			
@@ -59,9 +60,8 @@ package com.ofnodesandedges.y2010.graphics{
 			// Draw edges:
 			edgesSprite.graphics.clear();
 			for each(var source:NodeGraphics in _graphGraphics.nodes){
-				for(var targetID:String in source.neighbors){
-					var target:NodeGraphics = _graphGraphics.getNode(targetID);
-					drawEdge(source,target,source.neighbors[targetID]);
+				for each(var target:NodeGraphics in source.neighbors){
+					drawEdge(source,target,null);
 				}
 			}
 			
@@ -73,11 +73,11 @@ package com.ofnodesandedges.y2010.graphics{
 		}
 		
 		private function drawNode(node:NodeGraphics):void{
+			if(node.borderThickness>0) _nodesSprite.graphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
 			_nodesSprite.graphics.beginFill(node.color,node.alpha);
-			_nodesSprite.graphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
 			switch(node.shape.toLowerCase()){
 				case "square":
-					_nodesSprite.graphics.drawRect(-Math.sqrt(2)*node.size+node.x,-Math.sqrt(2)*node.size+node.y,node.size,node.size);
+					_nodesSprite.graphics.drawRect(-Math.SQRT2*node.size/2+node.x,-Math.SQRT2*node.size/2+node.y,node.size,node.size);
 					break;
 				case "hexagon":
 					drawPoly(node.size,6,node.x,node.y,_nodesSprite.graphics);
@@ -87,6 +87,7 @@ package com.ofnodesandedges.y2010.graphics{
 					break;
 				default:
 					_nodesSprite.graphics.drawCircle(node.x,node.y,node.size);
+					//_nodesSprite.graphics.drawRect(-Math.SQRT2*node.size/2+node.x,-Math.SQRT2*node.size/2+node.y,node.size,node.size);
 					break;
 			}
 			

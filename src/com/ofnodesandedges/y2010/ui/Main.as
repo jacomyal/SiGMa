@@ -1,5 +1,6 @@
 package com.ofnodesandedges.y2010.ui{
 	
+	import com.ofnodesandedges.y2010.computing.FPSCounter;
 	import com.ofnodesandedges.y2010.data.GraphData;
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
 	import com.ofnodesandedges.y2010.loading.GexfLoader;
@@ -12,6 +13,7 @@ package com.ofnodesandedges.y2010.ui{
 		
 		private var _filePath:String;
 		
+		private var _fpsCounter:FPSCounter;
 		private var _graph:GraphData;
 		private var _mDE:MainDisplayElement;
 		private var _gexfLoader:GexfLoader;
@@ -22,6 +24,10 @@ package com.ofnodesandedges.y2010.ui{
 			// Set file path:
 			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./standard_graph.gexf";
 			else _filePath = root.loaderInfo.parameters["filePath"];
+			
+			// Add the FPSCounter:
+			_fpsCounter = new FPSCounter(10,10,0x000000);
+			addChild(_fpsCounter);
 			
 			// Load the file:
 			_gexfLoader = new GexfLoader();

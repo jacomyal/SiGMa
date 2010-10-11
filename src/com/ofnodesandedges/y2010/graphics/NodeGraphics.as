@@ -23,10 +23,10 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _borderColor:uint;
 		private var _borderThickness:Number;
 		
-		private var _neighbors:Object;
+		private var _neighbors:Vector.<NodeGraphics>;
 		
 		public function NodeGraphics(nodeData:NodeData){
-			_neighbors = new Object();
+			_neighbors = new Vector.<NodeGraphics>();
 			
 			_label = nodeData.label;
 			_id = nodeData.id;
@@ -37,7 +37,7 @@ package com.ofnodesandedges.y2010.graphics{
 			_alpha = 1;
 			
 			_borderColor = 0x000000;
-			_borderThickness = 1;
+			_borderThickness = 0;
 			
 			_x = 0;
 			_y = 0;
@@ -49,8 +49,8 @@ package com.ofnodesandedges.y2010.graphics{
 			_freeze = 0;
 		}
 
-		public function addNeighbor(neighborID:String,edgeAttributes:Object):void{
-			_neighbors[neighborID] = edgeAttributes;
+		public function addNeighbor(neighbor:NodeGraphics):void{
+			_neighbors.push(neighbor);
 		}
 		
 		public function getNeighborsCount():int{
@@ -159,11 +159,11 @@ package com.ofnodesandedges.y2010.graphics{
 			_size = value;
 		}
 		
-		public function get neighbors():Object{
+		public function get neighbors():Vector.<NodeGraphics>{
 			return _neighbors;
 		}
 		
-		public function set neighbors(value:Object):void{
+		public function set neighbors(value:Vector.<NodeGraphics>):void{
 			_neighbors = value;
 		}
 		

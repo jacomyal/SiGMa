@@ -25,6 +25,7 @@ package com.ofnodesandedges.y2010.computing{
 		private var _maxDisplacement:Number;
 		private var _freezeStrength:Number;
 		private var _freezeInertia:Number;
+		private var _nodeOverlap:Boolean;
 		private var _gravity:Number;
 		private var _speed:Number;
 		private var _cooling:Number;
@@ -35,12 +36,13 @@ package com.ofnodesandedges.y2010.computing{
 			// Force vector parameters:
 			_inertia = 0.5;
 			_attractionStrength = 0.1;
-			_maxDisplacement = 50;
+			_maxDisplacement = 500;
 			_freezeStrength = 8;
 			_freezeInertia = 0.5;
 			_gravity = 0.003;
-			_speed = 250;
+			_speed = 400;
 			_cooling = 1;
+			_nodeOverlap = false;
 		}
 
 		public function launch(graphGraphics:GraphGraphics):void{
@@ -64,7 +66,11 @@ package com.ofnodesandedges.y2010.computing{
 			_stepsNumber = _stepsNumber+1;
 			
 			//Decrease speed:
-			if(_speed>0.0005) _speed *= 0.99;
+			if(_speed>0.0005){
+				_speed *= 0.995;
+			}else{
+				_nodeOverlap = true;
+			}
 			
 			dispatchEvent(new Event(FORCE_ATLAS_ONE_STEP));
 		}
@@ -96,8 +102,7 @@ package com.ofnodesandedges.y2010.computing{
 			for (i=0;i<l;i++) {
 				n1 = _graphGraphics.nodes[i];
 				
-				for(var n2ID:String in n1.neighbors) {
-					n2 = _graphGraphics.getNode(n2ID);
+				for each(n2 in n1.neighbors) {
 					
 					// REPETITION POSSIBLY A PROBLEM
 					fcBiAttractor_noCollide(n1, n2, _attractionStrength / (1 + n1.getNeighborsCount()));
@@ -152,12 +157,12 @@ package com.ofnodesandedges.y2010.computing{
 				
 				N2.dx -= xDist / (dist * dist) * c;
 				N2.dy -= yDist / (dist * dist) * c;
-			} else if (dist != 0) {
-				N1.dx -= xDist / dist * 100 * c;
-				N1.dy -= yDist / dist * 100 * c;
+			} else if ((dist != 0) && (_nodeOverlap == true)) {
+				N1.dx -= xDist / dist * 10 * c;
+				N1.dy -= yDist / dist * 10 * c;
 				
-				N2.dx += xDist / dist * 100 * c;
-				N2.dy += yDist / dist * 100 * c;
+				N2.dx += xDist / dist * 10 * c;
+				N2.dy += yDist / dist * 10 * c;
 			}
 		}
 		
