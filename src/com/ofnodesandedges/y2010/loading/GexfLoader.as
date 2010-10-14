@@ -164,7 +164,7 @@ package com.ofnodesandedges.y2010.loading{
 			for each(xmlCursor in xmlNodes){
 				if(!(nodesCounter%500)) trace("New node: "+nodesCounter);
 				node = new NodeData(xmlCursor.@label,xmlCursor.@id);
-				//node.size = xmlCursor.children().normalize().@value;
+				node.size = xmlCursor.children().normalize().@value;
 				node.color = setColor((xmlCursor.children().normalize().@b).toString(),(xmlCursor.children().normalize().@g).toString(),(xmlCursor.children().normalize().@r).toString());
 				
 				xmlNodesAttributesValues = null;

@@ -28,7 +28,9 @@ package com.ofnodesandedges.y2010.graphics{
 		// Mouse and spatial properties:
 		private var _mouseX:Number;
 		private var _mouseY:Number;
-		private var _fishEyeRadius:Number;
+		
+		// Interactivity processes:
+		private var _isMouseFishEye:Boolean;
 		
 		public function MainDisplayElement(main:Main){
 			_main = main;
@@ -43,15 +45,15 @@ package com.ofnodesandedges.y2010.graphics{
 			addChild(_nodesSprite);
 			addChild(_labelSprite);
 			
+			// Init interactivity state and interactive parameters:
+			addEventListener(MouseEvent.MOUSE_MOVE,whenMouseMoving);
+			_isMouseFishEye = true;
+			
 			// Build graph to display:
 			_graphGraphics = new GraphGraphics(_main.graph);
-			//_graphGraphics.circularize();
 			_graphGraphics.random(2000,2000);
 			_graphGraphics.refreshEdges();
-			
-			// Init mouse position recognition and spatial properties:
-			addEventListener(MouseEvent.MOUSE_MOVE,whenMouseMoving);
-			_fishEyeRadius = 100;
+			_graphGraphics.resizeNodes(0,60);
 			
 			// Init layouts:
 			_roughLayout = new RoughLayout();
@@ -80,43 +82,23 @@ package com.ofnodesandedges.y2010.graphics{
 		}
 		
 		private function layoutStepHandler(e:Event):void{
-			_graphGraphics.setDisplayVars();
-			
-			//_graphGraphics.setFishEye(0,0,20);
-			//_graphGraphics.setFishEye(_mouseX,_mouseY,_fishEyeRadius);
-			
 			_graphGraphics.processRescaling(stage,this);
+			
+			if(_isMouseFishEye){
+				var radius:Number = 1/3*Math.min(stage.stageWidth,stage.stageHeight)/this.scaleX;
+				var eye_x:Number = mouseX;// - this.x;
+				var eye_y:Number = mouseY;// - this.y;
+				
+				_graphGraphics.setFishEye(eye_x,eye_y,radius);
+			}else{
+				_graphGraphics.setDisplayVars();
+			}
 			_graphGraphics.drawGraph(_nodesSprite.graphics,_edgesSprite.graphics);
 		}
 		
 		private function whenMouseMoving(me:MouseEvent):void{
-			_mouseX = me.stageX;
-			_mouseX = me.stageY;
+			_mouseX = me.currentTarget.stageX;
+			_mouseY = me.currentTarget.stageY;
 		}
-
-		public function get labelSprite():Sprite{
-			return _labelSprite;
-		}
-
-		public function set labelSprite(value:Sprite):void{
-			_labelSprite = value;
-		}
-
-		public function get nodesSprite():Sprite{
-			return _nodesSprite;
-		}
-
-		public function set nodesSprite(value:Sprite):void{
-			_nodesSprite = value;
-		}
-
-		public function get edgesSprite():Sprite{
-			return _edgesSprite;
-		}
-
-		public function set edgesSprite(value:Sprite):void{
-			_edgesSprite = value;
-		}
-		
 	}
 }
