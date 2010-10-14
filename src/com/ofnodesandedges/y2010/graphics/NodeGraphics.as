@@ -7,6 +7,8 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _label:String;
 		private var _id:String;
 		
+		private var _displayX:Number;
+		private var _displayY:Number;
 		private var _x:Number;
 		private var _y:Number;
 		private var _dx:Number;
@@ -17,6 +19,7 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		private var _color:uint;
 		private var _size:Number;
+		private var _displaySize:Number;
 		private var _shape:String; // From now: "disc", "square", "diamond", "triangle". Default: "disc".
 		private var _alpha:Number;
 		
@@ -35,6 +38,10 @@ package com.ofnodesandedges.y2010.graphics{
 			_size = nodeData.size;
 			_shape = "disc";
 			_alpha = 1;
+			
+			_displaySize = 1;
+			_displayX = 0;
+			_displayY = 0;
 			
 			_borderColor = 0x000000;
 			_borderThickness = 0;
@@ -151,12 +158,12 @@ package com.ofnodesandedges.y2010.graphics{
 			_dx = value;
 		}
 
-		public function get size():Number{
-			return _size;
+		public function get displaySize():Number{
+			return _displaySize;
 		}
 
-		public function set size(value:Number):void{
-			_size = value;
+		public function set displaySize(value:Number):void{
+			_displaySize = value;
 		}
 		
 		public function get neighbors():Vector.<NodeGraphics>{
@@ -189,6 +196,30 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		public function set alpha(value:Number):void{
 			_alpha = value;
+		}
+		
+		public function get displayY():Number{
+			return _displayY;
+		}
+		
+		public function set displayY(value:Number):void{
+			_displayY = value;
+		}
+		
+		public function get displayX():Number{
+			return _displayX;
+		}
+		
+		public function set displayX(value:Number):void{
+			_displayX = value;
+		}
+		
+		public function get size():Number{
+			return _size;
+		}
+		
+		public function set size(value:Number):void{
+			_size = value;
 		}
 
 	}

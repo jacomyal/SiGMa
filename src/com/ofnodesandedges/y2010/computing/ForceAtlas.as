@@ -39,10 +39,10 @@ package com.ofnodesandedges.y2010.computing{
 			_maxDisplacement = 500;
 			_freezeStrength = 8;
 			_freezeInertia = 0.5;
-			_gravity = 0.003;
-			_speed = 400;
+			_gravity = 0.0003;
+			_speed = 1000;
 			_cooling = 1;
-			_nodeOverlap = false;
+			_nodeOverlap = true;
 		}
 
 		public function launch(graphGraphics:GraphGraphics):void{
@@ -64,13 +64,6 @@ package com.ofnodesandedges.y2010.computing{
 		public function stepForceVectorHandler(e:Event):void{
 			computeForceVectorOneStep();
 			_stepsNumber = _stepsNumber+1;
-			
-			//Decrease speed:
-			if(_speed>0.0005){
-				_speed *= 0.995;
-			}else{
-				_nodeOverlap = true;
-			}
 			
 			dispatchEvent(new Event(FORCE_ATLAS_ONE_STEP));
 		}
@@ -151,18 +144,30 @@ package com.ofnodesandedges.y2010.computing{
 			var yDist:Number = N1.y - N2.y;
 			var dist:Number = Math.sqrt(xDist * xDist + yDist * yDist) - N1.size - N2.size;	// distance (from the border of each node)
 			
-			if (dist > 0) {
-				N1.dx += xDist / (dist * dist) * c;
-				N1.dy += yDist / (dist * dist) * c;
-				
-				N2.dx -= xDist / (dist * dist) * c;
-				N2.dy -= yDist / (dist * dist) * c;
-			} else if ((dist != 0) && (_nodeOverlap == true)) {
-				N1.dx -= xDist / dist * 10 * c;
-				N1.dy -= yDist / dist * 10 * c;
-				
-				N2.dx += xDist / dist * 10 * c;
-				N2.dy += yDist / dist * 10 * c;
+			if(_nodeOverlap == true){
+				if (dist > 0) {
+					N1.dx += xDist / (dist * dist) * c;
+					N1.dy += yDist / (dist * dist) * c;
+					
+					N2.dx -= xDist / (dist * dist) * c;
+					N2.dy -= yDist / (dist * dist) * c;
+				} else if (dist != 0) {
+					N1.dx += xDist / (N1.size + N2.size) * c;
+					N1.dy += yDist / (N1.size + N2.size) * c;
+					
+					N2.dx -= xDist / (N1.size + N2.size) * c;
+					N2.dy -= yDist / (N1.size + N2.size) * c;
+				}
+			}else{
+				if (dist > 0) {
+					dist += N1.size + N2.size;
+					
+					N1.dx += xDist / (dist * dist) * c;
+					N1.dy += yDist / (dist * dist) * c;
+					
+					N2.dx -= xDist / (dist * dist) * c;
+					N2.dy -= yDist / (dist * dist) * c;
+				}
 			}
 		}
 		
