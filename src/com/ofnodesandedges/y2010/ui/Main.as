@@ -16,6 +16,7 @@ package com.ofnodesandedges.y2010.ui{
 		private var _fpsCounter:FPSCounter;
 		private var _graph:GraphData;
 		private var _mDE:MainDisplayElement;
+		private var _optionsPanel:OptionsPanel;
 		private var _gexfLoader:GexfLoader;
 		
 		public function Main(s:Stage){
@@ -36,8 +37,12 @@ package com.ofnodesandedges.y2010.ui{
 		}
 		
 		private function graphLoadedHandler(e:Event):void{
+			// Init Main Display Element:
 			_graph = _gexfLoader.graphData;
 			_mDE = new MainDisplayElement(this);
+			
+			// Init Options Panel:
+			_optionsPanel = new OptionsPanel(_mDE);
 		}
 
 		public function get graph():GraphData{

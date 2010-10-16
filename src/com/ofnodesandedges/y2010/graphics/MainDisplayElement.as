@@ -93,7 +93,10 @@ package com.ofnodesandedges.y2010.graphics{
 			}else{
 				_graphGraphics.setDisplayVars();
 			}
-			_graphGraphics.drawGraph(_nodesSprite.graphics,_edgesSprite.graphics);
+			_graphGraphics.drawGraph(_nodesSprite.graphics,null);//_edgesSprite.graphics);
+			_edgesSprite.graphics.clear();
+			_edgesSprite.graphics.lineStyle(60,0xAAAAAA,0.5);
+			_edgesSprite.graphics.drawCircle(mouseX,mouseY,1/3*Math.min(stage.stageWidth,stage.stageHeight)/this.scaleX);
 		}
 		
 		private function whenMouseMoving(me:MouseEvent):void{
