@@ -43,6 +43,7 @@ package com.ofnodesandedges.y2010.computing{
 			_speed = 1000;
 			_cooling = 1;
 			_nodeOverlap = true;
+			
 		}
 
 		public function launch(graphGraphics:GraphGraphics):void{
@@ -71,6 +72,7 @@ package com.ofnodesandedges.y2010.computing{
 		private function computeForceVectorOneStep():void{
 			var i:int, j:int, k:int, l:int = _graphGraphics.nodes.length;
 			var n:NodeGraphics, n1:NodeGraphics, n2:NodeGraphics;
+			var dist:Number, xDist:Number, yDist:Number, newDist:Number;
 			
 			for (i=0;i<l;i++) {
 				n = _graphGraphics.nodes[i];

@@ -24,6 +24,7 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _edgesSprite:Sprite;
 		private var _nodesSprite:Sprite;
 		private var _labelSprite:Sprite;
+		private var _fishEyeSprite:Sprite;
 		
 		// Mouse and spatial properties:
 		private var _mouseX:Number;
@@ -31,6 +32,7 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		// Interactivity processes:
 		private var _isMouseFishEye:Boolean;
+		private var _displayEdges:Boolean;
 		
 		public function MainDisplayElement(main:Main){
 			_main = main;
@@ -40,14 +42,17 @@ package com.ofnodesandedges.y2010.graphics{
 			_edgesSprite = new Sprite();
 			_nodesSprite = new Sprite();
 			_labelSprite = new Sprite();
+			_fishEyeSprite = new Sprite();
 			
 			addChild(_edgesSprite);
 			addChild(_nodesSprite);
 			addChild(_labelSprite);
+			addChild(_fishEyeSprite);
 			
 			// Init interactivity state and interactive parameters:
 			addEventListener(MouseEvent.MOUSE_MOVE,whenMouseMoving);
-			_isMouseFishEye = true;
+			_isMouseFishEye = false;
+			_displayEdges = false
 			
 			// Build graph to display:
 			_graphGraphics = new GraphGraphics(_main.graph);
@@ -65,8 +70,7 @@ package com.ofnodesandedges.y2010.graphics{
 			this.addEventListener(Event.ENTER_FRAME,_roughLayout.stepForceVectorHandler);
 			_roughLayout.launch(_graphGraphics);
 		}
-		
-		
+
 		private function launchForceAtlas():void{
 			_forceAtlas.addEventListener(ForceAtlas.FORCE_ATLAS_ONE_STEP,layoutStepHandler);
 			this.addEventListener(Event.ENTER_FRAME,_forceAtlas.stepForceVectorHandler);
@@ -93,15 +97,45 @@ package com.ofnodesandedges.y2010.graphics{
 			}else{
 				_graphGraphics.setDisplayVars();
 			}
-			_graphGraphics.drawGraph(_nodesSprite.graphics,null);//_edgesSprite.graphics);
-			_edgesSprite.graphics.clear();
-			_edgesSprite.graphics.lineStyle(60,0xAAAAAA,0.5);
-			_edgesSprite.graphics.drawCircle(mouseX,mouseY,1/3*Math.min(stage.stageWidth,stage.stageHeight)/this.scaleX);
+			
+			if(_displayEdges){
+				_graphGraphics.drawGraph(_nodesSprite.graphics,_edgesSprite.graphics);
+			}else{
+				_graphGraphics.drawGraph(_nodesSprite.graphics,null);
+			}
+			
+			if(_isMouseFishEye){
+				_fishEyeSprite.graphics.clear();
+				_fishEyeSprite.graphics.lineStyle(60,0xAAAAAA,0.5);
+				_fishEyeSprite.graphics.drawCircle(mouseX,mouseY,1/3*Math.min(stage.stageWidth,stage.stageHeight)/this.scaleX);
+			}
 		}
 		
 		private function whenMouseMoving(me:MouseEvent):void{
 			_mouseX = me.currentTarget.stageX;
 			_mouseY = me.currentTarget.stageY;
+		}
+		
+		public function get displayEdges():Boolean{
+			return _displayEdges;
+		}
+		
+		public function set displayEdges(value:Boolean):void{
+			_displayEdges = value;
+			if(_displayEdges==false){
+				_edgesSprite.graphics.clear();
+			}
+		}
+		
+		public function get isMouseFishEye():Boolean{
+			return _isMouseFishEye;
+		}
+		
+		public function set isMouseFishEye(value:Boolean):void{
+			_isMouseFishEye = value;
+			if(_isMouseFishEye==false){
+				_fishEyeSprite.graphics.clear();
+			}
 		}
 	}
 }
