@@ -23,11 +23,11 @@ package com.ofnodesandedges.y2010.ui{
 			s.addChild(this);
 			
 			// Set file path:
-			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./standard_graph.gexf";
+			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./test.gexf";
 			else _filePath = root.loaderInfo.parameters["filePath"];
 			
 			// Add the FPSCounter:
-			_fpsCounter = new FPSCounter(10,10,0x000000);
+			_fpsCounter = new FPSCounter(stage.stageWidth-100,10,0x000000);
 			addChild(_fpsCounter);
 			
 			// Load the file:

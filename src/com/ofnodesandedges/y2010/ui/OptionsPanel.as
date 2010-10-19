@@ -68,13 +68,13 @@ package com.ofnodesandedges.y2010.ui{
 			
 			_edgesOn = new EdgesOn();
 			_edgesOn.x = 10;
-			_edgesOn.y = _fishEyeOn.y + _fishEyeOn.height;
+			_edgesOn.y = _fishEyeOn.y + _fishEyeOn.height+5;
 			_edgesOn.height = 30*_edgesOn.height/_edgesOn.width;
 			_edgesOn.width = 30;
 			
 			_edgesOff = new EdgesOff();
 			_edgesOff.x = 10;
-			_edgesOff.y = _fishEyeOff.y + _fishEyeOff.height;
+			_edgesOff.y = _fishEyeOff.y + _fishEyeOff.height+5;
 			_edgesOff.height = 30*_edgesOff.height/_edgesOff.width;
 			_edgesOff.width = 30;
 			

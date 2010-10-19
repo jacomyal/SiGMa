@@ -98,10 +98,16 @@ package com.ofnodesandedges.y2010.graphics{
 					node.displayX = centerX + xDist*(newDist/dist*3/4 + 1/4);
 					node.displayY = centerY + yDist*(newDist/dist*3/4 + 1/4);
 					node.displaySize = Math.min(node.size*newDist/dist,10*node.size);
+					
+					node.borderColor = 0x000000;
+					node.borderThickness = node.displaySize/3;
 				}else{
 					node.displayX = node.x;
 					node.displayY = node.y;
 					node.displaySize = node.size;
+					
+					node.borderColor = 0x000000;
+					node.borderThickness = 0;
 				}
 			}
 		}
@@ -212,6 +218,7 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		private function drawNode(node:NodeGraphics,nodesGraphics:Graphics):void{
 			if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
+			else nodesGraphics.lineStyle(0,0,0);
 			nodesGraphics.beginFill(node.color,node.alpha);
 			switch(node.shape.toLowerCase()){
 				case "square":
