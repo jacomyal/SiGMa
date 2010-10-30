@@ -13,22 +13,15 @@ package com.ofnodesandedges.y2010.loading{
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
-	public class GexfLoader extends EventDispatcher{
+	public class GexfLoader extends FileLoader{
 		
-		public static const FILE_PARSED:String = "File totally parsed";
+		public function GexfLoader(){}
 		
-		private var _gexfPath:String;
-		private var _graphData:GraphData;
-		private var _fileLoader:URLLoader;
-		private var _fileRequest:URLRequest;
-		
-		public function GexfLoader(){
+		public override function openFile(filePath:String):void{
 			_graphData = new GraphData();
-		}
-		
-		public function openFile(filePath:String):void{
-			_gexfPath = filePath;
-			_fileRequest = new URLRequest(_gexfPath);
+			
+			_filePath = filePath;
+			_fileRequest = new URLRequest(_filePath);
 			_fileLoader = new URLLoader();
 			
 			configureListeners(_fileLoader);
@@ -280,38 +273,6 @@ package com.ofnodesandedges.y2010.loading{
 			for( var i:int = 0; i <bytes.length; i++ )
 				hex += decaToHexaFromInt( int(bytes[i]) );
 			return hex;
-		}
-		
-		public function get fileRequest():URLRequest{
-			return _fileRequest;
-		}
-		
-		public function set fileRequest(value:URLRequest):void{
-			_fileRequest = value;
-		}
-		
-		public function get fileLoader():URLLoader{
-			return _fileLoader;
-		}
-		
-		public function set fileLoader(value:URLLoader):void{
-			_fileLoader = value;
-		}
-		
-		public function get graphData():GraphData{
-			return _graphData;
-		}
-		
-		public function set graphData(value:GraphData):void{
-			_graphData = value;
-		}
-		
-		public function get gexfPath():String{
-			return _gexfPath;
-		}
-		
-		public function set gexfPath(value:String):void{
-			_gexfPath = value;
 		}
 		
 	}

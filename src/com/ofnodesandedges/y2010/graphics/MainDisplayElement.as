@@ -1,9 +1,7 @@
 package com.ofnodesandedges.y2010.graphics{
 	
-	import com.ofnodesandedges.y2010.computing.ForceAtlas;
-	import com.ofnodesandedges.y2010.computing.RoughLayout;
-	import com.ofnodesandedges.y2010.graphics.GraphGraphics;
-	import com.ofnodesandedges.y2010.graphics.NodeGraphics;
+	import com.ofnodesandedges.y2010.graphics.*;
+	import com.ofnodesandedges.y2010.layout.*;
 	import com.ofnodesandedges.y2010.ui.Main;
 	
 	import flash.display.Graphics;
@@ -17,8 +15,7 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _graphGraphics:GraphGraphics;
 		
 		// Layouts:
-		private var _roughLayout:RoughLayout;
-		private var _forceAtlas:ForceAtlas;
+		private var _layout:LayoutClass;
 		
 		// Layers:
 		private var _edgesSprite:Sprite;
@@ -50,7 +47,6 @@ package com.ofnodesandedges.y2010.graphics{
 			addChild(_fishEyeSprite);
 			
 			// Init interactivity state and interactive parameters:
-			addEventListener(MouseEvent.MOUSE_MOVE,whenMouseMoving);
 			_isMouseFishEye = false;
 			_displayEdges = false
 			
@@ -60,38 +56,41 @@ package com.ofnodesandedges.y2010.graphics{
 			_graphGraphics.refreshEdges();
 			_graphGraphics.resizeNodes(0,60);
 			
-			// Init layouts:
-			_roughLayout = new RoughLayout();
-			_forceAtlas = new ForceAtlas();
+			// Init graph drawing:
+			this.addEventListener(Event.ENTER_FRAME,enterFrameHandler);
 			
-			// Launch rough layout:
-			_roughLayout.addEventListener(RoughLayout.FORCE_VECTOR_ONE_STEP,layoutStepHandler);
-			_roughLayout.addEventListener(RoughLayout.FORCE_VECTOR_STABLE,roughForceVectorStable);
-			this.addEventListener(Event.ENTER_FRAME,_roughLayout.stepForceVectorHandler);
-			_roughLayout.launch(_graphGraphics);
-		}
-
-		private function launchForceAtlas():void{
-			_forceAtlas.addEventListener(ForceAtlas.FORCE_ATLAS_ONE_STEP,layoutStepHandler);
-			this.addEventListener(Event.ENTER_FRAME,_forceAtlas.stepForceVectorHandler);
-			_forceAtlas.launch(_graphGraphics);
+			// Init layout:
+			_layout = new RoughLayout();
+			
+			// Launch Rough layout:
+			_layout.addEventListener(LayoutClass.FINISH,roughLayoutFinished);
+			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+			_layout.init(_graphGraphics);
 		}
 		
-		private function roughForceVectorStable(e:Event):void{
-			_roughLayout.removeEventListener(RoughLayout.FORCE_VECTOR_ONE_STEP,layoutStepHandler);
-			_roughLayout.removeEventListener(RoughLayout.FORCE_VECTOR_STABLE,roughForceVectorStable);
-			this.removeEventListener(Event.ENTER_FRAME,_roughLayout.stepForceVectorHandler);
+		private function roughLayoutFinished(e:Event):void{
+			_layout.removeEventListener(LayoutClass.FINISH,roughLayoutFinished);
+			this.removeEventListener(Event.ENTER_FRAME,_layout.stepHandler);
 			
 			launchForceAtlas();
 		}
+
+		private function launchForceAtlas():void{
+			_layout = new ForceAtlas();
+			_layout.init(_graphGraphics);
+			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+		}
 		
-		private function layoutStepHandler(e:Event):void{
+		private function enterFrameHandler(e:Event):void{
 			_graphGraphics.processRescaling(stage,this);
+			var radius:Number = -1;
+			var eye_x:Number = -1;
+			var eye_y:Number = -1;
 			
 			if(_isMouseFishEye){
-				var radius:Number = 1/3*Math.min(stage.stageWidth,stage.stageHeight)/this.scaleX;
-				var eye_x:Number = mouseX;// - this.x;
-				var eye_y:Number = mouseY;// - this.y;
+				radius = 1/2*Math.min(stage.stageWidth,stage.stageHeight)/this.scaleX;
+				eye_x = mouseX;// - this.x;
+				eye_y = mouseY;// - this.y;
 				
 				_graphGraphics.setFishEye(eye_x,eye_y,radius);
 			}else{
@@ -107,13 +106,16 @@ package com.ofnodesandedges.y2010.graphics{
 			if(_isMouseFishEye){
 				_fishEyeSprite.graphics.clear();
 				_fishEyeSprite.graphics.lineStyle(60,0xAAAAAA,0.5);
-				_fishEyeSprite.graphics.drawCircle(mouseX,mouseY,1/3*Math.min(stage.stageWidth,stage.stageHeight)/this.scaleX);
+				_fishEyeSprite.graphics.drawCircle(eye_x,eye_y,radius);
 			}
 		}
 		
-		private function whenMouseMoving(me:MouseEvent):void{
-			_mouseX = me.currentTarget.stageX;
-			_mouseY = me.currentTarget.stageY;
+		public function startLayout():void{
+			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+		}
+		
+		public function stopLayout():void{
+			this.removeEventListener(Event.ENTER_FRAME,_layout.stepHandler);
 		}
 		
 		public function get displayEdges():Boolean{

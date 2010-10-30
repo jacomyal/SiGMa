@@ -1,4 +1,4 @@
-package com.ofnodesandedges.y2010.computing{
+package com.ofnodesandedges.y2010.layout{
 	
 	import com.ofnodesandedges.y2010.graphics.GraphGraphics;
 	import com.ofnodesandedges.y2010.graphics.NodeGraphics;
@@ -9,14 +9,7 @@ package com.ofnodesandedges.y2010.computing{
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	
-	public class ForceAtlas extends EventDispatcher{
-		
-		public static const FORCE_ATLAS_ONE_STEP:String = "One step of force vector computed";
-		public static const FORCE_ATLAS_STABLE:String = "Force vector stabilized";
-		public static const LAUNCH:String = "Launch algorithm";
-		
-		private var _graphGraphics:GraphGraphics;
-		private var _stepsNumber:Number;
+	public class ForceAtlas extends LayoutClass{
 		
 		// Force vector parameters:
 		private var _inertia:Number;
@@ -30,8 +23,11 @@ package com.ofnodesandedges.y2010.computing{
 		private var _speed:Number;
 		private var _cooling:Number;
 		
-		public function ForceAtlas(){
+		public function ForceAtlas(){}
+
+		public override function init(graphGraphics:GraphGraphics):void{
 			_stepsNumber = 0;
+			_autoStop = false;
 			
 			// Force vector parameters:
 			_inertia = 0.5;
@@ -44,17 +40,14 @@ package com.ofnodesandedges.y2010.computing{
 			_cooling = 1;
 			_nodeOverlap = true;
 			
-		}
-
-		public function launch(graphGraphics:GraphGraphics):void{
-			_graphGraphics = graphGraphics;
+			_graph = graphGraphics;
 			
 			var k:int, i:int, node:NodeGraphics;
-			k = _graphGraphics.nodes.length;
+			k = _graph.nodes.length;
 			
 			// Init dx dy
 			for(i=0;i<k;i++){
-				node = _graphGraphics.nodes[i];
+				node = _graph.nodes[i];
 				node.dx = 0;
 				node.dy = 0;
 				node.old_dx = 0;
@@ -62,41 +55,37 @@ package com.ofnodesandedges.y2010.computing{
 			}
 		}
 		
-		public function stepForceVectorHandler(e:Event):void{
+		public override function stepHandler(e:Event):void{
 			computeForceVectorOneStep();
 			_stepsNumber = _stepsNumber+1;
 			
-			dispatchEvent(new Event(FORCE_ATLAS_ONE_STEP));
+			dispatchEvent(new Event(ONE_STEP));
 		}
 		
 		private function computeForceVectorOneStep():void{
-			var i:int, j:int, k:int, l:int = _graphGraphics.nodes.length;
+			var i:int, j:int, k:int, l:int = _graph.nodes.length;
 			var n:NodeGraphics, n1:NodeGraphics, n2:NodeGraphics;
 			var dist:Number, xDist:Number, yDist:Number, newDist:Number;
 			
 			for (i=0;i<l;i++) {
-				n = _graphGraphics.nodes[i];
+				n = _graph.nodes[i];
 				n.old_dx = n.dx;
 				n.old_dy = n.dy;
 				n.dx *= _inertia;
 				n.dy *= _inertia;
 			}
 			
-			// repulsion
 			for (i=0;i<l-1;i++) {
-				n1 = _graphGraphics.nodes[i];
+				// repulsion
+				n1 = _graph.nodes[i];
 				
 				for (j=i+1;j<l;j++) {
-					n2 = _graphGraphics.nodes[j];
+					n2 = _graph.nodes[j];
 					
 					fcBiRepulsor_noCollide(n1, n2, 2 * (1 + n1.getNeighborsCount()) * (1 + n2.getNeighborsCount()));
 				}
-			}
-			
-			// attraction
-			for (i=0;i<l;i++) {
-				n1 = _graphGraphics.nodes[i];
 				
+				// attraction
 				for each(n2 in n1.neighbors) {
 					
 					// REPETITION POSSIBLY A PROBLEM
@@ -104,25 +93,29 @@ package com.ofnodesandedges.y2010.computing{
 				}
 			}
 			
+			//attraction from the last node:
+			n1 = _graph.nodes[l-1];
+			for each(n2 in n1.neighbors) {
+				
+				// REPETITION POSSIBLY A PROBLEM
+				fcBiAttractor_noCollide(n1, n2, _attractionStrength / (1 + n1.getNeighborsCount()));
+			}
+			
 			// gravity
 			for (i=0;i<l;i++) {
-				n = _graphGraphics.nodes[i];
+				n = _graph.nodes[i];
 				
 				n.dx -= _gravity * n.x;
 				n.dy -= _gravity * n.y;
-			}
-			
-			// speed
-			for (i=0;i<l;i++) {
-				n = _graphGraphics.nodes[i];
+				
+				// speed
+				n = _graph.nodes[i];
 				
 				n.dx *= _speed;
 				n.dy *= _speed;
-			}
-			
-			// apply forces
-			for (i=0;i<l;i++) {
-				n = _graphGraphics.nodes[i];
+
+				// apply forces
+				n = _graph.nodes[i];
 				
 				var d2:Number = 0.0001 + Math.sqrt(n.dx * n.dx + n.dy * n.dy);
 				var ratio:Number;
@@ -188,12 +181,12 @@ package com.ofnodesandedges.y2010.computing{
 		}
 		
 		private function rotation(degree_angle:Number):void{
-			var i:int,l:int = _graphGraphics.nodes.length;
+			var i:int,l:int = _graph.nodes.length;
 			var xTemp:Number,yTemp:Number,radians:Number;
 			var n:NodeGraphics;
 			
 			for (i=0;i<l;i++) {
-				n = _graphGraphics.nodes[i];
+				n = _graph.nodes[i];
 				radians = Math.PI*degree_angle/180;
 				
 				xTemp = n.x*Math.cos(radians) - n.y*Math.sin(radians);
@@ -211,22 +204,6 @@ package com.ofnodesandedges.y2010.computing{
 				n.x *= 0.8;
 				n.y *= 0.8;
 			}
-		}
-		
-		public function get graphGraphics():GraphGraphics{
-			return _graphGraphics;
-		}
-		
-		public function set graphGraphics(value:GraphGraphics):void{
-			_graphGraphics = value;
-		}
-		
-		public function get stepsNumber():Number{
-			return _stepsNumber;
-		}
-		
-		public function set stepsNumber(value:Number):void{
-			_stepsNumber = value;
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package com.ofnodesandedges.y2010.graphics{
 	
-	import com.ofnodesandedges.y2010.computing.MD5;
 	import com.ofnodesandedges.y2010.data.GraphData;
 	import com.ofnodesandedges.y2010.data.NodeData;
 	
@@ -80,11 +79,14 @@ package com.ofnodesandedges.y2010.graphics{
 				node.displayX = node.x;
 				node.displayY = node.y;
 				node.displaySize = node.size;
+				
+				node.borderColor = 0x000000;
+				node.borderThickness = 0;
 			}
 		}
 		
 		public function setFishEye(centerX:Number,centerY:Number,fishEyeRadius:Number):void{
-			var xDist:Number, yDist:Number, dist:Number, newDist:Number;
+			var xDist:Number, yDist:Number, dist:Number, newDist:Number, newSize:Number;
 			
 			for each(var node:NodeGraphics in _nodes){
 				xDist = node.x - centerX;
@@ -93,11 +95,20 @@ package com.ofnodesandedges.y2010.graphics{
 				dist = Math.sqrt(xDist*xDist + yDist*yDist);
 				
 				if(dist<fishEyeRadius){
-					newDist = Math.sqrt(Math.pow(fishEyeRadius,2) - Math.pow(dist-fishEyeRadius,2));
+					// Makes the biggest distances become bigger, the smallest smaller:
+					//newDist = 6.75*Math.pow(dist,2)/fishEyeRadius - 9.5*Math.pow(dist,3)/Math.pow(fishEyeRadius,2) + 3.75*Math.pow(dist,4)/Math.pow(fishEyeRadius,3);
+					//newSize = 6.75*Math.pow(dist,2)/fishEyeRadius - 9.5*Math.pow(dist,3)/Math.pow(fishEyeRadius,2) + 3.75*Math.pow(dist,4)/Math.pow(fishEyeRadius,3);
+					// Asymptotic exponential - everything is bigger, but the middle values are the most increased:
+					var coef:Number = 5;
+					newDist = Math.pow(Math.E,coef)/(Math.pow(Math.E,coef)-1)*fishEyeRadius*(1-Math.exp(-dist/fishEyeRadius*coef));
+					newSize = Math.pow(Math.E,coef)/(Math.pow(Math.E,coef)-1)*fishEyeRadius*(1-Math.exp(-dist/fishEyeRadius*coef));
+					// Quarter circle - everything is bigger, but the middle values are the most increased:
+					//newDist = Math.sqrt(Math.pow(fishEyeRadius,2) - Math.pow(dist-fishEyeRadius,2));
+					//newSize = Math.sqrt(Math.pow(fishEyeRadius,2) - Math.pow(dist-fishEyeRadius,2));
 					
 					node.displayX = centerX + xDist*(newDist/dist*3/4 + 1/4);
 					node.displayY = centerY + yDist*(newDist/dist*3/4 + 1/4);
-					node.displaySize = Math.min(node.size*newDist/dist,10*node.size);
+					node.displaySize = Math.min(node.size*newSize/dist,10*node.size);
 					
 					node.borderColor = 0x000000;
 					node.borderThickness = node.displaySize/3;

@@ -3,7 +3,7 @@ package com.ofnodesandedges.y2010.ui{
 	import com.ofnodesandedges.y2010.computing.FPSCounter;
 	import com.ofnodesandedges.y2010.data.GraphData;
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
-	import com.ofnodesandedges.y2010.loading.GexfLoader;
+	import com.ofnodesandedges.y2010.loading.*;
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -23,7 +23,7 @@ package com.ofnodesandedges.y2010.ui{
 			s.addChild(this);
 			
 			// Set file path:
-			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./test.gexf";
+			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./standard_graph.gexf";
 			else _filePath = root.loaderInfo.parameters["filePath"];
 			
 			// Add the FPSCounter:
@@ -32,7 +32,7 @@ package com.ofnodesandedges.y2010.ui{
 			
 			// Load the file:
 			_gexfLoader = new GexfLoader();
-			_gexfLoader.addEventListener(GexfLoader.FILE_PARSED,graphLoadedHandler);
+			_gexfLoader.addEventListener(FileLoader.FILE_PARSED,graphLoadedHandler);
 			_gexfLoader.openFile(_filePath);
 		}
 		
@@ -44,37 +44,13 @@ package com.ofnodesandedges.y2010.ui{
 			// Init Options Panel:
 			_optionsPanel = new OptionsPanel(_mDE);
 		}
-
+		
 		public function get graph():GraphData{
 			return _graph;
 		}
-
+		
 		public function set graph(value:GraphData):void{
 			_graph = value;
-		}
-
-		public function get mDE():MainDisplayElement{
-			return _mDE;
-		}
-
-		public function set mDE(value:MainDisplayElement):void{
-			_mDE = value;
-		}
-
-		public function get gexfLoader():GexfLoader{
-			return _gexfLoader;
-		}
-
-		public function set gexfLoader(value:GexfLoader):void{
-			_gexfLoader = value;
-		}
-
-		public function get filePath():String{
-			return _filePath;
-		}
-
-		public function set filePath(value:String):void{
-			_filePath = value;
 		}
 
 	}
