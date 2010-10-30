@@ -77,9 +77,9 @@ package com.ofnodesandedges.y2010.ui{
 			// FishEye management:
 			parameters = new Object();
 			parameters["mode"] = 1;
+			parameters['_mainDisplayElement'] = _mainDisplayElement;
 			
 			button = new FishEyeButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
-			FishEyeButton (button).mainDisplayElement = _mainDisplayElement;
 			_buttonsIndex['FishEyeButton'] = indexParser;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
@@ -87,9 +87,9 @@ package com.ofnodesandedges.y2010.ui{
 			// Edges displaying:
 			parameters = new Object();
 			parameters["mode"] = 1;
+			parameters['_mainDisplayElement'] = _mainDisplayElement;
 			
 			button = new DisplayEdgesButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
-			DisplayEdgesButton (button).mainDisplayElement = _mainDisplayElement;
 			_buttonsIndex['DisplayEdgesButton'] = indexParser;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
@@ -97,9 +97,9 @@ package com.ofnodesandedges.y2010.ui{
 			// Layout management:
 			parameters = new Object();
 			parameters["mode"] = 2;
+			parameters['_mainDisplayElement'] = _mainDisplayElement;
 			
 			button = new LayoutButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
-			LayoutButton (button).mainDisplayElement = _mainDisplayElement;
 			_buttonsIndex['LayoutButton'] = indexParser;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;

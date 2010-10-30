@@ -16,6 +16,8 @@ package com.ofnodesandedges.y2010.Buttons{
 			_actionButton = new EdgesOn();
 			_actionButton2 = new EdgesOff();
 			
+			_mainDisplayElement = options["_mainDisplayElement"];
+			
 			super(root,x,y,width,height,options);
 		}
 		
@@ -33,10 +35,6 @@ package com.ofnodesandedges.y2010.Buttons{
 				
 				switchAction();
 			}
-		}
-		
-		public function set mainDisplayElement(value:MainDisplayElement):void{
-			_mainDisplayElement = value;
 		}
 	}
 }

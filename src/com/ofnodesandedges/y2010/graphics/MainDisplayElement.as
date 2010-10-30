@@ -4,10 +4,8 @@ package com.ofnodesandedges.y2010.graphics{
 	import com.ofnodesandedges.y2010.layout.*;
 	import com.ofnodesandedges.y2010.ui.Main;
 	
-	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
 	
 	public class MainDisplayElement extends Sprite{
 		
@@ -27,8 +25,12 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _mouseX:Number;
 		private var _mouseY:Number;
 		
-		// Interactivity processes:
+		// Fish Eye:
 		private var _isMouseFishEye:Boolean;
+		private var _fishEyeRadius:Number;
+		private var _fishEyePower:Number;
+		
+		// Display edges:
 		private var _displayEdges:Boolean;
 		
 		public function MainDisplayElement(main:Main){
@@ -46,9 +48,13 @@ package com.ofnodesandedges.y2010.graphics{
 			addChild(_labelSprite);
 			addChild(_fishEyeSprite);
 			
-			// Init interactivity state and interactive parameters:
+			// Fish Eye:
 			_isMouseFishEye = false;
-			_displayEdges = false
+			_fishEyeRadius = 1/2*Math.min(stage.stageWidth,stage.stageHeight);
+			_fishEyePower = 5;
+			
+			// Display edges:
+			_displayEdges = false;
 			
 			// Build graph to display:
 			_graphGraphics = new GraphGraphics(_main.graph);
@@ -88,11 +94,10 @@ package com.ofnodesandedges.y2010.graphics{
 			var eye_y:Number = -1;
 			
 			if(_isMouseFishEye){
-				radius = 1/2*Math.min(stage.stageWidth,stage.stageHeight)/this.scaleX;
 				eye_x = mouseX;// - this.x;
 				eye_y = mouseY;// - this.y;
 				
-				_graphGraphics.setFishEye(eye_x,eye_y,radius);
+				_graphGraphics.setFishEye(eye_x,eye_y,_fishEyeRadius/this.scaleX,_fishEyePower);
 			}else{
 				_graphGraphics.setDisplayVars();
 			}
@@ -105,8 +110,8 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			if(_isMouseFishEye){
 				_fishEyeSprite.graphics.clear();
-				_fishEyeSprite.graphics.lineStyle(60,0xAAAAAA,0.5);
-				_fishEyeSprite.graphics.drawCircle(eye_x,eye_y,radius);
+				_fishEyeSprite.graphics.lineStyle(10/this.scaleX,0xAAAAAA,0.5);
+				_fishEyeSprite.graphics.drawCircle(eye_x,eye_y,_fishEyeRadius/this.scaleX);
 			}
 		}
 		
@@ -139,5 +144,23 @@ package com.ofnodesandedges.y2010.graphics{
 				_fishEyeSprite.graphics.clear();
 			}
 		}
+
+		public function set fishEyePower(value:Number):void{
+			_fishEyePower = value;
+		}
+		
+		public function get fishEyePower():Number{
+			return _fishEyePower;
+		}
+
+		public function set fishEyeRadius(value:Number):void{
+			_fishEyeRadius = value;
+		}
+		
+		public function get fishEyeRadius():Number{
+			return _fishEyeRadius;
+		}
+
+
 	}
 }

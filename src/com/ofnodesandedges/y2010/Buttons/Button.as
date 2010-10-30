@@ -16,7 +16,7 @@ package com.ofnodesandedges.y2010.Buttons{
 		protected var _description:String;
 		protected var _toolTip:ToolTip;
 		
-		protected var _popUp:PopUp = new PopUp();
+		protected var _popUp:PopUp;
 		protected var _parameters:Boolean = false;
 		
 		public function Button(root:DisplayObjectContainer,x:Number,y:Number,width:Number,height:Number=-1,options:Object=null){
@@ -64,7 +64,6 @@ package com.ofnodesandedges.y2010.Buttons{
 			}
 			
 			addChild(_actionButton);
-			addChild(_popUp);
 			
 			if(_parameters){
 				addChild(_openPopUpButton);
@@ -160,8 +159,8 @@ package com.ofnodesandedges.y2010.Buttons{
 		
 		protected function openPopUpClick(m:MouseEvent):void{
 			if(_openPopUpButton.enabled==true){
-				_popUp.clear();
-				_popUp.draw(this.x+_actionButton.width/2,-6,300,200);
+				addChild(_popUp);
+				_popUp.draw(_actionButton.width/2,-6);
 				
 				switchPopUpButton();
 			}
@@ -182,6 +181,7 @@ package com.ofnodesandedges.y2010.Buttons{
 		
 		protected function closePopUpClick(m:MouseEvent):void{
 			if(_closePopUpButton.enabled==true){
+				removeChild(_popUp);
 				_popUp.clear();
 				
 				switchPopUpButton();
