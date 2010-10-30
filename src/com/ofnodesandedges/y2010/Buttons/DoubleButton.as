@@ -2,29 +2,18 @@ package com.ofnodesandedges.y2010.Buttons{
 	
 	import com.ofnodesandedges.y2010.ui.ToolTip;
 	
+	import flash.display.DisplayObjectContainer;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
-	public class DoubleButtonClass extends ButtonClass{
+	public class DoubleButton extends Button{
 		
 		protected var _actionButton2:SimpleButton;
 		protected var _description2:String;
 		
-		public override function init(x:Number,y:Number,width:Number,height:Number=-1,options:Object=null):void{
-			// Parameters button initiation:
-			_parametersButton = new OpenParameters();
-			
-			// Buttons:
-			if(_actionButton!=null){
-				if(height==-1){
-					_actionButton.height = width*_actionButton.height/_actionButton.width;
-					_actionButton.width = width;
-				}else{
-					_actionButton.width = height*_actionButton.width/_actionButton.height;
-					_actionButton.height = height;
-				}
-			}
+		public function DoubleButton(root:DisplayObjectContainer,x:Number,y:Number,width:Number,height:Number=-1,options:Object=null){
+			super(root,x,y,width,height,options);
 			
 			if(_actionButton2!=null){
 				if(height==-1){
@@ -36,36 +25,9 @@ package com.ofnodesandedges.y2010.Buttons{
 				}
 			}
 			
-			if(_parametersButton!=null){
-				if(height==-1){
-					_parametersButton.width = width/2;
-					_parametersButton.height = width/2;
-				}else{
-					_parametersButton.width = height/2;
-					_parametersButton.height = height/2;
-				}
-				
-				_parametersButton.x = _actionButton.width;
-				_parametersButton.y = _actionButton.height;
-			}
-			
 			if((options!=null)&&(options.hasOwnProperty("mode"))&&(options["mode"]==2)){
-				addChild(_actionButton2);
-			}else{
-				addChild(_actionButton);
+				switchAction();
 			}
-			
-			addChild(_parametersButton);
-			
-			// Tooltip:
-			_toolTip = ToolTip.createToolTip(this.stage,0xFF3333,1);
-			
-			// Coordinates:
-			this.x = x;
-			this.y = y;
-			
-			// Event listeners:
-			this.addEventListeners();
 		}
 		
 		public override function addEventListeners():void{
@@ -77,9 +39,15 @@ package com.ofnodesandedges.y2010.Buttons{
 			_actionButton2.addEventListener(MouseEvent.MOUSE_OVER,action2Over);
 			_actionButton2.addEventListener(MouseEvent.MOUSE_OUT,action2Out);
 			
-			_parametersButton.addEventListener(MouseEvent.CLICK,parametersClick);
-			_parametersButton.addEventListener(MouseEvent.MOUSE_OVER,parametersOver);
-			_parametersButton.addEventListener(MouseEvent.MOUSE_OUT,parametersOut);
+			if(_parameters){
+				_openPopUpButton.addEventListener(MouseEvent.CLICK,openPopUpClick);
+				_openPopUpButton.addEventListener(MouseEvent.MOUSE_OVER,openPopUpOver);
+				_openPopUpButton.addEventListener(MouseEvent.MOUSE_OUT,openPopUpOut);
+				
+				_closePopUpButton.addEventListener(MouseEvent.CLICK,closePopUpClick);
+				_closePopUpButton.addEventListener(MouseEvent.MOUSE_OVER,closePopUpOver);
+				_closePopUpButton.addEventListener(MouseEvent.MOUSE_OUT,closePopUpOut);
+			}
 		}
 		
 		public override function removeEventListeners():void{
@@ -91,21 +59,27 @@ package com.ofnodesandedges.y2010.Buttons{
 			_actionButton2.removeEventListener(MouseEvent.MOUSE_OVER,action2Over);
 			_actionButton2.removeEventListener(MouseEvent.MOUSE_OUT,action2Out);
 			
-			_parametersButton.removeEventListener(MouseEvent.CLICK,parametersClick);
-			_parametersButton.removeEventListener(MouseEvent.MOUSE_OVER,parametersOver);
-			_parametersButton.removeEventListener(MouseEvent.MOUSE_OUT,parametersOut);
+			if(_parameters){
+				_openPopUpButton.removeEventListener(MouseEvent.CLICK,openPopUpClick);
+				_openPopUpButton.removeEventListener(MouseEvent.MOUSE_OVER,openPopUpOver);
+				_openPopUpButton.removeEventListener(MouseEvent.MOUSE_OUT,openPopUpOut);
+				
+				_closePopUpButton.removeEventListener(MouseEvent.CLICK,closePopUpClick);
+				_closePopUpButton.removeEventListener(MouseEvent.MOUSE_OVER,closePopUpOver);
+				_closePopUpButton.removeEventListener(MouseEvent.MOUSE_OUT,closePopUpOut);
+			}
 		}
 		
 		public override function enable():void{
 			_actionButton.enabled = true;
 			_actionButton2.enabled = true;
-			_parametersButton.enabled = true;
+			_openPopUpButton.enabled = true;
 		}
 		
 		public override function disable():void{
 			_actionButton.enabled = false;
 			_actionButton2.enabled = false;
-			_parametersButton.enabled = false;
+			_openPopUpButton.enabled = false;
 		}
 		
 		public function switchAction():void{

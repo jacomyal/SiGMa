@@ -1,19 +1,26 @@
 package com.ofnodesandedges.y2010.Buttons{
 	
+	import com.ofnodesandedges.y2010.PopUps.FishEyePopUp;
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
 	
+	import flash.display.DisplayObjectContainer;
 	import flash.events.MouseEvent;
 	
-	public class FishEyeButton extends DoubleButtonClass{
+	public class FishEyeButton extends DoubleButton{
 		
 		private var _mainDisplayElement:MainDisplayElement;
 		
-		public function FishEyeButton(){
+		public function FishEyeButton(root:DisplayObjectContainer,x:Number,y:Number,width:Number,height:Number=-1,options:Object=null){
 			_description = '"FishEye" zoom on';
 			_description2 = '"FishEye" zoom off';
 			
 			_actionButton = new FishEyeOn();
 			_actionButton2 = new FishEyeOff();
+			
+			_parameters = true;
+			_popUp = new FishEyePopUp();
+			
+			super(root,x,y,width,height,options);
 		}
 		
 		protected override function actionClick(m:MouseEvent):void{

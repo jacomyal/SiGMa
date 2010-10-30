@@ -9,7 +9,7 @@ package com.ofnodesandedges.y2010.layout{
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	
-	public class ForceAtlas extends LayoutClass{
+	public class ForceAtlas extends Layout{
 		
 		// Force vector parameters:
 		private var _inertia:Number;

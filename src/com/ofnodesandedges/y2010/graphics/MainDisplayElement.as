@@ -15,7 +15,7 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _graphGraphics:GraphGraphics;
 		
 		// Layouts:
-		private var _layout:LayoutClass;
+		private var _layout:Layout;
 		
 		// Layers:
 		private var _edgesSprite:Sprite;
@@ -63,13 +63,13 @@ package com.ofnodesandedges.y2010.graphics{
 			_layout = new RoughLayout();
 			
 			// Launch Rough layout:
-			_layout.addEventListener(LayoutClass.FINISH,roughLayoutFinished);
+			_layout.addEventListener(Layout.FINISH,roughLayoutFinished);
 			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
 			_layout.init(_graphGraphics);
 		}
 		
 		private function roughLayoutFinished(e:Event):void{
-			_layout.removeEventListener(LayoutClass.FINISH,roughLayoutFinished);
+			_layout.removeEventListener(Layout.FINISH,roughLayoutFinished);
 			this.removeEventListener(Event.ENTER_FRAME,_layout.stepHandler);
 			
 			launchForceAtlas();

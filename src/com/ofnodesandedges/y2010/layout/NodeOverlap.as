@@ -9,7 +9,7 @@ package com.ofnodesandedges.y2010.layout{
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	
-	public class NodeOverlap extends LayoutClass{
+	public class NodeOverlap extends Layout{
 		
 		// Node overlap parameters:
 		private var _overlapMove:Number;

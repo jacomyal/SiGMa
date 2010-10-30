@@ -5,7 +5,7 @@ package com.ofnodesandedges.y2010.layout{
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 
-	public class LayoutClass extends EventDispatcher{
+	public class Layout extends EventDispatcher{
 		
 		public static const ONE_STEP:String = "One step";
 		public static const FINISH:String = "Finish";

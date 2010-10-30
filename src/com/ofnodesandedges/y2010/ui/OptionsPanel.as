@@ -23,7 +23,7 @@ package com.ofnodesandedges.y2010.ui{
 		private var _backgroundSprite:Sprite;
 		
 		// Buttons:
-		private var _buttons:Vector.<ButtonClass>;
+		private var _buttons:Vector.<Button>;
 		private var _buttonsIndex:Object;
 		
 		public function OptionsPanel(mainDisplayElement:MainDisplayElement){
@@ -66,49 +66,40 @@ package com.ofnodesandedges.y2010.ui{
 			//
 			// Buttons:
 			//
-			_buttons = new Vector.<ButtonClass>();
+			_buttons = new Vector.<Button>();
 			_buttonsIndex = new Object();
 			
 			var xParser:Number = 150;
 			var indexParser:int = 1;
-			var button:ButtonClass;
+			var button:Button;
 			var parameters:Object;
 			
 			// FishEye management:
-			button = new FishEyeButton();
-			_backgroundSprite.addChild(button);
-			
-			FishEyeButton (button).mainDisplayElement = _mainDisplayElement;
 			parameters = new Object();
-			parameters["mode"] = 2;
+			parameters["mode"] = 1;
 			
-			button.init(xParser,-44,-1,BUTTONS_SIZE);
+			button = new FishEyeButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
+			FishEyeButton (button).mainDisplayElement = _mainDisplayElement;
 			_buttonsIndex['FishEyeButton'] = indexParser;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			
 			// Edges displaying:
-			button = new DisplayEdgesButton();
-			_backgroundSprite.addChild(button);
-			
-			DisplayEdgesButton (button).mainDisplayElement = _mainDisplayElement;
 			parameters = new Object();
-			parameters["mode"] = 2;
+			parameters["mode"] = 1;
 			
-			button.init(xParser,-44,-1,BUTTONS_SIZE);
+			button = new DisplayEdgesButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
+			DisplayEdgesButton (button).mainDisplayElement = _mainDisplayElement;
 			_buttonsIndex['DisplayEdgesButton'] = indexParser;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			
 			// Layout management:
-			button = new LayoutButton();
-			_backgroundSprite.addChild(button);
-			
-			LayoutButton (button).mainDisplayElement = _mainDisplayElement;
 			parameters = new Object();
 			parameters["mode"] = 2;
 			
-			button.init(xParser,-44,-1,BUTTONS_SIZE,parameters);
+			button = new LayoutButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
+			LayoutButton (button).mainDisplayElement = _mainDisplayElement;
 			_buttonsIndex['LayoutButton'] = indexParser;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
@@ -133,7 +124,6 @@ package com.ofnodesandedges.y2010.ui{
 				
 				removeChild(_closeOptionsPanel);
 				addChild(_openOptionsPanel);
-				stopRotatingButton();
 				
 				removeEventListener(Event.ENTER_FRAME,openingFrameHandler);
 				addEventListener(Event.ENTER_FRAME,closingFrameHandler);
@@ -145,7 +135,6 @@ package com.ofnodesandedges.y2010.ui{
 				
 				removeChild(_openOptionsPanel);
 				addChild(_closeOptionsPanel);
-				startRotatingButton();
 				
 				removeEventListener(Event.ENTER_FRAME,closingFrameHandler);
 				addEventListener(Event.ENTER_FRAME,openingFrameHandler);
@@ -181,114 +170,5 @@ package com.ofnodesandedges.y2010.ui{
 				_openOptionsPanel.enabled = true;
 			}
 		}
-		
-		/*
-		private function edgesOnClick(m:MouseEvent):void{
-			if(_edgesOn.enabled==true){
-				_mainDisplayElement.displayEdges = true;
-				_backgroundSprite.removeChild(_edgesOn);
-				_backgroundSprite.addChild(_edgesOff);
-			}
-		}
-		
-		private function edgesOnOver(m:MouseEvent):void{
-			if(_edgesOn.enabled==true){
-				_toolTip.addTip('<font face="Lucida Console" size="12" color="#000000">Display edges</font>');
-			}else{
-				_toolTip.addTip('<font face="Lucida Console" size="12" color="#000000">Display edges</font>\n' +
-					'<font face="Lucida Console" size="12" color="#ff6633">(not enable)</font>');
-			}
-		}
-		
-		private function edgesOnOut(m:MouseEvent):void{
-			_toolTip.removeTip();
-		}
-		
-		private function edgesOffClick(m:MouseEvent):void{
-			if(_edgesOff.enabled==true){
-				_mainDisplayElement.displayEdges = false;
-				_backgroundSprite.removeChild(_edgesOff);
-				_backgroundSprite.addChild(_edgesOn);
-			}
-		}
-		
-		private function edgesOffOver(m:MouseEvent):void{
-			if(_edgesOff.enabled==true){
-				_toolTip.addTip('<font face="Lucida Console" size="12" color="#000000">Stop displaying edges</font>');
-			}else{
-				_toolTip.addTip('<font face="Lucida Console" size="12" color="#000000">Stop displaying edges</font>\n' +
-					'<font face="Lucida Console" size="12" color="#ff6633">(not enable)</font>');
-			}
-		}
-		
-		private function edgesOffOut(m:MouseEvent):void{
-			_toolTip.removeTip();
-		}
-		
-		private function startLayoutClick(m:MouseEvent):void{
-			if(_startLayout.enabled==true){
-				_mainDisplayElement.startLayout();
-				
-				_backgroundSprite.removeChild(_startLayout);
-				_backgroundSprite.addChild(_stopLayout);
-			}
-		}
-		
-		private function startLayoutOver(m:MouseEvent):void{
-			if(_edgesOff.enabled==true){
-				_toolTip.addTip('<font face="Lucida Console" size="12" color="#000000">Start layout</font>');
-			}else{
-				_toolTip.addTip('<font face="Lucida Console" size="12" color="#000000">Start layout</font>\n' +
-					'<font face="Lucida Console" size="12" color="#ff6633">(not enable)</font>');
-			}
-		}
-		
-		private function startLayoutOut(m:MouseEvent):void{
-			_toolTip.removeTip();
-		}
-		
-		private function stopLayoutClick(m:MouseEvent):void{
-			if(_stopLayout.enabled==true){
-				_mainDisplayElement.stopLayout();
-				
-				_backgroundSprite.removeChild(_stopLayout);
-				_backgroundSprite.addChild(_startLayout);
-			}
-		}
-		
-		private function stopLayoutOver(m:MouseEvent):void{
-			if(_stopLayout.enabled==true){
-				_toolTip.addTip('<font face="Lucida Console" size="12" color="#000000">Stop layout</font>');
-			}else{
-				_toolTip.addTip('<font face="Lucida Console" size="12" color="#000000">Stop layout</font>\n' +
-					'<font face="Lucida Console" size="12" color="#ff6633">(not enable)</font>');
-			}
-		}
-		
-		private function stopLayoutOut(m:MouseEvent):void{
-			_toolTip.removeTip();
-		}
-		
-		private function radialViewOnClick(m:MouseEvent):void{
-			if(_radialViewOn.enabled==true){
-				_mainDisplayElement.stopLayout();
-				
-				_backgroundSprite.removeChild(_stopLayout);
-				_backgroundSprite.addChild(_startLayout);
-			}
-		}
-		
-		private function radialViewOnOver(m:MouseEvent):void{
-			if(_radialViewOn.enabled==true){
-				_toolTip.addTip('<font face="Lucida Console" size="12" color="#000000">Radial view</font>');
-			}else{
-				_toolTip.addTip('<font face="Lucida Console" size="12" color="#000000">Radial view</font>\n' +
-					'<font face="Lucida Console" size="12" color="#ff6633">(not enable)</font>');
-			}
-		}
-		
-		private function radialViewOnOut(m:MouseEvent):void{
-			_toolTip.removeTip();
-		}*/
 	}
 }

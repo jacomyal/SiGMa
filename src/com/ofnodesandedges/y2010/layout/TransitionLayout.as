@@ -6,7 +6,7 @@ package com.ofnodesandedges.y2010.layout{
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
-	public class TransitionLayout extends LayoutClass{
+	public class TransitionLayout extends Layout{
 		
 		public function TransitionLayout(){}
 		
