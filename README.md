@@ -15,7 +15,7 @@ Finally, SiGMa's interface will be oriented along different tools, from the simp
 
 ##II. Functionalities
 ###1. Current state
-Currently, a first version of the structure has been already implemented. Also, some first features are already implemented (a quick and efficient layout, the ForceAtlas and NodeOverlap layouts from [Gephi](http://www.gephi.org/ "Gephi, the Open Graph Viz Platform"), a *GEXF* loader), and it is already possible to visualiza a graph with SiGMa.
+Currently, a first version of the structure has been already implemented. Some first features are already implemented (a quick and efficient force-directed layout, the ForceAtlas and NodeOverlap layouts from [Gephi](http://www.gephi.org/ "Gephi, the Open Graph Viz Platform"), a [*GEXF*](http://www.gexf.net/ "Graph Exchange XML Format") loader, a *FishEye* zoom). Also, it is already possible to visualize a graph, without the labels.
 
 ###2. To be done
 The first priority is to finish a first version of the application, flexible for the user. That involves for example the recognition of the graph file format and of course the implementation of new loaders (*.gdf*, *.csv*, etc), or the recognition of spatial coordinates. Also, when enough tools will be implemented, a formulary to select which tools to display will be done, to make SiGMa fully customable.
