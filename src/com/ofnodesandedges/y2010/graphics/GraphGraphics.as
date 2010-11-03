@@ -222,7 +222,7 @@ package com.ofnodesandedges.y2010.graphics{
 			var xSize:Number = xMax - xMin;
 			var ySize:Number = yMax - yMin;
 			
-			ratio = Math.min(frameWidth/(xSize),frameHeight/(ySize))*0.9;
+			ratio = Math.min(frameWidth/xSize,frameHeight/ySize)*0.9;
 			
 			sprite.x = frameWidth/2-xCenter*ratio;
 			sprite.y = frameHeight/2-yCenter*ratio;

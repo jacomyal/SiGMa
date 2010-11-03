@@ -7,22 +7,34 @@
 
 **SiGMa** is a Web graph mapper for Flash, usable, modifiable and propagatable under the conditions of the [GPL 3.0 License](http://www.gnu.org/licenses/gpl.html "GPL 3.0 license"). This project has been initiated for two reasons:
 
-* First of all, the current state of Web graph mapping is not that accessible. There are a lot of solutions, from other Flash widgets to SeaDragon or SVG exports, but they all require the editor to use first a Graph Visualization Software to prepare the graph before. SiGMa will allow Web users to display a graph with different views, from a simple graph file. And for editors who still want to process some first treatment of the graph, SiGMa is also conceived to use some metrics or attributes from the graph file.
+* First of all, the current state of Web graph mapping is not that accessible. There are a lot of solutions, from other Flash widgets to SeaDragon or SVG exports, but they all require the editor to use first a Graph Visualization Software to prepare the graph before. SiGMa will allow webmasters to display a graph with different views, from graph file, as simple as possible (no need for coordinates or display nodes attributes). And for people who still want to process some first treatment of the graph, SiGMa is also conceived to use some metrics or attributes from the graph file.
 
-* Also, the source code is easy to adapt and modify for developers. The layout classes, the button classes and the loading classes are all normalized to make easy to create or use new layouts, buttons for the interface or buttons.
+* Also, it is often pretty hard to publish an interactive map with exactly the needed features, that's why SiGMa aims to be accessible for developers - more precisely, adding a feature specific to your data, like a geocoded layout, or a layout where x and y depend from specific attributes is easy to do.
 
 Finally, SiGMa's interface will be oriented along different tools, from the simple zoom to the filters, through other visualizations, etc. The user can manage the tools with a control panel, and each tool can have a specific settings panel. This aims to make it easy to add new features, and to help users to observe the graph as you want trough developer's view.
 
 ##II. Functionalities
 ###1. Current state
-Currently, a first version of the structure has been already implemented. Some first features are already implemented (a quick and efficient force-directed layout, the ForceAtlas and NodeOverlap layouts from [Gephi](http://www.gephi.org/ "Gephi, the Open Graph Viz Platform"), a [*GEXF*](http://www.gexf.net/ "Graph Exchange XML Format") loader, a *FishEye* zoom). Also, it is already possible to visualize a graph, without the labels.
+The most basic features have all been implemented: It is currently possible to load a GEXF encoded graph, and to display it. Also, some tools have been implemented to make the observation of the graph easier, including buttons to choose if labels and/or edges have to be displayed, with some parameters to adapt it as you want. And finally, some more specific features have been implemented, like a *FishEye* zoom, or two different layouts when the original file does not contain nodes coordinates, one force-directed layout rough and efficient, and the other one thiner and with a better quality, but slower.
 
 ###2. To be done
-The first priority is to finish a first version of the application, flexible for the user. That involves for example the recognition of the graph file format and of course the implementation of new loaders (*.gdf*, *.csv*, etc), or the recognition of spatial coordinates. Also, when enough tools will be implemented, a formulary to select which tools to display will be done, to make SiGMa fully customable.
+The first priority is to finish a first version of the application, flexible for the user. That involves for example the recognition of the graph file format and of course the implementation of new loaders (*.gdf*, *.csv*, etc). Also, when enough tools will be implemented, a formulary to select which tools to display will be done, to make SiGMa fully customable.
 
 ##III. How to use it
-(*Paragraph still to be done...*)
+* Download the last stable version at [GitHub](http://www.github.com/jacomyal/SiGMa), and put 'SiGMa.swf' somewhere on your server.
+* Put also on your server your *GEXF* encoded graph file.
+* Copy the code below in an HTML page, after having replaced the *italic* strings by the corresponding values:
 
+<code>
+      <object width=" *width of SiGMa* " height=" *height of SiGMa* " id="SiGMa">
+      <param name="movie" value=" *path of SiGMa.swf* ?filePath= *path of the GEXF file* " />
+      <param name="allowScriptAccess" value="always" />
+      <embed src=" *path of SiGMa.swf* ?filePath= *path of the GEXF file* " allowScriptAccess="always" width=" *width of SiGMa* " height=" *height of SiGMa* ">
+      </embed>
+      </object>
+</code>
+
+* That's all, you can now watch your graph.
 
 * * * *
 
