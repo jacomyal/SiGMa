@@ -23,17 +23,15 @@ The first priority is to finish a first version of the application, flexible for
 ##III. How to use it
 * Download the last stable version at [GitHub](http://www.github.com/jacomyal/SiGMa), and put 'SiGMa.swf' somewhere on your server.
 * Put also on your server your *GEXF* encoded graph file.
-* Copy the code below in an HTML page, after having replaced the *italic* strings by the corresponding values:
-
+* Copy the code below in an HTML page, after having replaced the `{}` strings by the corresponding values:
 <code>
-      <object width=" *width of SiGMa* " height=" *height of SiGMa* " id="SiGMa">
-      <param name="movie" value=" *path of SiGMa.swf* ?filePath= *path of the GEXF file* " />
+      <object width="{width of SiGMa}" height="{height of SiGMa}" id="SiGMa">
+      <param name="movie" value="{path of SiGMa.swf}?filePath={path of the GEXF file}" />
       <param name="allowScriptAccess" value="always" />
-      <embed src=" *path of SiGMa.swf* ?filePath= *path of the GEXF file* " allowScriptAccess="always" width=" *width of SiGMa* " height=" *height of SiGMa* ">
+      <embed src="{path of SiGMa.swf}?filePath={path of the GEXF file}" allowScriptAccess="always" width="{width of SiGMa}" height="{height of SiGMa}">
       </embed>
       </object>
 </code>
-
 * That's all, you can now watch your graph.
 
 * * * *
