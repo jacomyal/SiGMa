@@ -18,7 +18,7 @@
  *
  */
 
-package com.ofnodesandedges.y2010.Buttons{
+package com.ofnodesandedges.y2010.buttons{
 	
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
 	
@@ -39,6 +39,10 @@ package com.ofnodesandedges.y2010.Buttons{
 			_mainDisplayElement = options["_mainDisplayElement"];
 			
 			super(root,x,y,width,height,options);
+			
+			if(_mainDisplayElement.isPlaying == true){
+				switchAction();
+			}
 		}
 		
 		protected override function actionClick(m:MouseEvent):void{

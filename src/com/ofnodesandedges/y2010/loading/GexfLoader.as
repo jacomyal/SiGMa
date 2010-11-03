@@ -180,6 +180,10 @@ package com.ofnodesandedges.y2010.loading{
 				node.size = xmlCursor.children().normalize().@value;
 				node.color = setColor((xmlCursor.children().normalize().@b).toString(),(xmlCursor.children().normalize().@g).toString(),(xmlCursor.children().normalize().@r).toString());
 				
+				if((xmlCursor.children().normalize().@x != undefined)&&(xmlCursor.children().normalize().@y != undefined)){
+					node.xy(new Number(xmlCursor.children().normalize().@x),-(new Number(xmlCursor.children().normalize().@y)));
+				}
+				
 				xmlNodesAttributesValues = null;
 				
 				for each(xmlSubCursor in xmlCursor.children()){

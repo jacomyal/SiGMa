@@ -20,7 +20,7 @@
 
 package com.ofnodesandedges.y2010.ui{
 	
-	import com.ofnodesandedges.y2010.Buttons.*;
+	import com.ofnodesandedges.y2010.buttons.*;
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
 	
 	import flash.display.Sprite;
@@ -96,31 +96,37 @@ package com.ofnodesandedges.y2010.ui{
 			
 			// FishEye management:
 			parameters = new Object();
-			parameters["mode"] = 1;
 			parameters['_mainDisplayElement'] = _mainDisplayElement;
 			
 			button = new FishEyeButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
-			_buttonsIndex['FishEyeButton'] = indexParser;
+			_buttonsIndex['FishEyeButton'] = indexParser++;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			
 			// Edges displaying:
 			parameters = new Object();
-			parameters["mode"] = 1;
 			parameters['_mainDisplayElement'] = _mainDisplayElement;
 			
 			button = new DisplayEdgesButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
-			_buttonsIndex['DisplayEdgesButton'] = indexParser;
+			_buttonsIndex['DisplayEdgesButton'] = indexParser++;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			
 			// Layout management:
 			parameters = new Object();
-			parameters["mode"] = 2;
 			parameters['_mainDisplayElement'] = _mainDisplayElement;
 			
 			button = new LayoutButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
-			_buttonsIndex['LayoutButton'] = indexParser;
+			_buttonsIndex['LayoutButton'] = indexParser++;
+			_buttons.push(button);
+			xParser += button.getWidth()+10;
+			
+			// Layout management:
+			parameters = new Object();
+			parameters['_mainDisplayElement'] = _mainDisplayElement;
+			
+			button = new DisplayTextButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
+			_buttonsIndex['DisplayTextButton'] = indexParser++;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			

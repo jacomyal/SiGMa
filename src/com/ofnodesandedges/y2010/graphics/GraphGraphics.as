@@ -23,9 +23,13 @@ package com.ofnodesandedges.y2010.graphics{
 	import com.ofnodesandedges.y2010.data.GraphData;
 	import com.ofnodesandedges.y2010.data.NodeData;
 	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.display.Stage;
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
 	
 	import spark.primitives.Graphic;
 	
@@ -100,7 +104,6 @@ package com.ofnodesandedges.y2010.graphics{
 				node.displayY = node.y;
 				node.displaySize = node.size;
 				
-				node.borderColor = 0x000000;
 				node.borderThickness = 0;
 			}
 		}
@@ -129,14 +132,12 @@ package com.ofnodesandedges.y2010.graphics{
 					node.displayY = centerY + yDist*(newDist/dist*3/4 + 1/4);
 					node.displaySize = Math.min(node.size*newSize/dist,10*node.size);
 					
-					node.borderColor = 0x000000;
 					node.borderThickness = node.displaySize/3;
 				}else{
 					node.displayX = node.x;
 					node.displayY = node.y;
 					node.displaySize = node.size;
 					
-					node.borderColor = 0x000000;
 					node.borderThickness = 0;
 				}
 			}
@@ -164,6 +165,31 @@ package com.ofnodesandedges.y2010.graphics{
 				node.y = Math.random()*areaHeight - areaHeight/2;
 			}
 			
+		}
+		
+		public function rescaleNodes(areaWidth:Number,areaHeight:Number):void{
+			var i:int,l:int = _nodes.length; 
+			
+			var xMin:Number = _nodes[0].x;
+			var xMax:Number = _nodes[0].x;
+			var yMin:Number = _nodes[0].y;
+			var yMax:Number = _nodes[0].y;
+			
+			// Recenter the nodes:
+			for(i=1;i<l;i++){
+				if(_nodes[i].x>xMax) xMax = _nodes[i].x;
+				if(_nodes[i].x<xMin) xMin = _nodes[i].x;
+				if(_nodes[i].y>yMax) yMax = _nodes[i].y;
+				if(_nodes[i].y<yMin) yMin = _nodes[i].y; 
+			}
+			
+			var scale:Number = Math.max(areaWidth/(xMax-xMin),areaHeight/(yMax-yMin));
+			
+			// Rescale the nodes:
+			for(i=0;i<l;i++){
+				_nodes[i].x = (_nodes[i].x-(xMax+xMin)/2)*scale;
+				_nodes[i].y = (_nodes[i].y-(yMax+yMin)/2)*scale; 
+			}
 		}
 		
 		public function processRescaling(stage:Stage, sprite:Sprite):void{
@@ -223,9 +249,11 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 		}
 		
-		public function drawGraph(nodesGraphics:Graphics,edgesGraphics:Graphics):void{
+		public function drawGraph(edgesGraphics:Graphics,nodesGraphics:Graphics,labelSprite:Sprite=null,textSize:Number=0,textThreshold:Number=0):void{
 			if(edgesGraphics != null) drawEdges(edgesGraphics);
 			if(nodesGraphics != null) drawNodes(nodesGraphics);
+			if(labelSprite != null) drawLabels(textSize,textThreshold,labelSprite);
+			//if(labelSprite != null) drawLabelsOnBitmap(textSize,textThreshold,labelSprite);
 		}
 		
 		private function drawEdges(edgesGraphics:Graphics):void{
@@ -244,6 +272,55 @@ package com.ofnodesandedges.y2010.graphics{
 			for each(var node:NodeGraphics in _nodes){
 				drawNode(node,nodesGraphics);
 			}
+		}
+		
+		private function drawLabels(size:Number,threshold:Number,container:Sprite):void{
+			for(var i:int=container.numChildren;i>0;i--){
+				container.removeChildAt(i-1);
+			}
+			
+			for each(var displayNode:NodeGraphics in _nodes){
+				if(displayNode.displaySize>=threshold){
+					var label:TextField = new TextField();
+					var newSize:Number = size*displayNode.displaySize/10;
+					
+					label.htmlText = '<font face="Lucida Console" size="'+newSize+'" color="#000000">'+displayNode.label+'</font>';
+					label.autoSize = TextFieldAutoSize.LEFT;
+					label.x = displayNode.displayX+displayNode.displaySize*1.5;
+					label.y = displayNode.displayY-label.height/2;
+					
+					container.addChild(label);
+				}
+			}
+		}
+		
+		private function drawLabelsOnBitmap(size:Number,threshold:Number,labelContainer:Sprite):void{
+			for(var i:int=labelContainer.numChildren;i>0;i--){
+				labelContainer.removeChildAt(i-1);
+			}
+			
+			var bitmap:Bitmap = new Bitmap();
+			var bitmapData:BitmapData = new BitmapData(labelContainer.stage.stageWidth,labelContainer.stage.stageHeight);
+			var scale:Number = labelContainer.parent.scaleX;
+			var mainX:Number = labelContainer.parent.x;
+			var mainY:Number = labelContainer.parent.y;
+			
+			for each(var displayNode:NodeGraphics in _nodes){
+				if(displayNode.displaySize>=threshold){
+					var label:TextField = new TextField();
+					var newSize:Number = size*displayNode.displaySize/10;
+					
+					label.htmlText = '<font face="Lucida Console" size="'+newSize+'" color="#000000">'+displayNode.label+'</font>';
+					label.autoSize = TextFieldAutoSize.LEFT;
+					label.x = displayNode.displayX/scale+displayNode.displaySize*1.5+mainX;
+					label.y = displayNode.displayY/scale+label.height/2+mainY;
+					
+					bitmapData.draw(label);
+				}
+			}
+			
+			bitmap.bitmapData = bitmapData;
+			labelContainer.addChild(bitmap);
 		}
 		
 		private function drawNode(node:NodeGraphics,nodesGraphics:Graphics):void{
@@ -316,6 +393,28 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 			
 			poly_id=0;
+		}
+		
+		public function getMinSize():Number{
+			var result:Number = _nodes[0].size;
+			var i:int, l:int = _nodes.length;
+			
+			for(i=1;i<l;i++){
+				if(_nodes[i].size<result) result = _nodes[i].size; 
+			}
+			
+			return result;
+		}
+		
+		public function getMaxSize():Number{
+			var result:Number = _nodes[0].size;
+			var i:int, l:int = _nodes.length;
+			
+			for(i=1;i<l;i++){
+				if(_nodes[i].size>result) result = _nodes[i].size; 
+			}
+			
+			return result;
 		}
 		
 		public function get nodes():Vector.<NodeGraphics>{

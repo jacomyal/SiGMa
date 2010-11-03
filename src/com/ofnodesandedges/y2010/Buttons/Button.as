@@ -18,9 +18,9 @@
  *
  */
 
-package com.ofnodesandedges.y2010.Buttons{
+package com.ofnodesandedges.y2010.buttons{
 	
-	import com.ofnodesandedges.y2010.PopUps.PopUp;
+	import com.ofnodesandedges.y2010.popups.PopUp;
 	import com.ofnodesandedges.y2010.ui.ToolTip;
 	
 	import flash.display.DisplayObjectContainer;

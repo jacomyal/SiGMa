@@ -18,7 +18,7 @@
  *
  */
 
-package com.ofnodesandedges.y2010.Buttons{
+package com.ofnodesandedges.y2010.buttons{
 	
 	public class RadialViewButton extends Button{
 		

@@ -31,16 +31,19 @@ package com.ofnodesandedges.y2010.data{
 		private var _color:uint;
 		private var _size:Number;
 		
+		private var _x:Number;
+		private var _y:Number;
+		private var _hasSpatialData:Boolean;
+		
 		public function NodeData(label:String,id:String){
 			_label = label;
 			_id = id;
 			
+			_hasSpatialData = false;
+			
 			_outNeighbors = new Object();
 			_inNeighbors = new Object();
 			_attributes = new Object();
-			
-			_color = 0x000000;
-			_size = 20;
 		}
 		
 		public function addAttribute(key:String,value:String):void{
@@ -110,6 +113,25 @@ package com.ofnodesandedges.y2010.data{
 		public function set outNeighbors(value:Object):void{
 			_outNeighbors = value;
 		}
+
+		public function get x():Number{
+			return _x;
+		}
+
+		public function get y():Number{
+			return _y;
+		}
+		
+		public function xy(x:Number,y:Number):void{
+			_x = x;
+			_y = y;
+			_hasSpatialData = true;
+		}
+
+		public function get hasSpatialData():Boolean{
+			return _hasSpatialData;
+		}
+
 
 	}
 }

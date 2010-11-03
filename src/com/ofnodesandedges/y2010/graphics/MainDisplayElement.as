@@ -20,10 +20,12 @@
 
 package com.ofnodesandedges.y2010.graphics{
 	
+	import com.ofnodesandedges.y2010.data.NodeData;
 	import com.ofnodesandedges.y2010.graphics.*;
 	import com.ofnodesandedges.y2010.layout.*;
 	import com.ofnodesandedges.y2010.ui.Main;
 	
+	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
@@ -34,12 +36,13 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		// Layouts:
 		private var _layout:Layout;
+		private var _isPlaying:Boolean;
 		
 		// Layers:
 		private var _edgesSprite:Sprite;
 		private var _nodesSprite:Sprite;
 		private var _labelSprite:Sprite;
-		private var _fishEyeSprite:Sprite;
+		private var _miscSprite:Sprite;
 		
 		// Mouse and spatial properties:
 		private var _mouseX:Number;
@@ -49,6 +52,11 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _isMouseFishEye:Boolean;
 		private var _fishEyeRadius:Number;
 		private var _fishEyePower:Number;
+		
+		// Display texts:
+		private var _displayText:Boolean;
+		private var _textSize:Number;
+		private var _textThreshold:Number;
 		
 		// Display edges:
 		private var _displayEdges:Boolean;
@@ -61,12 +69,12 @@ package com.ofnodesandedges.y2010.graphics{
 			_edgesSprite = new Sprite();
 			_nodesSprite = new Sprite();
 			_labelSprite = new Sprite();
-			_fishEyeSprite = new Sprite();
+			_miscSprite = new Sprite();
 			
 			addChild(_edgesSprite);
 			addChild(_nodesSprite);
 			addChild(_labelSprite);
-			addChild(_fishEyeSprite);
+			addChild(_miscSprite);
 			
 			// Fish Eye:
 			_isMouseFishEye = false;
@@ -77,21 +85,48 @@ package com.ofnodesandedges.y2010.graphics{
 			_displayEdges = false;
 			
 			// Build graph to display:
-			_graphGraphics = new GraphGraphics(_main.graph);
-			_graphGraphics.random(2000,2000);
-			_graphGraphics.refreshEdges();
-			_graphGraphics.resizeNodes(0,60);
+			initGraph();
+			
+			// Display texts:
+			_displayText = false;
+			_textSize = 24;
+			_textThreshold = 1/5*_graphGraphics.getMinSize()+4/5*_graphGraphics.getMaxSize();
+			
+			// Init layout:
+			if(_isPlaying){
+				_layout = new RoughLayout();
+				
+				_graphGraphics.circularize();
+				_layout.addEventListener(Layout.FINISH,roughLayoutFinished);
+				this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+				_layout.init(_graphGraphics);
+			}else{
+				_displayText = true;
+				_layout = new ForceAtlas();
+				
+				_graphGraphics.rescaleNodes(2000,2000);
+				_layout.init(_graphGraphics);
+			}
 			
 			// Init graph drawing:
 			this.addEventListener(Event.ENTER_FRAME,enterFrameHandler);
+		}
+		
+		private function initGraph():void{
+			var hasSpatialData:Boolean = true;
 			
-			// Init layout:
-			_layout = new RoughLayout();
+			for each(var node:NodeData in _main.graph.nodes){
+				if(node.hasSpatialData == false){
+					hasSpatialData = false;
+					break;
+				}
+			}
 			
-			// Launch Rough layout:
-			_layout.addEventListener(Layout.FINISH,roughLayoutFinished);
-			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
-			_layout.init(_graphGraphics);
+			_graphGraphics = new GraphGraphics(_main.graph);
+			_graphGraphics.refreshEdges();
+			_graphGraphics.resizeNodes(0,60);
+			
+			_isPlaying = !hasSpatialData;
 		}
 		
 		private function roughLayoutFinished(e:Event):void{
@@ -122,24 +157,25 @@ package com.ofnodesandedges.y2010.graphics{
 				_graphGraphics.setDisplayVars();
 			}
 			
-			if(_displayEdges){
-				_graphGraphics.drawGraph(_nodesSprite.graphics,_edgesSprite.graphics);
-			}else{
-				_graphGraphics.drawGraph(_nodesSprite.graphics,null);
-			}
+			var edgesGraphics:Graphics = (_displayEdges) ? _edgesSprite.graphics : null;
+			var labelContainer:Sprite = (_displayText) ? _labelSprite : null;
+			
+			_graphGraphics.drawGraph(edgesGraphics,_nodesSprite.graphics,labelContainer,_textSize,_textThreshold);
 			
 			if(_isMouseFishEye){
-				_fishEyeSprite.graphics.clear();
-				_fishEyeSprite.graphics.lineStyle(10/this.scaleX,0xAAAAAA,0.5);
-				_fishEyeSprite.graphics.drawCircle(eye_x,eye_y,_fishEyeRadius/this.scaleX);
+				_miscSprite.graphics.clear();
+				_miscSprite.graphics.lineStyle(10/this.scaleX,0xAAAAAA,0.5);
+				_miscSprite.graphics.drawCircle(eye_x,eye_y,_fishEyeRadius/this.scaleX);
 			}
 		}
 		
 		public function startLayout():void{
+			_isPlaying = true;
 			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
 		}
 		
 		public function stopLayout():void{
+			_isPlaying = false;
 			this.removeEventListener(Event.ENTER_FRAME,_layout.stepHandler);
 		}
 		
@@ -161,7 +197,7 @@ package com.ofnodesandedges.y2010.graphics{
 		public function set isMouseFishEye(value:Boolean):void{
 			_isMouseFishEye = value;
 			if(_isMouseFishEye==false){
-				_fishEyeSprite.graphics.clear();
+				_miscSprite.graphics.clear();
 			}
 		}
 
@@ -179,6 +215,42 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		public function get fishEyeRadius():Number{
 			return _fishEyeRadius;
+		}
+		
+		public function get graphGraphics():GraphGraphics{
+			return _graphGraphics;
+		}
+
+		public function get displayText():Boolean{
+			return _displayText;
+		}
+
+		public function set displayText(value:Boolean):void{
+			_displayText = value;
+			
+			for(var i:int=_labelSprite.numChildren;i>0;i--){
+				_labelSprite.removeChildAt(i-1);
+			}
+		}
+
+		public function get textSize():Number{
+			return _textSize;
+		}
+
+		public function set textSize(value:Number):void{
+			_textSize = value;
+		}
+
+		public function get textThreshold():Number{
+			return _textThreshold;
+		}
+
+		public function set textThreshold(value:Number):void{
+			_textThreshold = value;
+		}
+
+		public function get isPlaying():Boolean{
+			return _isPlaying;
 		}
 
 

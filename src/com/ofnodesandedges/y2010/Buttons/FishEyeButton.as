@@ -18,9 +18,9 @@
  *
  */
 
-package com.ofnodesandedges.y2010.Buttons{
+package com.ofnodesandedges.y2010.buttons{
 	
-	import com.ofnodesandedges.y2010.PopUps.FishEyePopUp;
+	import com.ofnodesandedges.y2010.popups.FishEyePopUp;
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
 	
 	import flash.display.DisplayObjectContainer;
@@ -43,6 +43,10 @@ package com.ofnodesandedges.y2010.Buttons{
 			_popUp = new FishEyePopUp(_mainDisplayElement);
 			
 			super(root,x,y,width,height,options);
+			
+			if(_mainDisplayElement.isMouseFishEye == true){
+				switchAction();
+			}
 		}
 		
 		protected override function actionClick(m:MouseEvent):void{

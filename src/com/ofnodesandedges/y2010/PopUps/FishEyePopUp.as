@@ -18,7 +18,7 @@
  *
  */
 
-package com.ofnodesandedges.y2010.PopUps{
+package com.ofnodesandedges.y2010.popups{
 	
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
 	

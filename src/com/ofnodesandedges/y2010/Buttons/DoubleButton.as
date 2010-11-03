@@ -18,7 +18,7 @@
  *
  */
 
-package com.ofnodesandedges.y2010.Buttons{
+package com.ofnodesandedges.y2010.buttons{
 	
 	import com.ofnodesandedges.y2010.ui.ToolTip;
 	
@@ -43,10 +43,6 @@ package com.ofnodesandedges.y2010.Buttons{
 					_actionButton2.width = height*_actionButton2.width/_actionButton2.height;
 					_actionButton2.height = height;
 				}
-			}
-			
-			if((options!=null)&&(options.hasOwnProperty("mode"))&&(options["mode"]==2)){
-				switchAction();
 			}
 		}
 		
