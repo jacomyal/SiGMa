@@ -32,6 +32,7 @@ The first priority is to finish a first version of the application, flexible for
       </embed>
       </object>
 </code>
+* A sample is also available in 'SiGMa demo/simple_example.html' in the last stable version folder you downloaded.
 * That's all, you can now watch your graph.
 
 * * * *
