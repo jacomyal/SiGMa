@@ -21,38 +21,60 @@
 package com.ofnodesandedges.y2010.popups{
 	
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.filters.DropShadowFilter;
 	
 	public class PopUp extends Sprite{
 		
+		public static const CLOSE:String = "Close";
+		public static const OPEN:String = "Open";
+		
+		protected var _open:Boolean;
+		
 		protected var _contentWidth:Number;
 		protected var _contentHeight:Number;
 		
-		public function draw(x:Number,y:Number):void{
-			this.x = x;
-			this.y = y;
-			
-			var dropShadowFilter:DropShadowFilter = new DropShadowFilter(3, 45, 0x000000, .7, 2, 2, 1, 3);
-			this.filters = [dropShadowFilter];
-			
-			this.graphics.beginFill(0x000000,1);
-			this.graphics.drawRect(-26,-36-_contentHeight,_contentWidth+20,_contentHeight+20);
-			this.graphics.endFill();
-			
-			this.graphics.beginFill(0x000000,1);
-			this.graphics.moveTo(-6,-16);
-			this.graphics.lineTo(0,0);
-			this.graphics.lineTo(6,-16);
-			this.graphics.moveTo(-6,-16);
-			this.graphics.endFill();
-			
-			this.addChildren();
+		public function PopUp(){
+			_open = false;
 		}
 		
-		public function clear():void{
-			this.filters = null;
-			this.graphics.clear();
-			this.removeChildren();
+		public function open(x:Number,y:Number):void{
+			if(_open == false){
+				_open = true;
+				
+				this.x = x;
+				this.y = y;
+				
+				var dropShadowFilter:DropShadowFilter = new DropShadowFilter(3, 45, 0x000000, .7, 2, 2, 1, 3);
+				this.filters = [dropShadowFilter];
+				
+				this.graphics.beginFill(0x000000,1);
+				this.graphics.drawRect(-26,-36-_contentHeight,_contentWidth+20,_contentHeight+20);
+				this.graphics.endFill();
+				
+				this.graphics.beginFill(0x000000,1);
+				this.graphics.moveTo(-6,-16);
+				this.graphics.lineTo(0,0);
+				this.graphics.lineTo(6,-16);
+				this.graphics.moveTo(-6,-16);
+				this.graphics.endFill();
+				
+				this.addChildren();
+				
+				dispatchEvent(new Event(OPEN));
+			}
+		}
+		
+		public function close():void{
+			if(_open==true){
+				_open = false;
+				
+				this.filters = null;
+				this.graphics.clear();
+				this.removeChildren();
+				
+				dispatchEvent(new Event(CLOSE));
+			}
 		}
 		
 		public function addChildren():void{}

@@ -26,9 +26,13 @@ package com.ofnodesandedges.y2010.buttons{
 	import flash.display.DisplayObjectContainer;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
 	public class Button extends Sprite{
+		
+		public static const CLOSE_POP_UP:String = "Close Pop Up";
+		public static const OPEN_POP_UP:String = "Open Pop Up";
 		
 		protected var _actionButton:SimpleButton;
 		protected var _openPopUpButton:SimpleButton;
@@ -105,6 +109,11 @@ package com.ofnodesandedges.y2010.buttons{
 			_actionButton.addEventListener(MouseEvent.MOUSE_OVER,actionOver);
 			_actionButton.addEventListener(MouseEvent.MOUSE_OUT,actionOut);
 			
+			//if(_popUp != null){
+				_popUp.addEventListener(PopUp.OPEN,popUpOpening);
+				_popUp.addEventListener(PopUp.CLOSE,popUpClosing);
+			//}
+			
 			if(_parameters){
 				_openPopUpButton.addEventListener(MouseEvent.CLICK,openPopUpClick);
 				_openPopUpButton.addEventListener(MouseEvent.MOUSE_OVER,openPopUpOver);
@@ -162,6 +171,15 @@ package com.ofnodesandedges.y2010.buttons{
 			return _actionButton.height;
 		}
 		
+		public function closePopUp():void{
+			if((_popUp != null)&&(this.contains(_popUp))){
+				removeChild(_popUp);
+				_popUp.close();
+				
+				switchPopUpButton();
+			}
+		}
+		
 		protected function actionClick(m:MouseEvent):void{}
 		
 		protected function actionOver(m:MouseEvent):void{
@@ -180,7 +198,7 @@ package com.ofnodesandedges.y2010.buttons{
 		protected function openPopUpClick(m:MouseEvent):void{
 			if(_openPopUpButton.enabled==true){
 				addChild(_popUp);
-				_popUp.draw(_actionButton.width/2,-6);
+				_popUp.open(_actionButton.width/2,-6);
 				
 				switchPopUpButton();
 			}
@@ -202,7 +220,7 @@ package com.ofnodesandedges.y2010.buttons{
 		protected function closePopUpClick(m:MouseEvent):void{
 			if(_closePopUpButton.enabled==true){
 				removeChild(_popUp);
-				_popUp.clear();
+				_popUp.close();
 				
 				switchPopUpButton();
 			}
@@ -219,6 +237,14 @@ package com.ofnodesandedges.y2010.buttons{
 		
 		protected function closePopUpOut(m:MouseEvent):void{
 			_toolTip.removeTip();
+		}
+		
+		private function popUpOpening(e:Event):void{
+			dispatchEvent(new Event(OPEN_POP_UP));
+		}
+		
+		private function popUpClosing(e:Event):void{
+			dispatchEvent(new Event(CLOSE_POP_UP));
 		}
 	}
 }

@@ -42,6 +42,8 @@ package com.ofnodesandedges.y2010.popups{
 		private var _powerSlider:Slider;
 		
 		public function FishEyePopUp(mainDisplayElement:MainDisplayElement){
+			super();
+			
 			_mainDisplayElement = mainDisplayElement;
 			
 			_container = new Sprite();
@@ -107,11 +109,11 @@ package com.ofnodesandedges.y2010.popups{
 		}
 		
 		public override function removeChildren():void{
-			_container.removeChild(_radiusLabel);
-			_container.removeChild(_radiusSlider);
-			_container.removeChild(_powerLabel);
-			_container.removeChild(_powerSlider);
-			this.removeChild(_container);
+			if(_container.contains(_radiusLabel)) _container.removeChild(_radiusLabel);
+			if(_container.contains(_radiusSlider)) _container.removeChild(_radiusSlider);
+			if(_container.contains(_powerLabel)) _container.removeChild(_powerLabel);
+			if(_container.contains(_powerSlider)) _container.removeChild(_powerSlider);
+			if(this.contains(_container)) this.removeChild(_container);
 		}
 		
 		private function powerChange(s:SliderEvent):void{

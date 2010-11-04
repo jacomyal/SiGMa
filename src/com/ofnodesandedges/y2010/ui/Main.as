@@ -37,13 +37,13 @@ package com.ofnodesandedges.y2010.ui{
 		private var _graph:GraphData;
 		private var _mDE:MainDisplayElement;
 		private var _optionsPanel:OptionsPanel;
-		private var _gexfLoader:GexfLoader;
+		private var _fileLoader:FileLoader;
 		
 		public function Main(s:Stage){
 			s.addChild(this);
 			
 			// Set file path:
-			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./standard_graph.gexf";
+			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./les_miserables.gexf";
 			else _filePath = root.loaderInfo.parameters["filePath"];
 			
 			// Add the FPSCounter:
@@ -51,14 +51,24 @@ package com.ofnodesandedges.y2010.ui{
 			addChild(_fpsCounter);
 			
 			// Load the file:
-			_gexfLoader = new GexfLoader();
-			_gexfLoader.addEventListener(FileLoader.FILE_PARSED,graphLoadedHandler);
-			_gexfLoader.openFile(_filePath);
+			var fileExtension:String = _filePath.substr(_filePath.lastIndexOf('.')+1);
+			
+			switch(fileExtension.toLowerCase()){
+				case "gdf":
+					_fileLoader = new LoaderGDF();
+					break;
+				case "gexf":
+					_fileLoader = new LoaderGEXF();
+					break;
+			}
+			
+			_fileLoader.addEventListener(FileLoader.FILE_PARSED,graphLoadedHandler);
+			_fileLoader.openFile(_filePath);
 		}
 		
 		private function graphLoadedHandler(e:Event):void{
 			// Init Main Display Element:
-			_graph = _gexfLoader.graphData;
+			_graph = _fileLoader.graphData;
 			_mDE = new MainDisplayElement(this);
 			
 			// Init Options Panel:

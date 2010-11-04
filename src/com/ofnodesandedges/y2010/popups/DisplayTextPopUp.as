@@ -42,6 +42,8 @@ package com.ofnodesandedges.y2010.popups{
 		private var _sizeSlider:Slider;
 		
 		public function DisplayTextPopUp(mainDisplayElement:MainDisplayElement){
+			super();
+			
 			_mainDisplayElement = mainDisplayElement;
 			
 			_container = new Sprite();
@@ -108,11 +110,11 @@ package com.ofnodesandedges.y2010.popups{
 		}
 		
 		public override function removeChildren():void{
-			_container.removeChild(_thresholdLabel);
-			_container.removeChild(_thresholdSlider);
-			_container.removeChild(_sizeLabel);
-			_container.removeChild(_sizeSlider);
-			this.removeChild(_container);
+			if(_container.contains(_thresholdLabel)) _container.removeChild(_thresholdLabel);
+			if(_container.contains(_thresholdSlider)) _container.removeChild(_thresholdSlider);
+			if(_container.contains(_sizeLabel)) _container.removeChild(_sizeLabel);
+			if(_container.contains(_sizeSlider)) _container.removeChild(_sizeSlider);
+			if(this.contains(_container)) this.removeChild(_container);
 		}
 		
 		private function sizeChange(s:SliderEvent):void{

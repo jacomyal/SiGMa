@@ -24,72 +24,14 @@ package com.ofnodesandedges.y2010.loading{
 	import com.ofnodesandedges.y2010.data.NodeData;
 	
 	import flash.events.Event;
-	import flash.events.EventDispatcher;
-	import flash.events.HTTPStatusEvent;
-	import flash.events.IEventDispatcher;
-	import flash.events.IOErrorEvent;
-	import flash.events.ProgressEvent;
-	import flash.events.SecurityErrorEvent;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
 	
-	public class GexfLoader extends FileLoader{
+	public class LoaderGEXF extends FileLoader{
 		
-		public function GexfLoader(){}
+		public function LoaderGEXF(){}
 		
-		public override function openFile(filePath:String):void{
-			_graphData = new GraphData();
+		protected override function parseFile(data:String):void{
+			var xml:XML = new XML(data);
 			
-			_filePath = filePath;
-			_fileRequest = new URLRequest(_filePath);
-			_fileLoader = new URLLoader();
-			
-			configureListeners(_fileLoader);
-			
-			try {
-				_fileLoader.load(_fileRequest);
-			} catch (error:Error) {
-				trace("GexfLoader.openFile: Unable to load requested file.");
-			}
-		}
-		
-		private function configureListeners(dispatcher:IEventDispatcher):void {
-			dispatcher.addEventListener(Event.COMPLETE, completeHandler);
-			dispatcher.addEventListener(Event.OPEN, openHandler);
-			dispatcher.addEventListener(ProgressEvent.PROGRESS, progressHandler);
-			dispatcher.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
-			dispatcher.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpStatusHandler);
-			dispatcher.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
-		}
-		
-		private function completeHandler(event:Event):void{
-			trace("GexfLoader.completeHandler: Loading complete");
-			
-			var xml:XML = new XML(event.target.data);
-			parseXMLElement(xml);
-		}
-		
-		private function openHandler(event:Event):void{
-			trace("GexfLoader.openHandler: " + event);
-		}
-		
-		private function progressHandler(event:ProgressEvent):void{
-			trace("GexfLoader.progressHandler loaded:" + event.bytesLoaded + " total: " + event.bytesTotal);
-		}
-		
-		private function securityErrorHandler(event:SecurityErrorEvent):void{
-			trace("GexfLoader.securityErrorHandler: " + event);
-		}
-		
-		private function httpStatusHandler(event:HTTPStatusEvent):void{
-			trace("GexfLoader.httpStatusHandler: " + event);
-		}
-		
-		private function ioErrorHandler(event:IOErrorEvent):void{
-			trace("GexfLoader.ioErrorHandler: " + event);
-		}
-		
-		private function parseXMLElement(xml:XML):void{
 			var xmlRoot:XMLList = xml.elements();
 			var xmlMeta:XMLList;
 			var xmlGraph:XMLList;
@@ -104,10 +46,8 @@ package com.ofnodesandedges.y2010.loading{
 			// Parse at depth:=1:
 			for(var i:int=0;i<xmlRoot.length();i++){
 				if(xmlRoot[i].name().localName=='meta'){
-					trace("GexfLoader.parseXMLElement: Meta data found.");
 					xmlMeta = xmlRoot[i].children();
 				}else if(xmlRoot[i].name().localName=='graph'){
-					trace("GexfLoader.parseXMLElement: Graph found.");
 					xmlGraph = xmlRoot[i].children();
 					xmlGraphAttributes = xmlRoot[i].attributes();
 				}
@@ -123,16 +63,12 @@ package com.ofnodesandedges.y2010.loading{
 			// Parse at depth:=2:
 			for(i=0;i<xmlGraph.length();i++){
 				if((xmlGraph[i].name().localName=='attributes')&&(xmlGraph[i].attribute("class")=='node')){
-					trace("GexfLoader.parseXMLElement: Nodes attributes found.");
 					xmlNodesAttributes = xmlGraph[i].children();
 				}else if((xmlGraph[i].name().localName=='attributes')&&(xmlGraph[i].attribute("class")=='edge')){
-					trace("GexfLoader.parseXMLElement: Edges attributes found.");
 					xmlEdgesAttributes = xmlGraph[i].children();
 				}else if(xmlGraph[i].name().localName=='nodes'){
-					trace("GexfLoader.parseXMLElement: Nodes found.");
 					xmlNodes = xmlGraph[i].children();
 				}else if(xmlGraph[i].name().localName=='edges'){
-					trace("GexfLoader.parseXMLElement: Edges found.");
 					xmlEdges = xmlGraph[i].children();
 				}
 			}
@@ -293,8 +229,6 @@ package com.ofnodesandedges.y2010.loading{
 				nodesCounter++;
 			}
 			
-			trace("GexfLoader.parseXMLElement: "+nodesCounter+" nodes parsed.");
-			
 			// ... and edges:
 			var edgesCounter:int = 0;
 			var edgeAttributes:Object;
@@ -305,9 +239,6 @@ package com.ofnodesandedges.y2010.loading{
 				if(xmlCursor.@source!=xmlCursor.@target){
 					xmlEdgesAttributesValues = new XMLList();
 					edgeAttributes = new Object();
-					
-					_graphData.getNode(xmlCursor.@source).addOutNeighbor(xmlCursor.@target,edgeAttributes);
-					_graphData.getNode(xmlCursor.@target).addInNeighbor(xmlCursor.@source,edgeAttributes);
 					
 					for each(xmlSubCursor in xmlCursor.children()){
 						if(xmlSubCursor.name().localName=='attvalues'){
@@ -324,14 +255,13 @@ package com.ofnodesandedges.y2010.loading{
 							}
 						}
 					}
+					
+					_graphData.getNode(xmlCursor.@source).addOutNeighbor(xmlCursor.@target,edgeAttributes);
+					_graphData.getNode(xmlCursor.@target).addInNeighbor(xmlCursor.@source,edgeAttributes);
+					
 					edgesCounter++;
 				}
 			}
-			
-			trace("GexfLoader.parseXMLElement: "+edgesCounter+" edges parsed.");
-			
-			// Finally, we just send an event to let Main start the GUI:
-			trace("GexfLoader.parseXMLElement: File totally parsed, sending FILE_PARSED event.");
 			
 			dispatchEvent(new Event(FILE_PARSED));
 		}
@@ -390,13 +320,13 @@ package com.ofnodesandedges.y2010.loading{
 			var res:*;
 			
 			switch(type.toLowerCase()){
-				case 'integer':
 				case 'float':
 				case 'long':
 				case 'double':
 					res = new Number(defaultValue);
 					break;
 				case 'int':
+				case 'integer':
 					res = new int(defaultValue);
 					break;
 				default:

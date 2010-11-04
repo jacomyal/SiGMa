@@ -22,6 +22,7 @@ package com.ofnodesandedges.y2010.ui{
 	
 	import com.ofnodesandedges.y2010.buttons.*;
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
+	import com.ofnodesandedges.y2010.popups.PopUp;
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -30,6 +31,9 @@ package com.ofnodesandedges.y2010.ui{
 	import mx.effects.easing.Back;
 	
 	public class OptionsPanel extends Sprite{
+		
+		public static const CLOSE:String = "Close";
+		public static const OPEN:String = "Open";
 		
 		public static const BUTTONS_SIZE:Number = 40;
 		
@@ -50,14 +54,10 @@ package com.ofnodesandedges.y2010.ui{
 			_mainDisplayElement = mainDisplayElement;
 			_mainDisplayElement.stage.addChild(this);
 			
-			//
 			// Init ToolTip:
-			//
 			_toolTip = ToolTip.createToolTip(stage,0xFF3333,1);
 			
-			//
 			// Panel itself:
-			//
 			_optionsPanelButton = new OptionsPanelButton();
 			_optionsPanelButton.width = 220;
 			_optionsPanelButton.height = 220;
@@ -71,7 +71,7 @@ package com.ofnodesandedges.y2010.ui{
 			_openOptionsPanel.height = 58;
 			_openOptionsPanel.x = 0;
 			_openOptionsPanel.y = stage.stageHeight;
-			_openOptionsPanel.addEventListener(MouseEvent.CLICK,openOptionsPanel);
+			_openOptionsPanel.addEventListener(MouseEvent.CLICK,open);
 			this.addChild(_openOptionsPanel);
 			
 			_closeOptionsPanel = new CloseOptionsPanel();
@@ -79,13 +79,11 @@ package com.ofnodesandedges.y2010.ui{
 			_closeOptionsPanel.height = 58;
 			_closeOptionsPanel.x = 0;
 			_closeOptionsPanel.y = stage.stageHeight;
-			_closeOptionsPanel.addEventListener(MouseEvent.CLICK,closeOptionsPanel);
+			_closeOptionsPanel.addEventListener(MouseEvent.CLICK,close);
 			
 			_backgroundSprite = new Sprite();
 			
-			//
 			// Buttons:
-			//
 			_buttons = new Vector.<Button>();
 			_buttonsIndex = new Object();
 			
@@ -121,7 +119,7 @@ package com.ofnodesandedges.y2010.ui{
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			
-			// Layout management:
+			// Labels displaying:
 			parameters = new Object();
 			parameters['_mainDisplayElement'] = _mainDisplayElement;
 			
@@ -130,33 +128,38 @@ package com.ofnodesandedges.y2010.ui{
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			
-			//
+			// All buttons:
+			for each(button in _buttons){
+				button.addEventListener(Button.OPEN_POP_UP,popUpOpening);
+			}
+			
 			// Draw background:
-			//
 			_backgroundSprite.graphics.beginFill(0x000000);
 			_backgroundSprite.graphics.drawRoundRect(-20,-50,xParser+50,100,51,51);
 			_backgroundSprite.graphics.endFill();
 			
-			//
 			// Finish:
-			//
 			this.addChildAt(_backgroundSprite,0);
 			_backgroundSprite.x = -2/3*stage.stageWidth;
 			_backgroundSprite.y = stage.stageHeight;
 		}
 		
-		private function closeOptionsPanel(e:MouseEvent):void{
+		private function close(e:MouseEvent):void{
 			if(_closeOptionsPanel.enabled==true){
 				
 				removeChild(_closeOptionsPanel);
 				addChild(_openOptionsPanel);
 				
+				//closeAllPopUps();
+				
 				removeEventListener(Event.ENTER_FRAME,openingFrameHandler);
 				addEventListener(Event.ENTER_FRAME,closingFrameHandler);
+				
+				dispatchEvent(new Event(CLOSE));
 			}
 		}
 		
-		private function openOptionsPanel(e:Event):void{
+		private function open(e:Event):void{
 			if(_openOptionsPanel.enabled==true){
 				
 				removeChild(_openOptionsPanel);
@@ -164,6 +167,8 @@ package com.ofnodesandedges.y2010.ui{
 				
 				removeEventListener(Event.ENTER_FRAME,closingFrameHandler);
 				addEventListener(Event.ENTER_FRAME,openingFrameHandler);
+				
+				dispatchEvent(new Event(OPEN));
 			}
 		}
 		
@@ -194,6 +199,22 @@ package com.ofnodesandedges.y2010.ui{
 			}else{
 				removeEventListener(Event.ENTER_FRAME,closingFrameHandler);
 				_openOptionsPanel.enabled = true;
+			}
+		}
+		
+		private function closeAllPopUps():void{
+			for each(var button:Button in _buttons){
+				button.closePopUp();
+			}
+		}
+		
+		private function popUpOpening(e:Event):void{
+			//var buttonTarget:Button = e.target as Button;
+			
+			for each(var button:Button in _buttons){
+				//if(button!=buttonTarget){
+					button.closePopUp();
+				//}
 			}
 		}
 	}
