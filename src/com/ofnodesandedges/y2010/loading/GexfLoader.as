@@ -145,13 +145,31 @@ package com.ofnodesandedges.y2010.loading{
 			}
 			
 			// ..., node attributes...
+			var attId:String;
+			var attTitle:String;
+			var attType:String;
+			var attDefault:*;
+			
 			if(xmlNodesAttributes!=null){
 				var nodeAttributesCounter:int = 0;
 				for each(xmlCursor in xmlNodesAttributes){
 					if(xmlCursor.name().localName=="attribute"){
-						trace("GexfLoader.parseXMLElement: New attribute id: " + xmlCursor.@id + ", title: " + xmlCursor.@title + ", type: " + xmlCursor.@type);
-						_graphData.addNodeAttribute(xmlCursor.@id,xmlCursor.@title,xmlCursor.@type);
-						nodeAttributesCounter++;
+						attId = (xmlCursor.@id!=undefined) ? xmlCursor.@id : null;
+						attTitle = (xmlCursor.@title!=undefined) ? xmlCursor.@title : null;
+						attId = (xmlCursor.@type!=undefined) ? xmlCursor.@type : "String";
+						attDefault = null;
+						
+						for each(xmlSubCursor in xmlCursor.children()){
+							// Position:
+							if(xmlSubCursor.name().localName=='default'){
+								attDefault = setDefaultVar(xmlSubCursor.text(),attType);
+							}
+						}
+						
+						if((attId!=null)&&(attTitle!=null)){
+							_graphData.addNodeAttribute(attId,attTitle,attType,attDefault);
+							nodeAttributesCounter++;
+						}
 					}
 				}
 			}
@@ -161,9 +179,22 @@ package com.ofnodesandedges.y2010.loading{
 				var edgeAttributesCounter:int = 0;
 				for each(xmlCursor in xmlEdgesAttributes){
 					if(xmlCursor.name().localName=="attribute"){
-						trace("GexfLoader.parseXMLElement: New attribute id: " + xmlCursor.@id + ", title: " + xmlCursor.@title + ", type: " + xmlCursor.@type);
-						_graphData.addEdgeAttribute(xmlCursor.@id,xmlCursor.@title,xmlCursor.@type);
-						edgeAttributesCounter++;
+						attId = (xmlCursor.@id!=undefined) ? xmlCursor.@id : null;
+						attTitle = (xmlCursor.@title!=undefined) ? xmlCursor.@title : null;
+						attId = (xmlCursor.@type!=undefined) ? xmlCursor.@type : "String";
+						attDefault = null;
+						
+						for each(xmlSubCursor in xmlCursor.children()){
+							// Position:
+							if(xmlSubCursor.name().localName=='default'){
+								attDefault = setDefaultVar(xmlSubCursor.text(),attType);
+							}
+						}
+						
+						if((attId!=null)&&(attTitle!=null)){
+							_graphData.addEdgeAttribute(attId,attTitle,attType,attDefault);
+							edgeAttributesCounter++;
+						}
 					}
 				}
 			}
@@ -353,6 +384,27 @@ package com.ofnodesandedges.y2010.loading{
 			for( var i:int = 0; i <bytes.length; i++ )
 				hex += decaToHexaFromInt( int(bytes[i]) );
 			return hex;
+		}
+		
+		private function setDefaultVar(defaultValue:String,type:String):*{
+			var res:*;
+			
+			switch(type.toLowerCase()){
+				case 'integer':
+				case 'float':
+				case 'long':
+				case 'double':
+					res = new Number(defaultValue);
+					break;
+				case 'int':
+					res = new int(defaultValue);
+					break;
+				default:
+					res = defaultValue;
+					break;
+			}
+			
+			return res;
 		}
 		
 	}

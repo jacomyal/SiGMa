@@ -55,16 +55,24 @@ package com.ofnodesandedges.y2010.data{
 			return nodeResult;
 		}
 		
-		public function addNodeAttribute(id:String,title:String,type:String):void{
+		public function addNodeAttribute(id:String,title:String,type:String,defaultValue:*=null):void{
 			_nodeAttributes[id] = new Object();
 			_nodeAttributes[id]["title"] = title;
 			_nodeAttributes[id]["type"] = type;
+			
+			if(defaultValue!=null){
+				_nodeAttributes[id]["defaultValue"] = defaultValue;
+			}
 		}
 		
-		public function addEdgeAttribute(id:String,title:String,type:String):void{
+		public function addEdgeAttribute(id:String,title:String,type:String,defaultValue:*=null):void{
 			_edgeAttributes[id] = new Object();
 			_edgeAttributes[id]["title"] = title;
 			_edgeAttributes[id]["type"] = type;
+			
+			if(defaultValue!=null){
+				_edgeAttributes[id]["defaultValue"] = defaultValue;
+			}
 		}
 		
 		public function addMetaData(key:String,value:String):void{
