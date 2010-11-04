@@ -148,7 +148,7 @@ package com.ofnodesandedges.y2010.graphics{
 			var max:Number = _nodes[0].size;
 			
 			for each(var node:NodeGraphics in _nodes){
-				if(node.size>max) max = node.size;
+				if(node.size>max) max=node.size;
 			}
 			
 			// Apply homothetic transformation:
@@ -329,16 +329,16 @@ package com.ofnodesandedges.y2010.graphics{
 			nodesGraphics.beginFill(node.color,node.alpha);
 			switch(node.shape.toLowerCase()){
 				case "square":
-					nodesGraphics.drawRect(-Math.SQRT2*node.displaySize/2+node.displayX,-Math.SQRT2*node.displaySize/2+node.displayY,node.displaySize,node.displaySize);
+					nodesGraphics.drawRect(-Math.SQRT2*node.displaySize/2+node.displayX,-Math.SQRT2*node.displaySize/2+node.displayY,node.displaySize-node.borderThickness,node.displaySize-node.borderThickness);
 					break;
 				case "hexagon":
-					drawPoly(node.displaySize,6,node.displayX,node.displayY,nodesGraphics);
+					drawPoly(node.displaySize-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
 					break;
 				case "triangle":
-					drawPoly(node.displaySize,3,node.displayX,node.displayY,nodesGraphics);
+					drawPoly(node.displaySize-node.borderThickness,3,node.displayX,node.displayY,nodesGraphics);
 					break;
 				default:
-					nodesGraphics.drawCircle(node.displayX,node.displayY,node.displaySize);
+					nodesGraphics.drawCircle(node.displayX,node.displayY,node.displaySize-node.borderThickness);
 					//nodesGraphics.drawRect(-Math.SQRT2*node.displaySize/2+node.displayX,-Math.SQRT2*node.displaySize/2+node.displayY,node.displaySize,node.displaySize);
 					break;
 			}

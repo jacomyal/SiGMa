@@ -96,7 +96,7 @@ package com.ofnodesandedges.y2010.graphics{
 			if(_isPlaying){
 				_layout = new RoughLayout();
 				
-				_graphGraphics.circularize();
+				_graphGraphics.random(2000,2000);
 				_layout.addEventListener(Layout.FINISH,roughLayoutFinished);
 				this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
 				_layout.init(_graphGraphics);
@@ -124,7 +124,7 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			_graphGraphics = new GraphGraphics(_main.graph);
 			_graphGraphics.refreshEdges();
-			_graphGraphics.resizeNodes(0,60);
+			_graphGraphics.resizeNodes(0,30);
 			
 			_isPlaying = !hasSpatialData;
 		}

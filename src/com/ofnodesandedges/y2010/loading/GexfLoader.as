@@ -174,24 +174,80 @@ package com.ofnodesandedges.y2010.loading{
 			var xmlSubCursor:XML;
 			var xmlNodesAttributesValues:XMLList;
 			
+			var x:Number;
+			var y:Number;
+			
+			var size:Number;
+			var b:String;
+			var g:String;
+			var r:String;
+			
+			var id:String;
+			var label:String;
+			
 			for each(xmlCursor in xmlNodes){
-				if(!(nodesCounter%500)) trace("New node: "+nodesCounter);
-				node = new NodeData(xmlCursor.@label,xmlCursor.@id);
-				node.size = xmlCursor.children().normalize().@value;
-				node.color = setColor((xmlCursor.children().normalize().@b).toString(),(xmlCursor.children().normalize().@g).toString(),(xmlCursor.children().normalize().@r).toString());
+				label = (xmlCursor.@label!=undefined) ? xmlCursor.@label : null;
+				id = (xmlCursor.@id!=undefined) ? xmlCursor.@id : nodesCounter.toString();
 				
-				if((xmlCursor.children().normalize().@x != undefined)&&(xmlCursor.children().normalize().@y != undefined)){
-					node.xy(new Number(xmlCursor.children().normalize().@x),-(new Number(xmlCursor.children().normalize().@y)));
-				}
+				node = new NodeData(label,id);
 				
 				xmlNodesAttributesValues = null;
 				
 				for each(xmlSubCursor in xmlCursor.children()){
+					// Position:
+					if(xmlSubCursor.name().localName=='position'){
+						if(xmlSubCursor.attribute("x")!=undefined){
+							x = new Number(xmlSubCursor.attribute("x"));
+							
+							if(xmlSubCursor.attribute("y")!=undefined){
+								y = new Number(xmlSubCursor.attribute("y"));
+								
+								node.xy(x,y);
+							}
+						}
+					}
+					
+					// Color:
+					if(xmlSubCursor.name().localName=='color'){
+						if(xmlSubCursor.attribute("b")!=undefined){
+							b = xmlSubCursor.attribute("b");
+
+							if(xmlSubCursor.attribute("g")!=undefined){
+								g = xmlSubCursor.attribute("g");
+
+								if(xmlSubCursor.attribute("r")!=undefined){
+									r = xmlSubCursor.attribute("r");
+									
+									node.color = setColor(b,g,r);
+								}
+							}
+						}
+					}
+					
+					// Size:
+					if(xmlSubCursor.name().localName=='size'){
+						if(xmlSubCursor.@value!=undefined){
+							size = new Number(xmlSubCursor.@value);
+							node.size = size;
+						}
+					}
+					
+					// Old format attributes container, see below:
 					if(xmlSubCursor.name().localName=='attvalues'){
 						xmlNodesAttributesValues = xmlSubCursor.children();
 					}
+					
+					// New format attributes:
+					if(xmlSubCursor.name().localName=='attvalue'){
+						if((xmlSubCursor.attribute("for")!=undefined)&&(xmlSubCursor.@value!=undefined)){
+							node.addAttribute(xmlSubCursor.attribute("for"),xmlSubCursor.@value);
+						}else if((xmlSubCursor.@id!=undefined)&&(xmlSubCursor.@value!=undefined)){
+							node.addAttribute(xmlSubCursor.@id,xmlSubCursor.@value);
+						}
+					}
 				}
 				
+				// Old format attributes:
 				for each(xmlSubCursor in xmlNodesAttributesValues){
 					if(xmlSubCursor.name().localName=='attvalue'){
 						if((xmlSubCursor.attribute("for")!=undefined)&&(xmlSubCursor.@value!=undefined)){
