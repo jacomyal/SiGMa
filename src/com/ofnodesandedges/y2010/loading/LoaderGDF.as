@@ -113,12 +113,15 @@ package com.ofnodesandedges.y2010.loading{
 			var adaptedLine:String = line.substr(line.indexOf(">")+1);
 			adaptedLine = adaptedLine.replace(', ',',').replace(' ,',',');
 			
-			var array:Array = adaptedLine.split(',');
+			var array:Array = customSplit(adaptedLine);
 			
 			var x:Number;
 			var y:Number;
 			var size:Number = 1;
 			var color:uint = 0x000000;
+			var b:String;
+			var g:String;
+			var r:String;
 			
 			var hasX:Boolean = false;
 			var hasY:Boolean = false;
@@ -145,7 +148,12 @@ package com.ofnodesandedges.y2010.loading{
 						size = new Number(array[i]);
 						break;
 					case _nodeColorIndex:
-						//color = setColor(array[i].replace("'",'').split(','));
+						if(array[i].split(',').length>2){
+							b = clean(array[i].split(',')[0]);
+							g = clean(array[i].split(',')[1]);
+							r = clean(array[i].split(',')[2]);
+							color = setColor(b,g,r);
+						}
 						break;
 					default:
 						attributes[_nodesData[i]] = array[i];
@@ -155,7 +163,7 @@ package com.ofnodesandedges.y2010.loading{
 			
 			node = new NodeData(label,id);
 			
-			//if(hasX&&hasY) node.xy(x,y);
+			if(hasX&&hasY) node.xy(x,-y);
 			node.size = size;
 			node.color = color;
 			
@@ -174,7 +182,7 @@ package com.ofnodesandedges.y2010.loading{
 			var adaptedLine:String = line.substr(line.indexOf(">")+1);
 			adaptedLine = adaptedLine.replace(', ',',').replace(' ,',',');
 			
-			var array:Array = adaptedLine.split(',');
+			var array:Array = customSplit(adaptedLine);
 			
 			for(var i:int=0;i<array.length;i++){
 				switch(i){
@@ -199,10 +207,10 @@ package com.ofnodesandedges.y2010.loading{
 		private function setNodesData(line:String):void{
 			_nodesData = new Object();
 			
-			var adaptedLine:String = line.substr(line.indexOf(">")+1);
+			var adaptedLine:String = line.substr(line.indexOf(">")+2);
 			adaptedLine = adaptedLine.replace(', ',',').replace(' ,',',');
 			
-			var array:Array = adaptedLine.split(',');
+			var array:Array = customSplit(adaptedLine);
 			var s:String;
 			var attTitle:String;
 			var attType:String;
@@ -251,6 +259,8 @@ package com.ofnodesandedges.y2010.loading{
 					case "y":
 						_nodeYIndex = i;
 						break;
+					case "height":
+					case "width":
 					case "size":
 						_nodeSizeIndex = i;
 						break;
@@ -272,10 +282,10 @@ package com.ofnodesandedges.y2010.loading{
 		private function setEdgesData(line:String):void{
 			_edgesData = new Object();
 			
-			var adaptedLine:String = line.substr(line.indexOf(">")+1);
+			var adaptedLine:String = line.substr(line.indexOf(">")+2);
 			adaptedLine = adaptedLine.replace(', ',',').replace(' ,',',');
 			
-			var array:Array = adaptedLine.split(',');
+			var array:Array = customSplit(adaptedLine);
 			var s:String;
 			var attTitle:String;
 			var attType:String;
@@ -329,12 +339,53 @@ package com.ofnodesandedges.y2010.loading{
 			}
 		}
 		
+		private function customSplit(s:String):Array{
+			var res:Array = new Array();
+			var containerChar:String;
+			var inContainer:Boolean = false;
+			var containers:Array = ["'","'",'"','"','(',')','[',']','{','}'];
+			
+			var element:String = '';
+			var char:String;
+			
+			for(var parser:int=0;parser<s.length;parser++){
+				char = s.charAt(parser);
+				
+				if(inContainer==true){
+					if(char==containerChar){
+						inContainer = false;
+						containerChar = '';
+						
+						element += char;
+					}else{
+						element += char;  
+					}
+				}else{
+					if(containers.indexOf(char)>=0){
+						inContainer = true;
+						containerChar = containers[containers.indexOf(char)+1];
+						
+						element += char;
+					}else if(char==','){
+						res.push(clean(element));
+						element = '';
+					}else{
+						element += char;  
+					}
+				}
+			}
+			
+			res.push(clean(element));
+			
+			return res;
+		}
+		
 		private function clean(s:String):String{
 			var res:String = s;
 			
 			var hasChanged:Boolean = true;
 			
-			//while(hasChanged){
+			while((hasChanged==true)&&(res.length>1)){
 				hasChanged = false;
 				if((res.indexOf(' ')==0)||(res.indexOf('"')==0)||(res.indexOf("'")==0)){
 					res = res.substr(1);
@@ -342,18 +393,15 @@ package com.ofnodesandedges.y2010.loading{
 				}
 				
 				if((res.indexOf(' ')==res.length-1)||(res.indexOf('"')==res.length-1)||(res.indexOf("'")==res.length-1)){
-					res = res.substr(0,res.length-2);
+					res = res.substr(0,res.length-1);
 					hasChanged = true;
 				}
-			//}
+			}
 			
 			return res;
 		}
 		
-		private function setColor(param:Array):uint{
-			var B:String = param[0];
-			var G:String = param[1];
-			var R:String = param[2];
+		private function setColor(B:String,G:String,R:String):uint{
 			var tempColor:String ="0x"+decaToHexa(R)+decaToHexa(G)+decaToHexa(B);
 			return new uint(tempColor);
 		}

@@ -43,7 +43,7 @@ package com.ofnodesandedges.y2010.ui{
 			s.addChild(this);
 			
 			// Set file path:
-			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./les_miserables.gexf";
+			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./les_miserables.gdf";
 			else _filePath = root.loaderInfo.parameters["filePath"];
 			
 			// Add the FPSCounter:
