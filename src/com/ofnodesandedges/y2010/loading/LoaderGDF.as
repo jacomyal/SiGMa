@@ -25,42 +25,68 @@ package com.ofnodesandedges.y2010.loading{
 	
 	import flash.events.Event;
 	
+	import mx.messaging.SubscriptionInfo;
+	
 	public class LoaderGDF extends FileLoader{
 		
-		private var nodeLineStart:Array = ['nodedef>name', 'nodedef> name', 'Nodedef>name', 'Nodedef> name', 'nodedef>"name', 'nodedef> "name', 'Nodedef>"name', 'Nodedef> "name'];
-		private var edgeLineStart:Array = ['edgedef>', 'Edgedef>'];
+		private var _nodeLineStart:Array = ['nodedef>name', 'nodedef> name', 'Nodedef>name', 'Nodedef> name', 'nodedef>"name', 'nodedef> "name', 'Nodedef>"name', 'Nodedef> "name'];
+		private var _edgeLineStart:Array = ['edgedef>', 'Edgedef>'];
 		
-		private var nodesData:Object;
-		private var edgesData:Object;
+		private var _nodesData:Object;
+		private var _edgesData:Object;
 		
-		private var nodeIdIndex:int;
-		private var nodeLabelIndex:int;
-		private var nodeXIndex:int
-		private var nodeYIndex:int
-		private var nodeSizeIndex:int
-		private var nodeColorIndex:int
+		private var _nodeIdIndex:int = -1;
+		private var _nodeLabelIndex:int = -1;
+		private var _nodeXIndex:int = -1;
+		private var _nodeYIndex:int = -1;
+		private var _nodeSizeIndex:int = -1;
+		private var _nodeColorIndex:int = -1;
 		
-		private var edgeSourceIndex:int;
-		private var edgeTargetIndex:int;
+		private var _edgeSourceIndex:int = -1;
+		private var _edgeTargetIndex:int = -1;
+		
+		private var _hasNodeIndexes:Boolean;
+		private var _hasEdgeIndexes:Boolean;
 		
 		public function LoaderGDF(){}
 		
 		protected override function parseFile(data:String):void{
-			nodesData = new Object();
-			edgesData = new Object();
+			_nodesData = new Object();
+			_edgesData = new Object();
 			
 			var line:String;
 			var lines:Array = data.replace('\n\r','\n').replace('\r','\n').split("\n");
 			
+			var nodesCounter:int = 0;
+			var edgesCounter:int = 0;
+			
+			_hasNodeIndexes = false;
+			_hasEdgeIndexes = false;
+			
 			for(var i:int=0;i<lines.length;i++){
+				line = lines[i];
 				
+				if(isNodesFirstLine(line)){
+					_hasNodeIndexes = true;
+					setNodesData(line);
+				}else if(isEdgesFirstLine(line)){
+					_hasEdgeIndexes = true;
+					setEdgesData(line);
+				}else if(_hasEdgeIndexes){
+					addEdge(line);
+					edgesCounter ++;
+				}else if(_hasNodeIndexes){
+					addNode(line,nodesCounter);
+					nodesCounter ++;
+				}
 			}
 			
+			//if(_edgeSourceIndex>=0)
 			dispatchEvent(new Event(FILE_PARSED));
 		}
 		
-		private function isNodeFirstLine(line:String):Boolean{
-			for each(var s:String in nodeLineStart){
+		private function isNodesFirstLine(line:String):Boolean{
+			for each(var s:String in _nodeLineStart){
 				if (line.indexOf(s)>=0){
 					return true;
 				}
@@ -69,8 +95,8 @@ package com.ofnodesandedges.y2010.loading{
 			return false;
 		}
 		
-		private function isEdgeFirsteLine(line:String):Boolean{
-			for each(var s:String in edgeLineStart){
+		private function isEdgesFirstLine(line:String):Boolean{
+			for each(var s:String in _edgeLineStart){
 				if (line.indexOf(s)>=0){
 					return true;
 				}
@@ -79,30 +105,15 @@ package com.ofnodesandedges.y2010.loading{
 			return false;
 		}
 		
-		private function setNodesData(line:String):void{
-			nodesData = new Object();
+		private function addNode(line:String,counter:int):void{
+			var id:String = counter.toString();
+			var label:String = null;
+			var node:NodeData;
 			
 			var adaptedLine:String = line.substr(line.indexOf(">")+1);
 			adaptedLine = adaptedLine.replace(', ',',').replace(' ,',',');
 			
 			var array:Array = adaptedLine.split(',');
-			var s:String;
-			var attTitle:String;
-			var attType:String;
-			
-			for(var i:int = 0;i<array.length;i++){
-				attTitle = s.split(' ')[0];
-				attType = s.split(' ')[1];
-				s = array[i];
-				
-				nodesData.push = attTitle;
-			}
-		}
-		
-		private function addNode(array:Array,counter:int):void{
-			var id:String = counter.toString();
-			var label:String = null;
-			var node:NodeData;
 			
 			var x:Number;
 			var y:Number;
@@ -116,35 +127,35 @@ package com.ofnodesandedges.y2010.loading{
 			
 			for(var i:int=0;i<array.length;i++){
 				switch(i){
-					case nodeIdIndex:
+					case _nodeIdIndex:
 						id = array[i];
 						break;
-					case nodeLabelIndex:
-						label = array[i];
+					case _nodeLabelIndex:
+						label = clean(array[i]);
 						break;
-					case nodeXIndex:
+					case _nodeXIndex:
 						x = new Number(array[i]);
 						hasX = true;
 						break;
-					case nodeYIndex:
+					case _nodeYIndex:
 						y = new Number(array[i]);
 						hasY = true;
 						break;
-					case nodeSizeIndex:
+					case _nodeSizeIndex:
 						size = new Number(array[i]);
 						break;
-					case nodeColorIndex:
-						color = setColor(array[i].replace("'",'').split(','));
+					case _nodeColorIndex:
+						//color = setColor(array[i].replace("'",'').split(','));
 						break;
 					default:
-						attributes[nodesData[i]] = array[i];
+						attributes[_nodesData[i]] = array[i];
 						break;
 				}
 			}
 			
 			node = new NodeData(label,id);
 			
-			if(hasX&&hasY) node.xy(x,y);
+			//if(hasX&&hasY) node.xy(x,y);
 			node.size = size;
 			node.color = color;
 			
@@ -155,53 +166,191 @@ package com.ofnodesandedges.y2010.loading{
 			_graphData.addNode(node);
 		}
 		
-		private function addEdge(array:Array):void{
-			var source:String = null;
-			var target:String = null;
-			var edgeAttributes:Object;
+		private function addEdge(line:String):void{
+			var source:String = '';
+			var target:String = '';
+			var edgeAttributes:Object = new Object();
+			
+			var adaptedLine:String = line.substr(line.indexOf(">")+1);
+			adaptedLine = adaptedLine.replace(', ',',').replace(' ,',',');
+			
+			var array:Array = adaptedLine.split(',');
 			
 			for(var i:int=0;i<array.length;i++){
 				switch(i){
-					case edgeSourceIndex:
+					case _edgeSourceIndex:
 						source = array[i];
 						break;
-					case edgeTargetIndex:
+					case _edgeTargetIndex:
 						target = array[i];
 						break;
 					default:
-						edgeAttributes[edgesData[i]] = array[i];
+						edgeAttributes[_edgesData[i]] = array[i];
 						break;
 				}
 			}
 			
-			_graphData.getNode(source).addOutNeighbor(target,edgeAttributes);
-			_graphData.getNode(target).addInNeighbor(source,edgeAttributes);
+			if((source!='')&&(target!='')){
+				_graphData.getNode(source).addOutNeighbor(target,edgeAttributes);
+				_graphData.getNode(target).addInNeighbor(source,edgeAttributes);
+			}
 		}
 		
-		private function setEdgesData(line:String):void{
-			edgesData = new Object();
+		private function setNodesData(line:String):void{
+			_nodesData = new Object();
 			
 			var adaptedLine:String = line.substr(line.indexOf(">")+1);
 			adaptedLine = adaptedLine.replace(', ',',').replace(' ,',',');
 			
 			var array:Array = adaptedLine.split(',');
 			var s:String;
+			var attTitle:String;
+			var attType:String;
 			
 			for(var i:int = 0;i<array.length;i++){
 				s = array[i];
-				edgesData.push = s.split(' ');
+				
+				if(s.indexOf(' ')>=0){
+					attTitle = s.split(' ')[0];
+					attType = s.split(' ')[1];
+				}else{
+					attTitle = s;
+					attType = '';
+				}
+				
+				switch(clean(attType).toLowerCase()){
+					case "varchar":
+					case "string":
+						attType = "string";
+						break;
+					case "integer":
+					case "int":
+						attType = "int";
+						break;
+					case "double":
+					case "long":
+						attType = "number";
+						break;
+					default:
+						attType = "string";
+						break;
+				}
+				
+				_nodesData.push = attTitle;
+				
+				switch(clean(attTitle).toLowerCase()){
+					case "label":
+						_nodeLabelIndex = i;
+						break;
+					case "color":
+						_nodeColorIndex = i;
+						break;
+					case "x":
+						_nodeXIndex = i;
+						break;
+					case "y":
+						_nodeYIndex = i;
+						break;
+					case "size":
+						_nodeSizeIndex = i;
+						break;
+					case "id":
+					case "name":
+						_nodeIdIndex = i;
+						break;
+					default:
+						if(i==0){
+							_nodeIdIndex = i;
+						}else{
+							_graphData.addNodeAttribute(attTitle,attTitle,attType);
+						}
+						break;
+				}
 			}
 		}
 		
-		/**
-		 * Sets this node color, from three <code>Number</code> value (B, G, R) into a <code>uint</code> value.
-		 * 
-		 * @param B Blue value, between 0 and 255
-		 * @param G Green value, between 0 and 255
-		 * @param R Red value, between 0 and 255
-		 * @see #decaToHexa
-		 */
-		public function setColor(param:Array):uint{
+		private function setEdgesData(line:String):void{
+			_edgesData = new Object();
+			
+			var adaptedLine:String = line.substr(line.indexOf(">")+1);
+			adaptedLine = adaptedLine.replace(', ',',').replace(' ,',',');
+			
+			var array:Array = adaptedLine.split(',');
+			var s:String;
+			var attTitle:String;
+			var attType:String;
+			
+			for(var i:int = 0;i<array.length;i++){
+				s = array[i];
+				
+				if(s.indexOf(' ')>=0){
+					attTitle = s.split(' ')[0];
+					attType = s.split(' ')[1];
+				}else{
+					attTitle = s;
+					attType = '';
+				}
+				
+				switch(clean(attType).toLowerCase()){
+					case "varchar":
+					case "string":
+						attType = "string";
+						break;
+					case "integer":
+					case "int":
+						attType = "int";
+						break;
+					case "double":
+					case "long":
+						attType = "number";
+						break;
+					default:
+						attType = "string";
+						break;
+				}
+				
+				_edgesData.push = attTitle;
+				
+				switch(clean(attTitle).toLowerCase()){
+					case "node_1":
+					case "source":
+					case "node1":
+						_edgeSourceIndex = i;
+						break;
+					case "node_2":
+					case "target":
+					case "node2":
+						_edgeTargetIndex = i;
+						break;
+					default:
+						_graphData.addNodeAttribute(attTitle,attTitle,attType);
+						break;
+				}
+			}
+		}
+		
+		private function clean(s:String):String{
+			var res:String = s;
+			
+			var hasChanged:Boolean = true;
+			
+			//while(hasChanged){
+				hasChanged = false;
+				if((res.indexOf(' ')==0)||(res.indexOf('"')==0)||(res.indexOf("'")==0)){
+					res = res.substr(1);
+					hasChanged = true;
+				}
+				
+				if((res.indexOf(' ')==res.length-1)||(res.indexOf('"')==res.length-1)||(res.indexOf("'")==res.length-1)){
+					res = res.substr(0,res.length-2);
+					hasChanged = true;
+				}
+			//}
+			
+			return res;
+		}
+		
+		private function setColor(param:Array):uint{
 			var B:String = param[0];
 			var G:String = param[1];
 			var R:String = param[2];

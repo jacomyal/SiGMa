@@ -266,15 +266,7 @@ package com.ofnodesandedges.y2010.loading{
 			dispatchEvent(new Event(FILE_PARSED));
 		}
 		
-		/**
-		 * Sets this node color, from three <code>Number</code> value (B, G, R) into a <code>uint</code> value.
-		 * 
-		 * @param B Blue value, between 0 and 255
-		 * @param G Green value, between 0 and 255
-		 * @param R Red value, between 0 and 255
-		 * @see #decaToHexa
-		 */
-		public function setColor(B:String,G:String,R:String):uint{
+		private function setColor(B:String,G:String,R:String):uint{
 			var tempColor:String ="0x"+decaToHexa(R)+decaToHexa(G)+decaToHexa(B);
 			return new uint(tempColor);
 		}
