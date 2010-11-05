@@ -20,10 +20,11 @@
 
 package com.ofnodesandedges.y2010.buttons{
 	
-	import com.ofnodesandedges.y2010.popups.FishEyePopUp;
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
+	import com.ofnodesandedges.y2010.popups.FishEyePopUp;
 	
 	import flash.display.DisplayObjectContainer;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
 	public class FishEyeButton extends DoubleButton{
@@ -41,6 +42,8 @@ package com.ofnodesandedges.y2010.buttons{
 			
 			_parameters = true;
 			_popUp = new FishEyePopUp(_mainDisplayElement);
+			_popUp.addEventListener(FishEyePopUp.DISABLE_MOUSE_WHEEL,disableMouseWheel);
+			_popUp.addEventListener(FishEyePopUp.ENABLE_MOUSE_WHEEL,enableMouseWheel);
 			
 			super(root,x,y,width,height,options);
 			
@@ -52,6 +55,7 @@ package com.ofnodesandedges.y2010.buttons{
 		protected override function actionClick(m:MouseEvent):void{
 			if(_actionButton.enabled==true){
 				_mainDisplayElement.isMouseFishEye = true;
+				if(FishEyePopUp (_popUp).isMouseActive()) stage.addEventListener(MouseEvent.MOUSE_WHEEL,fishEyeWheel);
 				
 				switchAction();
 			}
@@ -60,9 +64,26 @@ package com.ofnodesandedges.y2010.buttons{
 		protected override function action2Click(m:MouseEvent):void{
 			if(_actionButton2.enabled==true){
 				_mainDisplayElement.isMouseFishEye = false;
+				stage.removeEventListener(MouseEvent.MOUSE_WHEEL,fishEyeWheel);
 
 				switchAction();
 			}
+		}
+		
+		private function fishEyeWheel(m:MouseEvent):void{
+			var param:Number = 0;
+			if(m.delta>0) param=1;
+			else if(m.delta<0) param=-1;
+			
+			FishEyePopUp (_popUp).powerIncrease(param);
+		}
+		
+		private function enableMouseWheel(e:Event):void{
+			if(_mainDisplayElement.isMouseFishEye) stage.addEventListener(MouseEvent.MOUSE_WHEEL,fishEyeWheel);
+		}
+		
+		private function disableMouseWheel(e:Event):void{
+			stage.removeEventListener(MouseEvent.MOUSE_WHEEL,fishEyeWheel);
 		}
 	}
 }
