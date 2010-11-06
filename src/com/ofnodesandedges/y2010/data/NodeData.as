@@ -38,7 +38,6 @@ package com.ofnodesandedges.y2010.data{
 		public function NodeData(label:String,id:String){
 			_label = label;
 			_id = id;
-			_size = 1;
 			
 			_hasSpatialData = false;
 			

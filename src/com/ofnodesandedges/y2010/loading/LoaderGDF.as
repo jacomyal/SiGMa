@@ -22,6 +22,7 @@ package com.ofnodesandedges.y2010.loading{
 	
 	import com.ofnodesandedges.y2010.data.GraphData;
 	import com.ofnodesandedges.y2010.data.NodeData;
+	import com.ofnodesandedges.y2010.metrics.HITS;
 	
 	import flash.events.Event;
 	
@@ -81,7 +82,8 @@ package com.ofnodesandedges.y2010.loading{
 				}
 			}
 			
-			//if(_edgeSourceIndex>=0)
+			checkColorsAndSizes();
+			
 			dispatchEvent(new Event(FILE_PARSED));
 		}
 		
@@ -117,8 +119,9 @@ package com.ofnodesandedges.y2010.loading{
 			
 			var x:Number;
 			var y:Number;
-			var size:Number = 1;
-			var color:uint = 0x000000;
+			var size:Number = 0;
+			var color:uint = 0;
+			var hasLocalColor:Boolean = false
 			var b:String;
 			var g:String;
 			var r:String;
@@ -153,6 +156,8 @@ package com.ofnodesandedges.y2010.loading{
 							g = clean(array[i].split(',')[1]);
 							r = clean(array[i].split(',')[2]);
 							color = setColor(b,g,r);
+							
+							hasLocalColor = true;
 						}
 						break;
 					default:
@@ -164,8 +169,13 @@ package com.ofnodesandedges.y2010.loading{
 			node = new NodeData(label,id);
 			
 			if(hasX&&hasY) node.xy(x,-y);
-			node.size = size;
-			node.color = color;
+			else _hasNodeCoordinates++;
+			
+			if(size>0) node.size = size;
+			else _hasNodeSizes++;
+			
+			if(hasLocalColor) node.color = color;
+			else _hasNodeColors++;
 			
 			for(var key:String in attributes){
 				node.addAttribute(key,attributes[key]);
@@ -361,7 +371,7 @@ package com.ofnodesandedges.y2010.loading{
 						element += char;  
 					}
 				}else{
-					if(containers.indexOf(char)>=0){
+					if((containers.indexOf(char)>=0)&&(element=='')){
 						inContainer = true;
 						containerChar = containers[containers.indexOf(char)+1];
 						

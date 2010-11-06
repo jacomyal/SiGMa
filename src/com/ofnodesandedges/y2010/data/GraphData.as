@@ -78,6 +78,54 @@ package com.ofnodesandedges.y2010.data{
 		public function addMetaData(key:String,value:String):void{
 			_metaData[key] = value;
 		}
+		
+		public function setColor(attributeKey:String,colorMin:uint,colorMax:uint):void{
+			var blueOffsetMax:Number = colorMax % 256;
+			var greenOffsetMax:Number = ( colorMax >> 8 ) % 256;
+			var redOffsetMax:Number = ( colorMax >> 16 ) % 256;
+			
+			var blueOffsetMin:Number = colorMin % 256;
+			var greenOffsetMin:Number = ( colorMin >> 8 ) % 256;
+			var redOffsetMin:Number = ( colorMin >> 16 ) % 256;
+			
+			var blueOffset:Number;
+			var greenOffset:Number;
+			var redOffset:Number;
+			
+			var max:Number = nodes[0].attributes[attributeKey];
+			var min:Number = nodes[0].attributes[attributeKey];
+			
+			// Set extrema:
+			for each(var node:NodeData in nodes){
+				if(node.attributes[attributeKey]>max) max = node.attributes[attributeKey];
+				if(node.attributes[attributeKey]<min) min = node.attributes[attributeKey];
+			}
+			
+			// Set colors:
+			for each(node in nodes){
+				blueOffset = (blueOffsetMax-blueOffsetMin)/(max-min)*(node.attributes[attributeKey]-min)+blueOffsetMin;
+				greenOffset = (greenOffsetMax-greenOffsetMin)/(max-min)*(node.attributes[attributeKey]-min)+greenOffsetMin;
+				redOffset = (redOffsetMax-redOffsetMin)/(max-min)*(node.attributes[attributeKey]-min)+redOffsetMin;
+				
+				node.color = redOffset<<16|greenOffset<<8|blueOffset;
+			}
+		}
+		
+		public function setSize(attributeKey:String,sizeMin:Number,sizeMax:Number):void{
+			var max:Number = nodes[0].attributes[attributeKey];
+			var min:Number = nodes[0].attributes[attributeKey];
+			
+			// Set extrema:
+			for each(var node:NodeData in nodes){
+				if(node.attributes[attributeKey]>max) max = node.attributes[attributeKey];
+				if(node.attributes[attributeKey]<min) min = node.attributes[attributeKey];
+			}
+			
+			// Set colors:
+			for each(node in nodes){
+				node.size = (sizeMax-sizeMin)/(max-min)*(node.attributes[attributeKey]-min)+sizeMin; 
+			}
+		}
 
 		public function get nodes():Vector.<NodeData>{
 			return _nodes;

@@ -24,10 +24,15 @@ package com.ofnodesandedges.y2010.ui{
 	import com.ofnodesandedges.y2010.data.GraphData;
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
 	import com.ofnodesandedges.y2010.loading.*;
+	import com.ofnodesandedges.y2010.metrics.HITS;
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
+	
+	import mx.core.TextFieldAsset;
 	
 	public class Main extends Sprite{
 		
@@ -43,7 +48,7 @@ package com.ofnodesandedges.y2010.ui{
 			s.addChild(this);
 			
 			// Set file path:
-			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./les_miserables.gdf";
+			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./celegans.gexf";
 			else _filePath = root.loaderInfo.parameters["filePath"];
 			
 			// Add the FPSCounter:
@@ -67,8 +72,10 @@ package com.ofnodesandedges.y2010.ui{
 		}
 		
 		private function graphLoadedHandler(e:Event):void{
-			// Init Main Display Element:
+			// Analyse graph:
 			_graph = _fileLoader.graphData;
+			
+			// Init Main Display Element:
 			_mDE = new MainDisplayElement(this);
 			
 			// Init Options Panel:

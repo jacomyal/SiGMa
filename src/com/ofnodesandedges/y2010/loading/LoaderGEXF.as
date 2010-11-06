@@ -162,41 +162,38 @@ package com.ofnodesandedges.y2010.loading{
 				
 				for each(xmlSubCursor in xmlCursor.children()){
 					// Position:
-					if(xmlSubCursor.name().localName=='position'){
-						if(xmlSubCursor.attribute("x")!=undefined){
-							x = new Number(xmlSubCursor.attribute("x"));
-							
-							if(xmlSubCursor.attribute("y")!=undefined){
-								y = new Number(xmlSubCursor.attribute("y"));
-								
-								node.xy(x,y);
-							}
-						}
+					if((xmlSubCursor.name().localName=='position')&&
+					   (xmlSubCursor.attribute("x")!=undefined)&&
+					   (xmlSubCursor.attribute("y")!=undefined)){
+						x = new Number(xmlSubCursor.attribute("x"));
+						y = new Number(xmlSubCursor.attribute("y"));
+						
+						node.xy(x,y);
+					}else{
+						_hasNodeCoordinates++;
 					}
 					
 					// Color:
-					if(xmlSubCursor.name().localName=='color'){
-						if(xmlSubCursor.attribute("b")!=undefined){
-							b = xmlSubCursor.attribute("b");
-
-							if(xmlSubCursor.attribute("g")!=undefined){
-								g = xmlSubCursor.attribute("g");
-
-								if(xmlSubCursor.attribute("r")!=undefined){
-									r = xmlSubCursor.attribute("r");
-									
-									node.color = setColor(b,g,r);
-								}
-							}
-						}
+					if((xmlSubCursor.name().localName=='color')&&
+					   (xmlSubCursor.attribute("b")!=undefined)&&
+					   (xmlSubCursor.attribute("g")!=undefined)&&
+					   (xmlSubCursor.attribute("r")!=undefined)){
+						b = xmlSubCursor.attribute("b");
+						g = xmlSubCursor.attribute("g");
+						r = xmlSubCursor.attribute("r");
+						
+						node.color = setColor(b,g,r);
+					}else{
+						_hasNodeColors++;
 					}
 					
 					// Size:
-					if(xmlSubCursor.name().localName=='size'){
-						if(xmlSubCursor.@value!=undefined){
-							size = new Number(xmlSubCursor.@value);
-							node.size = size;
-						}
+					if((xmlSubCursor.name().localName=='size')&&
+					   (xmlSubCursor.@value!=undefined)){
+						size = new Number(xmlSubCursor.@value);
+						node.size = size;
+					}else{
+						_hasNodeSizes++;
 					}
 					
 					// Old format attributes container, see below:
@@ -262,6 +259,8 @@ package com.ofnodesandedges.y2010.loading{
 					edgesCounter++;
 				}
 			}
+			
+			checkColorsAndSizes();
 			
 			dispatchEvent(new Event(FILE_PARSED));
 		}
