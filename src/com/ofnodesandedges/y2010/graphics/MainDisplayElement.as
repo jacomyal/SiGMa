@@ -113,29 +113,34 @@ package com.ofnodesandedges.y2010.graphics{
 		}
 		
 		private function initGraph():void{
-			var hasSpatialData:Boolean = true;
-			
-			for each(var node:NodeData in _main.graph.nodes){
-				if(node.hasSpatialData == false){
-					hasSpatialData = false;
-					break;
-				}
-			}
-			
 			_graphGraphics = new GraphGraphics(_main.graph);
 			_graphGraphics.refreshEdges();
 			_graphGraphics.resizeNodes(0,30);
 			
-			_isPlaying = !hasSpatialData;
+			_isPlaying = !_main.graph.hasCoordinates;
 		}
 		
 		private function roughLayoutFinished(e:Event):void{
 			_layout.removeEventListener(Layout.FINISH,roughLayoutFinished);
 			this.removeEventListener(Event.ENTER_FRAME,_layout.stepHandler);
 			
-			launchForceAtlas();
+			launchNodeOverlap();
+		}
+		
+		private function nodeOverlapFinished(e:Event):void{
+			_layout.removeEventListener(Layout.FINISH,nodeOverlapFinished);
+			this.removeEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+			
+			//launchForceAtlas();
 		}
 
+		private function launchNodeOverlap():void{
+			_layout = new NodeOverlap();
+			_layout.init(_graphGraphics);
+			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+			_layout.addEventListener(Layout.FINISH,nodeOverlapFinished);
+		}
+		
 		private function launchForceAtlas():void{
 			_layout = new ForceAtlas();
 			_layout.init(_graphGraphics);

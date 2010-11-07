@@ -1,4 +1,4 @@
-nodedef> name VARCHAR,label VARCHAR,width DOUBLE,height DOUBLE,x DOUBLE,y DOUBLE,color VARCHAR,Modularity Class INTEGER
+nodedef>name VARCHAR,label VARCHAR,width DOUBLE,height DOUBLE,x DOUBLE,y DOUBLE,color VARCHAR,Modularity Class INTEGER
 0.0,"Myriel",28.685719,28.685719,846.527,-1570.72,'91,91,245',0
 1.0,"Napoleon",4.0,4.0,1425.0109,-2524.0613,'91,91,245',0
 2.0,"MlleBaptistine",9.485715,9.485715,649.162,-1308.6366,'245,91,91',1
@@ -76,7 +76,7 @@ nodedef> name VARCHAR,label VARCHAR,width DOUBLE,height DOUBLE,x DOUBLE,y DOUBLE
 74.0,"Child2",6.742856,6.742856,2076.2908,1535.174,'91,245,91',8
 75.0,"Brujon",20.457142,20.457142,-1032.5941,1465.4169,'91,245,194',7
 76.0,"MmeHucheloup",20.457142,20.457142,1444.7601,2811.6296,'91,245,91',8
-edgedef> node1,node2,label VARCHAR,weight DOUBLE,directed BOOLEAN,color VARCHAR
+edgedef>node1,node2,label VARCHAR,weight DOUBLE,directed BOOLEAN,color VARCHAR
 1.0,0.0,,1.0,true,'-255,-255,-255',"0",1.0
 2.0,0.0,,8.0,true,'-255,-255,-255',"1",8.0
 3.0,0.0,,10.0,true,'-255,-255,-255',"2",10.0

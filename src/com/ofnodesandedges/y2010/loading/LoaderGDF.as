@@ -82,7 +82,7 @@ package com.ofnodesandedges.y2010.loading{
 				}
 			}
 			
-			checkColorsAndSizes();
+			checkGraph();
 			
 			dispatchEvent(new Event(FILE_PARSED));
 		}
@@ -168,8 +168,10 @@ package com.ofnodesandedges.y2010.loading{
 			
 			node = new NodeData(label,id);
 			
-			if(hasX&&hasY) node.xy(x,-y);
-			else _hasNodeCoordinates++;
+			if(hasX&&hasY){
+				node.x = x;
+				node.y = -y;
+			}else _hasNodeCoordinates++;
 			
 			if(size>0) node.size = size;
 			else _hasNodeSizes++;
@@ -209,15 +211,14 @@ package com.ofnodesandedges.y2010.loading{
 			}
 			
 			if((source!='')&&(target!='')){
-				_graphData.getNode(source).addOutNeighbor(target,edgeAttributes);
-				_graphData.getNode(target).addInNeighbor(source,edgeAttributes);
+				_graphData.addEdge(source,target);
 			}
 		}
 		
 		private function setNodesData(line:String):void{
 			_nodesData = new Object();
 			
-			var adaptedLine:String = line.substr(line.indexOf(">")+2);
+			var adaptedLine:String = line.substr(line.indexOf(">")+1);
 			adaptedLine = adaptedLine.replace(', ',',').replace(' ,',',');
 			
 			var array:Array = customSplit(adaptedLine);
@@ -292,7 +293,7 @@ package com.ofnodesandedges.y2010.loading{
 		private function setEdgesData(line:String):void{
 			_edgesData = new Object();
 			
-			var adaptedLine:String = line.substr(line.indexOf(">")+2);
+			var adaptedLine:String = line.substr(line.indexOf(">")+1);
 			adaptedLine = adaptedLine.replace(', ',',').replace(' ,',',');
 			
 			var array:Array = customSplit(adaptedLine);

@@ -48,7 +48,7 @@ package com.ofnodesandedges.y2010.ui{
 			s.addChild(this);
 			
 			// Set file path:
-			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./celegans.gexf";
+			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./les_miserables.gexf";
 			else _filePath = root.loaderInfo.parameters["filePath"];
 			
 			// Add the FPSCounter:
@@ -72,8 +72,9 @@ package com.ofnodesandedges.y2010.ui{
 		}
 		
 		private function graphLoadedHandler(e:Event):void{
-			// Analyse graph:
+			// Get the graph:
 			_graph = _fileLoader.graphData;
+			_graph.removeOrphelins();
 			
 			// Init Main Display Element:
 			_mDE = new MainDisplayElement(this);

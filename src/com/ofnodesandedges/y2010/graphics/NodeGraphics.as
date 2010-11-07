@@ -66,8 +66,8 @@ package com.ofnodesandedges.y2010.graphics{
 			_borderColor = brightenColor(_color,30);
 			_borderThickness = 0;
 			
-			_x = nodeData.x;
-			_y = nodeData.y;
+			_x = (nodeData.x) ? nodeData.x : 0;
+			_y = (nodeData.y) ? nodeData.y : 0;
 			_dx = 0;
 			_dy = 0;
 			_old_dx = 0;

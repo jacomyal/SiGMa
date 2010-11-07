@@ -162,15 +162,17 @@ package com.ofnodesandedges.y2010.loading{
 				
 				for each(xmlSubCursor in xmlCursor.children()){
 					// Position:
-					if((xmlSubCursor.name().localName=='position')&&
-					   (xmlSubCursor.attribute("x")!=undefined)&&
-					   (xmlSubCursor.attribute("y")!=undefined)){
-						x = new Number(xmlSubCursor.attribute("x"));
-						y = new Number(xmlSubCursor.attribute("y"));
-						
-						node.xy(x,y);
-					}else{
-						_hasNodeCoordinates++;
+					if(xmlSubCursor.name().localName=='position'){
+						if((xmlSubCursor.attribute("x")!=undefined)&&
+						   (xmlSubCursor.attribute("y")!=undefined)){
+							x = new Number(xmlSubCursor.attribute("x"));
+							y = new Number(xmlSubCursor.attribute("y"));
+							
+							node.x = x;
+							node.y = -y;
+						}else{
+							_hasNodeCoordinates++;
+						}
 					}
 					
 					// Color:
@@ -253,14 +255,15 @@ package com.ofnodesandedges.y2010.loading{
 						}
 					}
 					
-					_graphData.getNode(xmlCursor.@source).addOutNeighbor(xmlCursor.@target,edgeAttributes);
-					_graphData.getNode(xmlCursor.@target).addInNeighbor(xmlCursor.@source,edgeAttributes);
+					if(xmlCursor.@target){
+						_graphData.addEdge(xmlCursor.@source,xmlCursor.@target);
+					}
 					
 					edgesCounter++;
 				}
 			}
 			
-			checkColorsAndSizes();
+			checkGraph();
 			
 			dispatchEvent(new Event(FILE_PARSED));
 		}

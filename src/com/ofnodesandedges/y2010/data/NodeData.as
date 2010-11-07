@@ -33,13 +33,10 @@ package com.ofnodesandedges.y2010.data{
 		
 		private var _x:Number;
 		private var _y:Number;
-		private var _hasSpatialData:Boolean;
 		
 		public function NodeData(label:String,id:String){
 			_label = label;
 			_id = id;
-			
-			_hasSpatialData = false;
 			
 			_outNeighbors = new Object();
 			_inNeighbors = new Object();
@@ -117,21 +114,17 @@ package com.ofnodesandedges.y2010.data{
 		public function get x():Number{
 			return _x;
 		}
-
+		
+		public function set x(value:Number):void{
+			_x = value;
+		}
+		
 		public function get y():Number{
 			return _y;
 		}
 		
-		public function xy(x:Number,y:Number):void{
-			_x = x;
-			_y = y;
-			_hasSpatialData = true;
+		public function set y(value:Number):void{
+			_y = value;
 		}
-
-		public function get hasSpatialData():Boolean{
-			return _hasSpatialData;
-		}
-
-
 	}
 }

@@ -28,6 +28,7 @@ package com.ofnodesandedges.y2010.data{
 		private var _metaData:Object;
 		
 		private var _defaultEdgeType:String;
+		private var _hasCoordinates:Boolean;
 		
 		public function GraphData(){
 			_nodes = new Vector.<NodeData>();
@@ -40,6 +41,21 @@ package com.ofnodesandedges.y2010.data{
 		
 		public function addNode(node:NodeData):void{
 			_nodes.push(node);
+		}
+		
+		public function addEdge(sourceID:String,targetID:String):void{
+			var nodeFrom:NodeData = getNode(sourceID);
+			var nodeTo:NodeData = getNode(targetID);
+			
+			if((nodeFrom!=null)&&(nodeTo!=null)){
+				nodeFrom.addOutNeighbor(targetID,edgeAttributes);
+				nodeTo.addInNeighbor(sourceID,edgeAttributes);
+				
+				if(_defaultEdgeType == "undirected"){
+					nodeTo.addOutNeighbor(sourceID,edgeAttributes);
+					nodeFrom.addInNeighbor(targetID,edgeAttributes);
+				}
+			}
 		}
 		
 		public function getNode(nodeID:String):NodeData{
@@ -126,37 +142,46 @@ package com.ofnodesandedges.y2010.data{
 				node.size = (sizeMax-sizeMin)/(max-min)*(node.attributes[attributeKey]-min)+sizeMin; 
 			}
 		}
+		
+		public function removeOrphelins():void{
+			var newNodes:Vector.<NodeData> = new Vector.<NodeData>();
+			var key:String;
+			
+			var hasInNeighbors:Boolean;
+			var hasOutNeighbors:Boolean;
+			
+			for each(var node:NodeData in _nodes){
+				hasInNeighbors = false;
+				hasOutNeighbors = false;
+				
+				for(key in node.inNeighbors){
+					hasInNeighbors = true;
+				}
+				
+				for(key in node.outNeighbors){
+					hasOutNeighbors = true;
+				}
+				
+				if(hasInNeighbors||hasOutNeighbors) newNodes.push(node);
+			}
+			
+			_nodes = newNodes;
+		}
 
 		public function get nodes():Vector.<NodeData>{
 			return _nodes;
 		}
 
-		public function set nodes(value:Vector.<NodeData>):void{
-			_nodes = value;
-		}
-
 		public function get nodeAttributes():Object{
 			return _nodeAttributes;
-		}
-
-		public function set nodeAttributes(value:Object):void{
-			_nodeAttributes = value;
 		}
 		
 		public function get edgeAttributes():Object{
 			return _edgeAttributes;
 		}
-		
-		public function set edgeAttributes(value:Object):void{
-			_edgeAttributes = value;
-		}
 
 		public function get metaData():Object{
 			return _metaData;
-		}
-
-		public function set metaData(value:Object):void{
-			_metaData = value;
 		}
 
 		public function get defaultEdgeType():String{
@@ -166,6 +191,15 @@ package com.ofnodesandedges.y2010.data{
 		public function set defaultEdgeType(value:String):void{
 			_defaultEdgeType = value;
 		}
+
+		public function get hasCoordinates():Boolean{
+			return _hasCoordinates;
+		}
+
+		public function set hasCoordinates(value:Boolean):void{
+			_hasCoordinates = value;
+		}
+
 
 	}
 }

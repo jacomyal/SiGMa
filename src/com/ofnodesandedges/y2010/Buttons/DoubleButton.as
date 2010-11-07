@@ -29,6 +29,8 @@ package com.ofnodesandedges.y2010.buttons{
 	
 	public class DoubleButton extends Button{
 		
+		public static const SWITCH:String = "Switch";
+		
 		protected var _actionButton2:SimpleButton;
 		protected var _description2:String;
 		

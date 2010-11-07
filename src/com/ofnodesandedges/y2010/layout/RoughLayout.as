@@ -49,10 +49,10 @@ package com.ofnodesandedges.y2010.layout{
 			// Force vector parameters:
 			_speed = 10;
 			_cooler = 5;
-			_gravity = 50;
+			_gravity = 200;
 			_stepsMax = 500;
-			_attraction = 1;
-			_repulsion = 5000;
+			_attraction = 0.01;
+			_repulsion = 10;
 			_forceVectorMaxDisplacement = 2000;
 			_graph = graph;
 			_stepsMin = 3*Math.floor(Math.log(_graph.nodes.length));
@@ -91,7 +91,7 @@ package com.ofnodesandedges.y2010.layout{
 			
 			k = _graph.nodes.length;
 			
-			// 1. Basic repulsion-attraction force directed layout for a directed graph:
+			// Basic repulsion-attraction force directed layout for a directed graph:
 			for(i=0;i<k;i++){
 				nodeFrom = _graph.nodes[i];
 				
@@ -130,17 +130,17 @@ package com.ofnodesandedges.y2010.layout{
 		
 		private function attractionDirected(nodeFrom:NodeGraphics,nodeTo:NodeGraphics):void{
 			var distance:Number = Math.sqrt(Math.pow(nodeFrom.x-nodeTo.x,2)+Math.pow(nodeFrom.y-nodeTo.y,2));
-			var f:Number = attractionCoef(_attraction,distance);
+			var f:Number = _attraction*distance;
 			
-			nodeFrom.dx += (nodeFrom.x-nodeTo.x)*f;
-			nodeFrom.dy += (nodeFrom.y-nodeTo.y)*f;
-			nodeTo.dx -= (nodeFrom.x-nodeTo.x)*f;
-			nodeTo.dy -= (nodeFrom.y-nodeTo.y)*f;
+			nodeFrom.dx -= (nodeFrom.x-nodeTo.x)*f;
+			nodeFrom.dy -= (nodeFrom.y-nodeTo.y)*f;
+			nodeTo.dx += (nodeFrom.x-nodeTo.x)*f;
+			nodeTo.dy += (nodeFrom.y-nodeTo.y)*f;
 		}
 		
 		private function repulsionDirected(nodeFrom:NodeGraphics,nodeTo:NodeGraphics):void{
 			var distance:Number = Math.sqrt(Math.pow(nodeFrom.x-nodeTo.x,2)+Math.pow(nodeFrom.y-nodeTo.y,2));
-			var f:Number = repulsionCoef(_repulsion/(nodeFrom.neighbors.length+1)/(nodeTo.neighbors.length+1),distance);
+			var f:Number = _repulsion/(nodeFrom.neighbors.length+1)/(nodeTo.neighbors.length+1)/Math.log(distance);
 			
 			nodeFrom.dx += (nodeFrom.x-nodeTo.x)*f;
 			nodeFrom.dy += (nodeFrom.y-nodeTo.y)*f;
@@ -153,14 +153,6 @@ package com.ofnodesandedges.y2010.layout{
 			
 			node.dx += node.x/distance*_gravity;
 			node.dy += node.y/distance*_gravity;
-		}
-		
-		private function attractionCoef(c:Number,dist:Number):Number{
-			return(-0.01*c*dist);
-		}
-		
-		private function repulsionCoef(c:Number,dist:Number):Number{
-			return(0.001*c/Math.log(dist));
 		}
 	}
 }

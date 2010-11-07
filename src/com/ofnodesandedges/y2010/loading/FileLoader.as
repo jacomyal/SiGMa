@@ -35,6 +35,7 @@ package com.ofnodesandedges.y2010.loading{
 	
 	public class FileLoader extends EventDispatcher{
 		
+		public static const THRESHOLD:Number = 0.02;
 		public static const FILE_PARSED:String = "File totally parsed";
 		
 		protected var _filePath:String;
@@ -79,23 +80,25 @@ package com.ofnodesandedges.y2010.loading{
 		
 		protected function parseFile(data:String):void{}
 		
-		protected function checkColorsAndSizes():void{
+		protected function checkGraph():void{
 			if((_hasNodeColors>_graphData.nodes.length/10)||(_hasNodeSizes>_graphData.nodes.length/10)){
 				(new HITS()).computeMetric(_graphData,1);
-				if(_hasNodeColors>_graphData.nodes.length/10){
+				if(_hasNodeColors>_graphData.nodes.length*THRESHOLD){
 					var minColor:uint = 0xFEF48D;
 					var maxColor:uint = 0xFF1F08;
 					
 					_graphData.setColor(HITS.AUTHORITIES_ID,minColor,maxColor);
 				}
 				
-				if(_hasNodeSizes>_graphData.nodes.length/10){
+				if(_hasNodeSizes>_graphData.nodes.length*THRESHOLD){
 					var minSize:Number = 10;
 					var maxSize:Number = 100;
 					
 					_graphData.setSize(HITS.HUBS_ID,minSize,maxSize);
 				}
 			}
+			
+			_graphData.hasCoordinates = (_hasNodeCoordinates>_graphData.nodes.length*THRESHOLD) ? false : true ;
 		}
 		
 		private function openHandler(event:Event):void{
