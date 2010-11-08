@@ -86,9 +86,9 @@ package com.ofnodesandedges.y2010.popups{
 			if(_radiusLabel.width>_contentWidth) _contentWidth = _radiusLabel.width;
 			
 			_radiusSlider = new Slider();
-			_radiusSlider.minimum = 1/8*Math.min(_mainDisplayElement.stage.stageWidth,_mainDisplayElement.stage.stageHeight);
-			_radiusSlider.maximum = Math.min(_mainDisplayElement.stage.stageWidth,_mainDisplayElement.stage.stageHeight);
-			_radiusSlider.value = _mainDisplayElement.fishEyeRadius;
+			_radiusSlider.minimum = 1/2*Math.min(_mainDisplayElement.stage.stageWidth,_mainDisplayElement.stage.stageHeight);
+			_radiusSlider.maximum = 4*Math.min(_mainDisplayElement.stage.stageWidth,_mainDisplayElement.stage.stageHeight);
+			_radiusSlider.value = _mainDisplayElement.fishEyeDisplay.radius;
 			_radiusSlider.addEventListener(SliderEvent.CHANGE,radiusChange);
 			_radiusSlider.width = 100;
 			_radiusSlider.liveDragging = true;
@@ -110,7 +110,7 @@ package com.ofnodesandedges.y2010.popups{
 			_powerSlider = new Slider();
 			_powerSlider.minimum = 1;
 			_powerSlider.maximum = 30;
-			_powerSlider.value = _mainDisplayElement.fishEyePower;
+			_powerSlider.value = _mainDisplayElement.fishEyeDisplay.power;
 			_powerSlider.addEventListener(SliderEvent.CHANGE,powerChange);
 			_powerSlider.width = 100;
 			_powerSlider.liveDragging = true;
@@ -154,7 +154,7 @@ package com.ofnodesandedges.y2010.popups{
 				_powerSlider.value = Math.max(_powerSlider.minimum,_powerSlider.value-step);
 			}
 			
-			_mainDisplayElement.fishEyePower = _powerSlider.value;
+			_mainDisplayElement.fishEyeDisplay.power = _powerSlider.value;
 		}
 		
 		public function isMouseActive():Boolean{
@@ -162,11 +162,11 @@ package com.ofnodesandedges.y2010.popups{
 		}
 		
 		private function powerChange(s:SliderEvent):void{
-			_mainDisplayElement.fishEyePower = _powerSlider.value;
+			_mainDisplayElement.fishEyeDisplay.power = _powerSlider.value;
 		}
 		
 		private function radiusChange(s:SliderEvent):void{
-			_mainDisplayElement.fishEyeRadius = _radiusSlider.value;
+			_mainDisplayElement.fishEyeDisplay.radius = _radiusSlider.value;
 		}
 		
 		private function mouseCheckBoxClick(s:MouseEvent):void{

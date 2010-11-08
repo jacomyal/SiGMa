@@ -47,14 +47,14 @@ package com.ofnodesandedges.y2010.buttons{
 			
 			super(root,x,y,width,height,options);
 			
-			if(_mainDisplayElement.isMouseFishEye == true){
+			if(_mainDisplayElement.fishEyeDisplay.enable){
 				switchAction();
 			}
 		}
 		
 		protected override function actionClick(m:MouseEvent):void{
 			if(_actionButton.enabled==true){
-				_mainDisplayElement.isMouseFishEye = true;
+				_mainDisplayElement.fishEyeDisplay.enable = true;
 				if(FishEyePopUp (_popUp).isMouseActive()) stage.addEventListener(MouseEvent.MOUSE_WHEEL,fishEyeWheel);
 				
 				switchAction();
@@ -63,7 +63,7 @@ package com.ofnodesandedges.y2010.buttons{
 		
 		protected override function action2Click(m:MouseEvent):void{
 			if(_actionButton2.enabled==true){
-				_mainDisplayElement.isMouseFishEye = false;
+				_mainDisplayElement.fishEyeDisplay.enable = false;
 				stage.removeEventListener(MouseEvent.MOUSE_WHEEL,fishEyeWheel);
 
 				switchAction();
@@ -79,7 +79,7 @@ package com.ofnodesandedges.y2010.buttons{
 		}
 		
 		private function enableMouseWheel(e:Event):void{
-			if(_mainDisplayElement.isMouseFishEye) stage.addEventListener(MouseEvent.MOUSE_WHEEL,fishEyeWheel);
+			if(_mainDisplayElement.fishEyeDisplay.enable) stage.addEventListener(MouseEvent.MOUSE_WHEEL,fishEyeWheel);
 		}
 		
 		private function disableMouseWheel(e:Event):void{

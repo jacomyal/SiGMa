@@ -21,6 +21,8 @@
 package com.ofnodesandedges.y2010.graphics{
 	
 	import com.ofnodesandedges.y2010.data.NodeData;
+	import com.ofnodesandedges.y2010.display.FishEyeDisplay;
+	import com.ofnodesandedges.y2010.display.ZoomDisplay;
 	import com.ofnodesandedges.y2010.graphics.*;
 	import com.ofnodesandedges.y2010.layout.*;
 	import com.ofnodesandedges.y2010.ui.Main;
@@ -48,22 +50,22 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _mouseX:Number;
 		private var _mouseY:Number;
 		
-		// Fish Eye:
-		private var _isMouseFishEye:Boolean;
-		private var _fishEyeRadius:Number;
-		private var _fishEyePower:Number;
-		
-		// Display texts:
+		// Display vars:
+		private var _displayEdges:Boolean;
 		private var _displayText:Boolean;
 		private var _textSize:Number;
 		private var _textThreshold:Number;
 		
-		// Display edges:
-		private var _displayEdges:Boolean;
+		// Display classes:
+		private var _fishEyeDisplay:FishEyeDisplay;
+		private var _zoomDisplay:ZoomDisplay;
 		
 		public function MainDisplayElement(main:Main){
 			_main = main;
 			_main.stage.addChild(this);
+			
+			// Build graph to display:
+			initGraph();
 			
 			// Init layers:
 			_edgesSprite = new Sprite();
@@ -76,18 +78,12 @@ package com.ofnodesandedges.y2010.graphics{
 			addChild(_labelSprite);
 			addChild(_miscSprite);
 			
-			// Fish Eye:
-			_isMouseFishEye = false;
-			_fishEyeRadius = 1/2*Math.min(stage.stageWidth,stage.stageHeight);
-			_fishEyePower = 5;
+			// Display classes:
+			_fishEyeDisplay = new FishEyeDisplay(_graphGraphics,_miscSprite);
+			_zoomDisplay = new ZoomDisplay(_graphGraphics,stage);
 			
-			// Display edges:
+			// Display vars:
 			_displayEdges = false;
-			
-			// Build graph to display:
-			initGraph();
-			
-			// Display texts:
 			_displayText = false;
 			_textSize = 24;
 			_textThreshold = 1/5*_graphGraphics.getMinSize()+4/5*_graphGraphics.getMaxSize();
@@ -148,30 +144,22 @@ package com.ofnodesandedges.y2010.graphics{
 		}
 		
 		private function enterFrameHandler(e:Event):void{
-			_graphGraphics.processRescaling(stage,this);
 			var radius:Number = -1;
 			var eye_x:Number = -1;
 			var eye_y:Number = -1;
 			
-			if(_isMouseFishEye){
-				eye_x = mouseX;// - this.x;
-				eye_y = mouseY;// - this.y;
-				
-				_graphGraphics.setFishEye(eye_x,eye_y,_fishEyeRadius/this.scaleX,_fishEyePower);
-			}else{
-				_graphGraphics.setDisplayVars();
-			}
-			
+			// Set/reset sprites:
 			var edgesGraphics:Graphics = (_displayEdges) ? _edgesSprite.graphics : null;
 			var labelContainer:Sprite = (_displayText) ? _labelSprite : null;
+			_miscSprite.graphics.clear();
+			
+			// Adapt display:
+			_graphGraphics.processRescaling(stage,this);
+			_graphGraphics.setDisplayVars();
+			if(_fishEyeDisplay.enable) _fishEyeDisplay.applyDisplay();
+			if(_zoomDisplay.enable) _zoomDisplay.applyDisplay();
 			
 			_graphGraphics.drawGraph(edgesGraphics,_nodesSprite.graphics,labelContainer,_textSize,_textThreshold);
-			
-			if(_isMouseFishEye){
-				_miscSprite.graphics.clear();
-				_miscSprite.graphics.lineStyle(10/this.scaleX,0xAAAAAA,0.5);
-				_miscSprite.graphics.drawCircle(eye_x,eye_y,_fishEyeRadius/this.scaleX);
-			}
 		}
 		
 		public function startLayout():void{
@@ -193,33 +181,6 @@ package com.ofnodesandedges.y2010.graphics{
 			if(_displayEdges==false){
 				_edgesSprite.graphics.clear();
 			}
-		}
-		
-		public function get isMouseFishEye():Boolean{
-			return _isMouseFishEye;
-		}
-		
-		public function set isMouseFishEye(value:Boolean):void{
-			_isMouseFishEye = value;
-			if(_isMouseFishEye==false){
-				_miscSprite.graphics.clear();
-			}
-		}
-
-		public function set fishEyePower(value:Number):void{
-			_fishEyePower = value;
-		}
-		
-		public function get fishEyePower():Number{
-			return _fishEyePower;
-		}
-
-		public function set fishEyeRadius(value:Number):void{
-			_fishEyeRadius = value;
-		}
-		
-		public function get fishEyeRadius():Number{
-			return _fishEyeRadius;
 		}
 		
 		public function get graphGraphics():GraphGraphics{
@@ -256,6 +217,14 @@ package com.ofnodesandedges.y2010.graphics{
 
 		public function get isPlaying():Boolean{
 			return _isPlaying;
+		}
+
+		public function get fishEyeDisplay():FishEyeDisplay{
+			return _fishEyeDisplay;
+		}
+
+		public function get zoomDisplay():ZoomDisplay{
+			return _zoomDisplay;
 		}
 
 

@@ -108,43 +108,6 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 		}
 		
-		public function setFishEye(centerX:Number,centerY:Number,fishEyeRadius:Number,fishEyePower:Number):void{
-			var xDist:Number, yDist:Number, dist:Number, newDist:Number, newSize:Number;
-			
-			for each(var node:NodeGraphics in _nodes){
-				xDist = node.x - centerX;
-				yDist = node.y - centerY;
-				
-				dist = Math.sqrt(xDist*xDist + yDist*yDist);
-				
-				if(dist<fishEyeRadius){
-					// Makes the biggest distances become bigger, the smallest smaller:
-					//newDist = 6.75*Math.pow(dist,2)/fishEyeRadius - 9.5*Math.pow(dist,3)/Math.pow(fishEyeRadius,2) + 3.75*Math.pow(dist,4)/Math.pow(fishEyeRadius,3);
-					//newSize = 6.75*Math.pow(dist,2)/fishEyeRadius - 9.5*Math.pow(dist,3)/Math.pow(fishEyeRadius,2) + 3.75*Math.pow(dist,4)/Math.pow(fishEyeRadius,3);
-					
-					// Asymptotic exponential - everything is bigger, but the middle values are the most increased:
-					newDist = Math.pow(Math.E,fishEyePower)/(Math.pow(Math.E,fishEyePower)-1)*fishEyeRadius*(1-Math.exp(-dist/fishEyeRadius*fishEyePower));
-					newSize = Math.pow(Math.E,fishEyePower)/(Math.pow(Math.E,fishEyePower)-1)*fishEyeRadius*(1-Math.exp(-dist/fishEyeRadius*fishEyePower));
-					
-					// Quarter circle - everything is bigger, but the middle values are the most increased:
-					//newDist = Math.sqrt(Math.pow(fishEyeRadius,2) - Math.pow(dist-fishEyeRadius,2));
-					//newSize = Math.sqrt(Math.pow(fishEyeRadius,2) - Math.pow(dist-fishEyeRadius,2));
-					
-					node.displayX = centerX + xDist*(newDist/dist*3/4 + 1/4);
-					node.displayY = centerY + yDist*(newDist/dist*3/4 + 1/4);
-					node.displaySize = Math.min(node.size*newSize/dist,10*node.size);
-					
-					node.borderThickness = node.displaySize/3;
-				}else{
-					node.displayX = node.x;
-					node.displayY = node.y;
-					node.displaySize = node.size;
-					
-					node.borderThickness = 0;
-				}
-			}
-		}
-		
 		public function resizeNodes(newMin:Number,newMax:Number):void{
 			// Find current maxima:
 			var max:Number = _nodes[0].size;
