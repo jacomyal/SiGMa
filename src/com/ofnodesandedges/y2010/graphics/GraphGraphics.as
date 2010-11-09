@@ -98,11 +98,11 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 		}
 		
-		public function setDisplayVars():void{
+		public function setDisplayVars(x:Number=0,y:Number=0,ratio:Number=1):void{
 			for each(var node:NodeGraphics in _nodes){
-				node.displayX = node.x;
-				node.displayY = node.y;
-				node.displaySize = node.size;
+				node.displayX = node.x*ratio+x;
+				node.displayY = node.y*ratio+y;
+				node.displaySize = node.size*Math.sqrt(ratio);
 				
 				node.borderThickness = 0;
 			}

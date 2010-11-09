@@ -22,9 +22,9 @@ package com.ofnodesandedges.y2010.graphics{
 	
 	import com.ofnodesandedges.y2010.data.NodeData;
 	import com.ofnodesandedges.y2010.display.FishEyeDisplay;
-	import com.ofnodesandedges.y2010.display.ZoomDisplay;
 	import com.ofnodesandedges.y2010.graphics.*;
 	import com.ofnodesandedges.y2010.layout.*;
+	import com.ofnodesandedges.y2010.mouseinteraction.MouseInteraction;
 	import com.ofnodesandedges.y2010.ui.Main;
 	
 	import flash.display.Graphics;
@@ -56,9 +56,9 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _textSize:Number;
 		private var _textThreshold:Number;
 		
-		// Display classes:
+		// Display and interaction classes:
 		private var _fishEyeDisplay:FishEyeDisplay;
-		private var _zoomDisplay:ZoomDisplay;
+		private var _mouseInteraction:MouseInteraction;
 		
 		public function MainDisplayElement(main:Main){
 			_main = main;
@@ -80,7 +80,8 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			// Display classes:
 			_fishEyeDisplay = new FishEyeDisplay(_graphGraphics,_miscSprite);
-			_zoomDisplay = new ZoomDisplay(_graphGraphics,stage);
+			_mouseInteraction = new MouseInteraction(this);
+			_mouseInteraction.enable();
 			
 			// Display vars:
 			_displayEdges = false;
@@ -144,10 +145,6 @@ package com.ofnodesandedges.y2010.graphics{
 		}
 		
 		private function enterFrameHandler(e:Event):void{
-			var radius:Number = -1;
-			var eye_x:Number = -1;
-			var eye_y:Number = -1;
-			
 			// Set/reset sprites:
 			var edgesGraphics:Graphics = (_displayEdges) ? _edgesSprite.graphics : null;
 			var labelContainer:Sprite = (_displayText) ? _labelSprite : null;
@@ -155,9 +152,8 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			// Adapt display:
 			_graphGraphics.processRescaling(stage,this);
-			_graphGraphics.setDisplayVars();
+			_graphGraphics.setDisplayVars(_mouseInteraction.x,_mouseInteraction.y,_mouseInteraction.ratio);
 			if(_fishEyeDisplay.enable) _fishEyeDisplay.applyDisplay();
-			if(_zoomDisplay.enable) _zoomDisplay.applyDisplay();
 			
 			_graphGraphics.drawGraph(edgesGraphics,_nodesSprite.graphics,labelContainer,_textSize,_textThreshold);
 		}
@@ -221,10 +217,6 @@ package com.ofnodesandedges.y2010.graphics{
 
 		public function get fishEyeDisplay():FishEyeDisplay{
 			return _fishEyeDisplay;
-		}
-
-		public function get zoomDisplay():ZoomDisplay{
-			return _zoomDisplay;
 		}
 
 
