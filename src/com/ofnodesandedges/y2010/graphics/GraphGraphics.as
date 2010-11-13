@@ -98,11 +98,11 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 		}
 		
-		public function setDisplayVars(x:Number=0,y:Number=0,ratio:Number=1):void{
+		public function setDisplayVars(stageX:Number=0,stageY:Number=0,stageRatio:Number=1):void{
 			for each(var node:NodeGraphics in _nodes){
-				node.displayX = node.x*ratio+x;
-				node.displayY = node.y*ratio+y;
-				node.displaySize = node.size*Math.sqrt(ratio);
+				node.displayX = node.x*stageRatio+stageX;
+				node.displayY = node.y*stageRatio+stageY;
+				node.displaySize = node.size*Math.sqrt(stageRatio);
 				
 				node.borderThickness = 0;
 			}
@@ -146,51 +146,13 @@ package com.ofnodesandedges.y2010.graphics{
 				if(_nodes[i].y<yMin) yMin = _nodes[i].y; 
 			}
 			
-			var scale:Number = Math.max(areaWidth/(xMax-xMin),areaHeight/(yMax-yMin));
+			var scale:Number = Math.min(0.9*areaWidth/(xMax-xMin),0.9*areaHeight/(yMax-yMin));
 			
 			// Rescale the nodes:
 			for(i=0;i<l;i++){
-				_nodes[i].x = (_nodes[i].x-(xMax+xMin)/2)*scale;
-				_nodes[i].y = (_nodes[i].y-(yMax+yMin)/2)*scale; 
+				_nodes[i].x = (_nodes[i].x-(xMax+xMin)/2)*scale + areaWidth/2;
+				_nodes[i].y = (_nodes[i].y-(yMax+yMin)/2)*scale + areaHeight/2; 
 			}
-		}
-		
-		public function processRescaling(stage:Stage, sprite:Sprite):void{
-			var xMin:Number = _nodes[0].x-_nodes[0].size;
-			var xMax:Number = _nodes[0].x-_nodes[0].size;
-			var yMin:Number = _nodes[0].y-_nodes[0].size;
-			var yMax:Number = _nodes[0].y-_nodes[0].size;
-			var ratio:Number;
-			var node:NodeGraphics;
-			
-			var frameWidth:Number = stage.stageWidth-30;
-			var frameHeight:Number = stage.stageHeight-30;
-			
-			for (var i:Number = 1;i<_nodes.length;i++){
-				node = _nodes[i];
-				
-				if(node.x-node.size < xMin)
-					xMin = node.x-node.size;
-				if(node.x+node.size > xMax)
-					xMax = node.x+node.size;
-				if(node.y-node.size < yMin)
-					yMin = node.y-node.size;
-				if(node.y+node.size > yMax)
-					yMax = node.y+node.size;
-			}
-			
-			var xCenter:Number = (xMax + xMin)/2;
-			var yCenter:Number = (yMax + yMin)/2;
-			
-			var xSize:Number = xMax - xMin;
-			var ySize:Number = yMax - yMin;
-			
-			ratio = Math.min(frameWidth/xSize,frameHeight/ySize)*0.9;
-			
-			sprite.x = frameWidth/2-xCenter*ratio;
-			sprite.y = frameHeight/2-yCenter*ratio;
-			sprite.scaleX = ratio;
-			sprite.scaleY = ratio;
 		}
 		
 		public function refreshEdges():void{
@@ -301,7 +263,9 @@ package com.ofnodesandedges.y2010.graphics{
 					drawPoly(node.displaySize-node.borderThickness,3,node.displayX,node.displayY,nodesGraphics);
 					break;
 				default:
-					nodesGraphics.drawCircle(node.displayX,node.displayY,node.displaySize-node.borderThickness);
+					nodesGraphics.drawCircle(node.displayX,
+						node.displayY,
+						node.displaySize-node.borderThickness);
 					//nodesGraphics.drawRect(-Math.SQRT2*node.displaySize/2+node.displayX,-Math.SQRT2*node.displaySize/2+node.displayY,node.displaySize,node.displaySize);
 					break;
 			}

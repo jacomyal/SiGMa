@@ -36,7 +36,7 @@ package com.ofnodesandedges.y2010.display{
 			_sprite = sprite;
 			
 			_enable = false;
-			_radius = Math.min(_sprite.stage.stageWidth,_sprite.stage.stageHeight);
+			_radius = Math.min(_sprite.stage.stageWidth,_sprite.stage.stageHeight)/2;
 			_power = 5;
 		}
 		
@@ -65,7 +65,7 @@ package com.ofnodesandedges.y2010.display{
 			
 			_sprite.graphics.clear();
 			_sprite.graphics.lineStyle(10/_sprite.scaleX,0xAAAAAA,2);
-			_sprite.graphics.drawCircle(_sprite.mouseX,_sprite.mouseY,_radius/_sprite.scaleX);
+			_sprite.graphics.drawCircle(_sprite.mouseX,_sprite.mouseY,_radius);
 		}
 
 		public function get power():Number{

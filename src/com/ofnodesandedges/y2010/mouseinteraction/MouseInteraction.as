@@ -1,4 +1,26 @@
+/**
+ *
+ * SiGMa, the Simple Graph Mapper
+ * Copyright (C) 2010, Alexis Jacomy
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.ofnodesandedges.y2010.mouseinteraction{
+	
+	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -20,17 +42,22 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		
 		public function MouseInteraction(sprite:Sprite){
 			_sprite = sprite;
+			
+			_sprite.graphics.beginFill(0xFFAA55,0);
+			_sprite.graphics.drawRect(-10,-10,_sprite.stage.stageWidth+20,_sprite.stage.stageHeight+20);
+			_sprite.graphics.endFill();
+			
 			resetValues();
 		}
 		
 		private function mouseDown(m:MouseEvent):void{
 			_mouseX = m.localX;
 			_mouseY = m.localY;
-			_sprite.stage.addEventListener(Event.ENTER_FRAME,mouseMove);
+			_sprite.addEventListener(Event.ENTER_FRAME,mouseMove);
 		}
 		
 		private function mouseUp(m:MouseEvent):void{
-			_sprite.stage.removeEventListener(Event.ENTER_FRAME,mouseMove);
+			_sprite.removeEventListener(Event.ENTER_FRAME,mouseMove);
 		}
 		
 		private function mouseWheel(m:MouseEvent):void{
@@ -84,15 +111,15 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		}
 		
 		public function enable():void{
-			_sprite.stage.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
-			_sprite.stage.addEventListener(MouseEvent.MOUSE_UP,mouseUp);
-			_sprite.stage.addEventListener(MouseEvent.MOUSE_WHEEL,mouseWheel);
+			_sprite.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
+			_sprite.addEventListener(MouseEvent.MOUSE_UP,mouseUp);
+			_sprite.addEventListener(MouseEvent.MOUSE_WHEEL,mouseWheel);
 		}
 		
 		public function disable():void{
-			_sprite.stage.removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
-			_sprite.stage.removeEventListener(MouseEvent.MOUSE_UP,mouseUp);
-			_sprite.stage.removeEventListener(MouseEvent.MOUSE_WHEEL,mouseWheel);
+			_sprite.removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
+			_sprite.removeEventListener(MouseEvent.MOUSE_UP,mouseUp);
+			_sprite.removeEventListener(MouseEvent.MOUSE_WHEEL,mouseWheel);
 		}
 		
 		public function resetValues():void{

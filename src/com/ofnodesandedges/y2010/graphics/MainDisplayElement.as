@@ -45,6 +45,7 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _nodesSprite:Sprite;
 		private var _labelSprite:Sprite;
 		private var _miscSprite:Sprite;
+		private var _mouseSprite:Sprite;
 		
 		// Mouse and spatial properties:
 		private var _mouseX:Number;
@@ -63,7 +64,6 @@ package com.ofnodesandedges.y2010.graphics{
 		public function MainDisplayElement(main:Main){
 			_main = main;
 			_main.stage.addChild(this);
-			
 			// Build graph to display:
 			initGraph();
 			
@@ -72,15 +72,17 @@ package com.ofnodesandedges.y2010.graphics{
 			_nodesSprite = new Sprite();
 			_labelSprite = new Sprite();
 			_miscSprite = new Sprite();
+			_mouseSprite = new Sprite();
 			
 			addChild(_edgesSprite);
 			addChild(_nodesSprite);
 			addChild(_labelSprite);
 			addChild(_miscSprite);
+			addChild(_mouseSprite);
 			
 			// Display classes:
 			_fishEyeDisplay = new FishEyeDisplay(_graphGraphics,_miscSprite);
-			_mouseInteraction = new MouseInteraction(this);
+			_mouseInteraction = new MouseInteraction(_mouseSprite);
 			_mouseInteraction.enable();
 			
 			// Display vars:
@@ -101,7 +103,7 @@ package com.ofnodesandedges.y2010.graphics{
 				_displayText = true;
 				_layout = new ForceAtlas();
 				
-				_graphGraphics.rescaleNodes(2000,2000);
+				_graphGraphics.rescaleNodes(stage.stageWidth,stage.stageHeight);
 				_layout.init(_graphGraphics);
 			}
 			
@@ -112,7 +114,7 @@ package com.ofnodesandedges.y2010.graphics{
 		private function initGraph():void{
 			_graphGraphics = new GraphGraphics(_main.graph);
 			_graphGraphics.refreshEdges();
-			_graphGraphics.resizeNodes(0,30);
+			_graphGraphics.resizeNodes(0,15);
 			
 			_isPlaying = !_main.graph.hasCoordinates;
 		}
@@ -151,7 +153,7 @@ package com.ofnodesandedges.y2010.graphics{
 			_miscSprite.graphics.clear();
 			
 			// Adapt display:
-			_graphGraphics.processRescaling(stage,this);
+			_graphGraphics.rescaleNodes(stage.stageWidth,stage.stageHeight);
 			_graphGraphics.setDisplayVars(_mouseInteraction.x,_mouseInteraction.y,_mouseInteraction.ratio);
 			if(_fishEyeDisplay.enable) _fishEyeDisplay.applyDisplay();
 			

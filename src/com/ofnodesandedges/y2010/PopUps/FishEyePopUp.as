@@ -86,8 +86,8 @@ package com.ofnodesandedges.y2010.popups{
 			if(_radiusLabel.width>_contentWidth) _contentWidth = _radiusLabel.width;
 			
 			_radiusSlider = new Slider();
-			_radiusSlider.minimum = 1/4*Math.min(_mainDisplayElement.stage.stageWidth,_mainDisplayElement.stage.stageHeight);
-			_radiusSlider.maximum = 2*Math.min(_mainDisplayElement.stage.stageWidth,_mainDisplayElement.stage.stageHeight);
+			_radiusSlider.minimum = 1/8*Math.min(_mainDisplayElement.stage.stageWidth,_mainDisplayElement.stage.stageHeight);
+			_radiusSlider.maximum = Math.min(_mainDisplayElement.stage.stageWidth,_mainDisplayElement.stage.stageHeight);
 			_radiusSlider.value = _mainDisplayElement.fishEyeDisplay.radius;
 			_radiusSlider.addEventListener(SliderEvent.CHANGE,radiusChange);
 			_radiusSlider.width = 100;

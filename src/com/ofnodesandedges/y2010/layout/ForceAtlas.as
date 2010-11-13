@@ -55,7 +55,7 @@ package com.ofnodesandedges.y2010.layout{
 			_maxDisplacement = 500;
 			_freezeStrength = 8;
 			_freezeInertia = 0.5;
-			_gravity = 0.0003;
+			_gravity = 0.0000;
 			_speed = 1000;
 			_cooling = 1;
 			_nodeOverlap = true;
