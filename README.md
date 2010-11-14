@@ -15,10 +15,25 @@ Finally, SiGMa's interface will be oriented along different tools, from the simp
 
 ##II. Functionalities
 ###1. Current state
-The most basic features have all been implemented: It is currently possible to load a GEXF or GDF encoded graph, and to display it. Also, some tools have been implemented to make the observation of the graph easier, including buttons to choose if labels and/or edges have to be displayed, with some parameters to adapt it as you want. And finally, some more specific features have been implemented, like a *FishEye* zoom, or two different layouts when the original file does not contain nodes coordinates, one force-directed layout rough and efficient, and the other one thiner and with a better quality, but slower.
+The most basic features have all been implemented, and SiGMa is not usable:
+* *GEXF* and *GDF* loaders
+* *HITS* to set nodes colors/sizes - when not set in the original file
+* Force-directed layout to set nodes coordinates - when not set in the original file
+* Mouse interaction (zoom in/out, drag and drop the stage, *FishEye* zoom)
+* Display parameters (display/ hide edges or labels, set nodes/labels/edges size)
 
 ###2. To be done
-The first priority is to finish a first version of the application, flexible for the user. That involves some classes to set nodes colors and sizes when they are not set in the file - a metric like *HITS* is planned, and also maybe a clustering algorithm to set the colors when it's relevant (Social Networks mapping, etc). Also, when enough tools will be implemented, a formulary to select which tools to display will be done, to make SiGMa fully customable.
+The next features to implement are most about content or to increase the customization potential for the user:
+* Nodes/edges attributes display
+* Meta data display
+* Edges labels
+* Nodes filtering/categorization/search
+* Formulary to allow webmasters to customize the options panel and initial settings
+
+When these features will be all implemented, it will then be possible to start implementing new exploration modes:
+* Radial exploration
+* Neighbourhood exploration
+* Circular layout
 
 ##III. How to use it
 * Download the last stable version at [GitHub](http://www.github.com/jacomyal/SiGMa/downloads), and put 'SiGMa demo/SiGMa.swf' somewhere on your server.
