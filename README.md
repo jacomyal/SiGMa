@@ -16,6 +16,7 @@ Finally, SiGMa's interface will be oriented along different tools, from the simp
 ##II. Functionalities
 ###1. Current state
 The most basic features have all been implemented, and SiGMa is not usable:
+
 * *GEXF* and *GDF* loaders
 * *HITS* to set nodes colors/sizes - when not set in the original file
 * Force-directed layout to set nodes coordinates - when not set in the original file
@@ -24,6 +25,7 @@ The most basic features have all been implemented, and SiGMa is not usable:
 
 ###2. To be done
 The next features to implement are most about content or to increase the customization potential for the user:
+
 * Nodes/edges attributes display
 * Meta data display
 * Edges labels
