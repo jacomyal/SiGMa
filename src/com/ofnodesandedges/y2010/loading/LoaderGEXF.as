@@ -176,26 +176,28 @@ package com.ofnodesandedges.y2010.loading{
 					}
 					
 					// Color:
-					if((xmlSubCursor.name().localName=='color')&&
-					   (xmlSubCursor.attribute("b")!=undefined)&&
-					   (xmlSubCursor.attribute("g")!=undefined)&&
-					   (xmlSubCursor.attribute("r")!=undefined)){
-						b = xmlSubCursor.attribute("b");
-						g = xmlSubCursor.attribute("g");
-						r = xmlSubCursor.attribute("r");
-						
-						node.color = setColor(b,g,r);
-					}else{
-						_hasNodeColors++;
+					if(xmlSubCursor.name().localName=='color'){
+						if((xmlSubCursor.attribute("b")!=undefined)&&
+						   (xmlSubCursor.attribute("g")!=undefined)&&
+						   (xmlSubCursor.attribute("r")!=undefined)){
+							b = xmlSubCursor.attribute("b");
+							g = xmlSubCursor.attribute("g");
+							r = xmlSubCursor.attribute("r");
+							
+							node.color = setColor(b,g,r);
+						}else{
+							_hasNodeColors++;
+						}
 					}
 					
 					// Size:
-					if((xmlSubCursor.name().localName=='size')&&
-					   (xmlSubCursor.@value!=undefined)){
-						size = new Number(xmlSubCursor.@value);
-						node.size = size;
-					}else{
-						_hasNodeSizes++;
+					if(xmlSubCursor.name().localName=='size'){
+						if(xmlSubCursor.@value!=undefined){
+							size = new Number(xmlSubCursor.@value);
+							node.size = size;
+						}else{
+							_hasNodeSizes++;
+						}
 					}
 					
 					// Old format attributes container, see below:

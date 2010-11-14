@@ -81,13 +81,14 @@ package com.ofnodesandedges.y2010.loading{
 		protected function parseFile(data:String):void{}
 		
 		protected function checkGraph():void{
-			if((_hasNodeColors>_graphData.nodes.length/10)||(_hasNodeSizes>_graphData.nodes.length/10)){
-				(new HITS()).computeMetric(_graphData,1);
+			if((_hasNodeColors>_graphData.nodes.length*THRESHOLD)||(_hasNodeSizes>_graphData.nodes.length*THRESHOLD)){
+				var options:Object = {steps:1};
+				(new HITS()).computeMetric(_graphData,options);
 				if(_hasNodeColors>_graphData.nodes.length*THRESHOLD){
 					var minColor:uint = 0xFEF48D;
 					var maxColor:uint = 0xFF1F08;
 					
-					//_graphData.setColor(HITS.AUTHORITIES_ID,minColor,maxColor);
+					_graphData.setColor(HITS.AUTHORITIES_ID,minColor,maxColor);
 				}
 				
 				if(_hasNodeSizes>_graphData.nodes.length*THRESHOLD){

@@ -23,7 +23,7 @@ package com.ofnodesandedges.y2010.metrics{
 	import com.ofnodesandedges.y2010.data.GraphData;
 	import com.ofnodesandedges.y2010.data.NodeData;
 	
-	public class HITS{
+	public class HITS extends Metric{
 		
 		public static const HUBS_ID:String = "flash_hubs";
 		public static const HUBS_LABEL:String = "Hub score";
@@ -32,7 +32,9 @@ package com.ofnodesandedges.y2010.metrics{
 		
 		public function HITS(){}
 		
-		public function computeMetric(graph:GraphData,steps:int):GraphData{
+		public override function computeMetric(graph:GraphData,options:Object = null):void{
+			var steps:int = options["steps"];
+			
 			graph.addNodeAttribute(HUBS_ID,HUBS_LABEL,"number",1);
 			graph.addNodeAttribute(AUTHORITIES_ID,AUTHORITIES_LABEL,"number",1);
 			
@@ -79,8 +81,6 @@ package com.ofnodesandedges.y2010.metrics{
 				node.addAttribute(HUBS_ID,hubs[index[node.id]]);
 				node.addAttribute(AUTHORITIES_ID,authorities[index[node.id]]);
 			}
-			
-			return graph;
 		}
 	}
 }
