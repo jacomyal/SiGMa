@@ -21,41 +21,36 @@
 package com.ofnodesandedges.y2010.buttons{
 	
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
+	import com.ofnodesandedges.y2010.popups.FishEyePopUp;
+	import com.ofnodesandedges.y2010.popups.SettingsPopUp;
 	
 	import flash.display.DisplayObjectContainer;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
-	public class LayoutButton extends DoubleButton{
+	public class SettingsButton extends DoubleButton{
 		
+		private var _settingsPopUp:SettingsPopUp;
 		private var _mainDisplayElement:MainDisplayElement;
 		
-		public function LayoutButton(root:DisplayObjectContainer,x:Number,y:Number,width:Number,height:Number=-1,options:Object=null){
-			_description = 'Start layout';
-			_description2 = 'Stop layout';
+		public function SettingsButton(root:DisplayObjectContainer,x:Number,y:Number,width:Number,height:Number=-1,options:Object=null){
+			_description = 'Open settings panel';
+			_description2 = 'Close settings panel';
 			
-			_actionButton = new StartLayout();
-			_actionButton2 = new StopLayout();
+			_actionButton = new OpenSettings();
+			_actionButton2 = new CloseSettings();
 			
 			_mainDisplayElement = options["_mainDisplayElement"];
-			_mainDisplayElement.addEventListener(MainDisplayElement.LAYOUT_FINISHED,whenLayoutFinished);
+			
+			_settingsPopUp = new SettingsPopUp(_mainDisplayElement);
 			
 			super(root,x,y,width,height,options);
-			
-			if(_mainDisplayElement.isPlaying == true){
-				switchAction();
-			}
-		}
-		
-		public function whenLayoutFinished(e:Event):void{
-			if(_mainDisplayElement.isPlaying == false){
-				switchAction();
-			}
 		}
 		
 		protected override function actionClick(m:MouseEvent):void{
 			if(_actionButton.enabled==true){
-				_mainDisplayElement.startLayout();
+				addChild(_settingsPopUp);
+				_settingsPopUp.open(_actionButton.width/2,-6);
 				
 				switchAction();
 			}
@@ -63,7 +58,8 @@ package com.ofnodesandedges.y2010.buttons{
 		
 		protected override function action2Click(m:MouseEvent):void{
 			if(_actionButton2.enabled==true){
-				_mainDisplayElement.stopLayout();
+				removeChild(_settingsPopUp);
+				_settingsPopUp.close();
 				
 				switchAction();
 			}

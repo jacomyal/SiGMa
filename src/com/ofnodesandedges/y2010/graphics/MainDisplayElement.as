@@ -33,6 +33,9 @@ package com.ofnodesandedges.y2010.graphics{
 	
 	public class MainDisplayElement extends Sprite{
 		
+		public static const LAYOUT_STARTED:String = "Layout started";
+		public static const LAYOUT_FINISHED:String = "Layout finish";
+		
 		private var _main:Main;
 		private var _graphGraphics:GraphGraphics;
 		
@@ -56,6 +59,8 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _displayText:Boolean;
 		private var _textSize:Number;
 		private var _textThreshold:Number;
+		private var _nodesRatio:Number;
+		private var _edgesRatio:Number;
 		
 		// Display and interaction classes:
 		private var _fishEyeDisplay:FishEyeDisplay;
@@ -64,6 +69,7 @@ package com.ofnodesandedges.y2010.graphics{
 		public function MainDisplayElement(main:Main){
 			_main = main;
 			_main.stage.addChild(this);
+			
 			// Build graph to display:
 			initGraph();
 			
@@ -89,13 +95,17 @@ package com.ofnodesandedges.y2010.graphics{
 			_displayEdges = false;
 			_displayText = false;
 			_textSize = 24;
-			_textThreshold = 1/5*_graphGraphics.getMinSize()+4/5*_graphGraphics.getMaxSize();
+			_textThreshold = 3/5*_graphGraphics.getMinSize()+2/5*_graphGraphics.getMaxSize();
+			_nodesRatio = 1;
+			_edgesRatio = 1;
 			
 			// Init layout:
 			if(_isPlaying){
 				_layout = new RoughLayout();
 				
 				_graphGraphics.random(2000,2000);
+				_graphGraphics.rescaleNodes(stage.stageWidth,stage.stageHeight);
+				
 				_layout.addEventListener(Layout.FINISH,roughLayoutFinished);
 				this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
 				_layout.init(_graphGraphics);
@@ -114,7 +124,9 @@ package com.ofnodesandedges.y2010.graphics{
 		private function initGraph():void{
 			_graphGraphics = new GraphGraphics(_main.graph);
 			_graphGraphics.refreshEdges();
+			
 			_graphGraphics.resizeNodes(0,15);
+			_graphGraphics.rescaleNodes(stage.stageWidth,stage.stageHeight);
 			
 			_isPlaying = !_main.graph.hasCoordinates;
 		}
@@ -129,6 +141,12 @@ package com.ofnodesandedges.y2010.graphics{
 		private function nodeOverlapFinished(e:Event):void{
 			_layout.removeEventListener(Layout.FINISH,nodeOverlapFinished);
 			this.removeEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+			
+			_isPlaying = false;
+			dispatchEvent(new Event(LAYOUT_FINISHED));
+			
+			_layout = new ForceAtlas();
+			_layout.init(_graphGraphics);
 			
 			//launchForceAtlas();
 		}
@@ -157,7 +175,11 @@ package com.ofnodesandedges.y2010.graphics{
 			_graphGraphics.setDisplayVars(_mouseInteraction.x,_mouseInteraction.y,_mouseInteraction.ratio);
 			if(_fishEyeDisplay.enable) _fishEyeDisplay.applyDisplay();
 			
-			_graphGraphics.drawGraph(edgesGraphics,_nodesSprite.graphics,labelContainer,_textSize,_textThreshold);
+			_graphGraphics.drawGraph(edgesGraphics,_nodesSprite.graphics,_edgesRatio*_mouseInteraction.ratio,_nodesRatio,stage.stageWidth,stage.stageHeight,labelContainer,_textSize,_textThreshold);
+		}
+		
+		public function rescaleGraph():void{
+			_mouseInteraction.resetValues();
 		}
 		
 		public function startLayout():void{
@@ -219,6 +241,22 @@ package com.ofnodesandedges.y2010.graphics{
 
 		public function get fishEyeDisplay():FishEyeDisplay{
 			return _fishEyeDisplay;
+		}
+
+		public function get nodesRatio():Number{
+			return _nodesRatio;
+		}
+
+		public function set nodesRatio(value:Number):void{
+			_nodesRatio = value;
+		}
+
+		public function get edgesRatio():Number{
+			return _edgesRatio;
+		}
+
+		public function set edgesRatio(value:Number):void{
+			_edgesRatio = value;
 		}
 
 

@@ -36,6 +36,9 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		private var _x:Number;
 		private var _y:Number;
 		
+		
+		private var _tempX:Number;
+		private var _tempY:Number;
 		private var _mouseX:Number;
 		private var _mouseY:Number;
 		private var _zoomRatio:Number;
@@ -51,8 +54,12 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		}
 		
 		private function mouseDown(m:MouseEvent):void{
-			_mouseX = m.localX;
-			_mouseY = m.localY;
+			_mouseX = m.stageX;
+			_mouseY = m.stageY;
+			
+			_tempX = _x;
+			_tempY = _y;
+			
 			_sprite.addEventListener(Event.ENTER_FRAME,mouseMove);
 		}
 		
@@ -61,8 +68,8 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		}
 		
 		private function mouseWheel(m:MouseEvent):void{
-			_mouseX = m.localX;
-			_mouseY = m.localY;
+			_mouseX = m.stageX;
+			_mouseY = m.stageY;
 			
 			if(m.delta>=0){
 				startZoomIn();
@@ -71,9 +78,9 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 			}
 		}
 		
-		private function mouseMove():void{
-			_x = _sprite.stage.mouseX - _mouseX;
-			_y = _sprite.stage.mouseY - _mouseY;
+		private function mouseMove(e:Event):void{
+			_x = _sprite.stage.mouseX - _mouseX + _tempX;
+			_y = _sprite.stage.mouseY - _mouseY + _tempY;
 		}
 		
 		private function startZoomIn():void{

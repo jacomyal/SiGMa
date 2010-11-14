@@ -87,7 +87,7 @@ package com.ofnodesandedges.y2010.loading{
 					var minColor:uint = 0xFEF48D;
 					var maxColor:uint = 0xFF1F08;
 					
-					_graphData.setColor(HITS.AUTHORITIES_ID,minColor,maxColor);
+					//_graphData.setColor(HITS.AUTHORITIES_ID,minColor,maxColor);
 				}
 				
 				if(_hasNodeSizes>_graphData.nodes.length*THRESHOLD){

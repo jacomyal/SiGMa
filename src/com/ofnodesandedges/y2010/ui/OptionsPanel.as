@@ -92,6 +92,15 @@ package com.ofnodesandedges.y2010.ui{
 			var button:Button;
 			var parameters:Object;
 			
+			// Rescale graph:
+			parameters = new Object();
+			parameters['_mainDisplayElement'] = _mainDisplayElement;
+			
+			button = new ResetStagePositionButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
+			_buttonsIndex['ResetStagePositionButton'] = indexParser++;
+			_buttons.push(button);
+			xParser += button.getWidth()+10;
+			
 			// FishEye management:
 			parameters = new Object();
 			parameters['_mainDisplayElement'] = _mainDisplayElement;
@@ -125,6 +134,15 @@ package com.ofnodesandedges.y2010.ui{
 			
 			button = new DisplayTextButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
 			_buttonsIndex['DisplayTextButton'] = indexParser++;
+			_buttons.push(button);
+			xParser += button.getWidth()+10;
+			
+			// Labels displaying:
+			parameters = new Object();
+			parameters['_mainDisplayElement'] = _mainDisplayElement;
+			
+			button = new SettingsButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
+			_buttonsIndex['SettingsButton'] = indexParser++;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			

@@ -109,10 +109,10 @@ package com.ofnodesandedges.y2010.buttons{
 			_actionButton.addEventListener(MouseEvent.MOUSE_OVER,actionOver);
 			_actionButton.addEventListener(MouseEvent.MOUSE_OUT,actionOut);
 			
-			//if(_popUp != null){
+			if(_popUp != null){
 				_popUp.addEventListener(PopUp.OPEN,popUpOpening);
 				_popUp.addEventListener(PopUp.CLOSE,popUpClosing);
-			//}
+			}
 			
 			if(_parameters){
 				_openPopUpButton.addEventListener(MouseEvent.CLICK,openPopUpClick);

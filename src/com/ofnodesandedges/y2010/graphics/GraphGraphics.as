@@ -39,6 +39,9 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		private var _defaultEdgeType:String;
 		
+		private var _width:Number;
+		private var _height:Number;
+		
 		public function GraphGraphics(graphData:GraphData){
 			_nodes = new Vector.<NodeGraphics>();
 			
@@ -50,16 +53,12 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			// Construct each node from the original data:
 			for(var i:int = 0; i<graphData.nodes.length; i++){
-				for(var targetID:String in graphData.nodes[i].inNeighbors){
-					_nodes[i].addNeighbor(getNode(targetID));
-				}
-				
 				for(var sourceID:String in graphData.nodes[i].outNeighbors){
 					_nodes[i].addNeighbor(getNode(sourceID));
 				}
 			}
 			
-			_defaultEdgeType = "undirected";
+			_defaultEdgeType = graphData.defaultEdgeType;
 		}
 		
 		public function addNode(node:NodeGraphics):void{
@@ -91,18 +90,16 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			for each(node in _nodes){
 				node.x = radius*Math.cos(angle);
-				node.displayX = radius*Math.cos(angle);
 				node.y = radius*Math.sin(angle);
-				node.displayY = radius*Math.sin(angle);
 				angle += Math.PI*2/nodesCount;
 			}
 		}
 		
 		public function setDisplayVars(stageX:Number=0,stageY:Number=0,stageRatio:Number=1):void{
 			for each(var node:NodeGraphics in _nodes){
-				node.displayX = node.x*stageRatio+stageX;
-				node.displayY = node.y*stageRatio+stageY;
-				node.displaySize = node.size*Math.sqrt(stageRatio);
+				node.displayX = node.displayX*stageRatio+stageX;
+				node.displayY = node.displayY*stageRatio+stageY;
+				node.displaySize = node.displaySize*Math.sqrt(stageRatio);
 				
 				node.borderThickness = 0;
 			}
@@ -150,8 +147,9 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			// Rescale the nodes:
 			for(i=0;i<l;i++){
-				_nodes[i].x = (_nodes[i].x-(xMax+xMin)/2)*scale + areaWidth/2;
-				_nodes[i].y = (_nodes[i].y-(yMax+yMin)/2)*scale + areaHeight/2; 
+				_nodes[i].displayX = (_nodes[i].x-(xMax+xMin)/2)*scale + areaWidth/2;
+				_nodes[i].displayY = (_nodes[i].y-(yMax+yMin)/2)*scale + areaHeight/2;
+				_nodes[i].displaySize = _nodes[i].size*scale;
 			}
 		}
 		
@@ -174,28 +172,31 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 		}
 		
-		public function drawGraph(edgesGraphics:Graphics,nodesGraphics:Graphics,labelSprite:Sprite=null,textSize:Number=0,textThreshold:Number=0):void{
-			if(edgesGraphics != null) drawEdges(edgesGraphics);
-			if(nodesGraphics != null) drawNodes(nodesGraphics);
+		public function drawGraph(edgesGraphics:Graphics,nodesGraphics:Graphics,edgesRatio:Number,nodesRatio:Number,width:Number,height:Number,labelSprite:Sprite=null,textSize:Number=0,textThreshold:Number=0):void{
+			_width = width;
+			_height = height;
+			
+			if(edgesGraphics != null) drawEdges(edgesGraphics,edgesRatio);
+			if(nodesGraphics != null) drawNodes(nodesGraphics,nodesRatio);
 			if(labelSprite != null) drawLabels(textSize,textThreshold,labelSprite);
 			//if(labelSprite != null) drawLabelsOnBitmap(textSize,textThreshold,labelSprite);
 		}
 		
-		private function drawEdges(edgesGraphics:Graphics):void{
+		private function drawEdges(edgesGraphics:Graphics,ratio:Number):void{
 			// Draw edges:
 			edgesGraphics.clear();
 			for each(var source:NodeGraphics in _nodes){
 				for each(var target:NodeGraphics in source.neighbors){
-					drawEdge(source,target,edgesGraphics);
+					drawEdge(source,target,edgesGraphics,ratio);
 				}
 			}
 		}
 		
-		private function drawNodes(nodesGraphics:Graphics):void{
+		private function drawNodes(nodesGraphics:Graphics,ratio:Number):void{
 			// Draw nodes:
 			nodesGraphics.clear();
 			for each(var node:NodeGraphics in _nodes){
-				drawNode(node,nodesGraphics);
+				drawNode(node,nodesGraphics,ratio);
 			}
 		}
 		
@@ -205,7 +206,7 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 			
 			for each(var displayNode:NodeGraphics in _nodes){
-				if(displayNode.displaySize>=threshold){
+				if((displayNode.displaySize>=threshold)&&(isOnScreen(displayNode))){
 					var label:TextField = new TextField();
 					var newSize:Number = size*displayNode.displaySize/10;
 					
@@ -231,7 +232,7 @@ package com.ofnodesandedges.y2010.graphics{
 			var mainY:Number = labelContainer.parent.y;
 			
 			for each(var displayNode:NodeGraphics in _nodes){
-				if(displayNode.displaySize>=threshold){
+				if((displayNode.displaySize>=threshold)&&(isOnScreen(displayNode))){
 					var label:TextField = new TextField();
 					var newSize:Number = size*displayNode.displaySize/10;
 					
@@ -248,56 +249,66 @@ package com.ofnodesandedges.y2010.graphics{
 			labelContainer.addChild(bitmap);
 		}
 		
-		private function drawNode(node:NodeGraphics,nodesGraphics:Graphics):void{
+		private function drawNode(node:NodeGraphics,nodesGraphics:Graphics,ratio:Number):void{
 			if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
 			else nodesGraphics.lineStyle(0,0,0);
 			nodesGraphics.beginFill(node.color,node.alpha);
-			switch(node.shape.toLowerCase()){
-				case "square":
-					nodesGraphics.drawRect(-Math.SQRT2*node.displaySize/2+node.displayX,-Math.SQRT2*node.displaySize/2+node.displayY,node.displaySize-node.borderThickness,node.displaySize-node.borderThickness);
-					break;
-				case "hexagon":
-					drawPoly(node.displaySize-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
-					break;
-				case "triangle":
-					drawPoly(node.displaySize-node.borderThickness,3,node.displayX,node.displayY,nodesGraphics);
-					break;
-				default:
-					nodesGraphics.drawCircle(node.displayX,
-						node.displayY,
-						node.displaySize-node.borderThickness);
-					//nodesGraphics.drawRect(-Math.SQRT2*node.displaySize/2+node.displayX,-Math.SQRT2*node.displaySize/2+node.displayY,node.displaySize,node.displaySize);
-					break;
+			if(isOnScreen(node)){
+				switch(node.shape.toLowerCase()){
+					case "square":
+						nodesGraphics.drawRect(-Math.SQRT2*node.displaySize*ratio/2+node.displayX,-Math.SQRT2*node.displaySize*ratio/2+node.displayY,node.displaySize*ratio-node.borderThickness,node.displaySize*ratio-node.borderThickness);
+						break;
+					case "hexagon":
+						drawPoly(node.displaySize*ratio-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
+						break;
+					case "triangle":
+						drawPoly(node.displaySize*ratio-node.borderThickness,3,node.displayX,node.displayY,nodesGraphics);
+						break;
+					default:
+						nodesGraphics.drawCircle(node.displayX,node.displayY,node.displaySize*ratio-node.borderThickness);
+						//nodesGraphics.drawRect(-Math.SQRT2*node.displaySize/2+node.displayX,-Math.SQRT2*node.displaySize/2+node.displayY,node.displaySize,node.displaySize);
+						break;
+				}
 			}
 			
 			nodesGraphics.endFill();
 		}
 		
-		private function drawEdge(source:NodeGraphics,target:NodeGraphics,edgesGraphics:Graphics):void{
-			var thickness:Number = 2;
-			var color:uint = source.color;;
+		private function drawEdge(source:NodeGraphics,target:NodeGraphics,edgesGraphics:Graphics,ratio:Number):void{
+			var thickness:Number = 1*Math.sqrt(ratio);
+			var color:uint = source.color;
 			var alpha:Number = 1;
 			
 			edgesGraphics.lineStyle(thickness,color,alpha);
-			
-			switch(_defaultEdgeType){
-				case "arrows":
-					
-					break;
-				case "directed":
-					var x_controle:Number = (source.displayX+target.displayX)/2 - (target.displayY-source.displayY)/4;
-					var y_controle:Number = (source.displayY+target.displayY)/2 - (source.displayX-target.displayX)/4;
-					
-					edgesGraphics.moveTo(source.displayX,source.displayY);
-					edgesGraphics.curveTo(x_controle,y_controle,target.displayX,target.displayY);
-					break;
-				default:
-					edgesGraphics.moveTo(source.displayX,source.displayY);
-					edgesGraphics.lineTo(target.displayX,target.displayY);
-					break;
+			if((isOnScreen(source))||(isOnScreen(target))){
+				switch(_defaultEdgeType){
+					case "arrows":
+						
+						break;
+					case "directed":
+						var x_controle:Number = (source.displayX+target.displayX)/2 - (target.displayY-source.displayY)/4;
+						var y_controle:Number = (source.displayY+target.displayY)/2 - (source.displayX-target.displayX)/4;
+						
+						edgesGraphics.moveTo(source.displayX,source.displayY);
+						edgesGraphics.curveTo(x_controle,y_controle,target.displayX,target.displayY);
+						break;
+					default:
+						edgesGraphics.moveTo(source.displayX,source.displayY);
+						edgesGraphics.lineTo(target.displayX,target.displayY);
+						break;
+				}
 			}
 			
 			edgesGraphics.endFill();
+		}
+		
+		private function isOnScreen(node:NodeGraphics):Boolean{
+			var res:Boolean = (node.displayX+node.displaySize>-_width/3)
+							&&(node.displayX-node.displaySize<_width*4/3)
+							&&(node.displayY+node.displaySize>-_height/3)
+							&&(node.displayY-node.displaySize<_height*4/3);
+			
+			return res;
 		}
 		
 		private function drawPoly(r:int,seg:int,cx:Number,cy:Number,container:Graphics):void{
@@ -323,22 +334,22 @@ package com.ofnodesandedges.y2010.graphics{
 		}
 		
 		public function getMinSize():Number{
-			var result:Number = _nodes[0].size;
+			var result:Number = _nodes[0].displaySize;
 			var i:int, l:int = _nodes.length;
 			
 			for(i=1;i<l;i++){
-				if(_nodes[i].size<result) result = _nodes[i].size; 
+				if(_nodes[i].displaySize<result) result = _nodes[i].displaySize; 
 			}
 			
 			return result;
 		}
 		
 		public function getMaxSize():Number{
-			var result:Number = _nodes[0].size;
+			var result:Number = _nodes[0].displaySize;
 			var i:int, l:int = _nodes.length;
 			
 			for(i=1;i<l;i++){
-				if(_nodes[i].size>result) result = _nodes[i].size; 
+				if(_nodes[i].displaySize>result) result = _nodes[i].displaySize; 
 			}
 			
 			return result;
