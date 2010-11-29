@@ -211,7 +211,7 @@ package com.ofnodesandedges.y2010.loading{
 			}
 			
 			if((source!='')&&(target!='')){
-				_graphData.addEdge(source,target);
+				_graphData.addEdge(source,target,new Object());
 			}
 		}
 		

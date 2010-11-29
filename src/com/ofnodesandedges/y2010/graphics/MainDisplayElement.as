@@ -88,7 +88,7 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			// Display classes:
 			_fishEyeDisplay = new FishEyeDisplay(_graphGraphics,_miscSprite);
-			_mouseInteraction = new MouseInteraction(_mouseSprite);
+			_mouseInteraction = new MouseInteraction(_mouseSprite,_graphGraphics);
 			_mouseInteraction.enable();
 			
 			// Display vars:
@@ -172,8 +172,13 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			// Adapt display:
 			_graphGraphics.rescaleNodes(stage.stageWidth,stage.stageHeight);
-			_graphGraphics.setDisplayVars(_mouseInteraction.x,_mouseInteraction.y,_mouseInteraction.ratio);
-			if(_fishEyeDisplay.enable) _fishEyeDisplay.applyDisplay();
+			if(_fishEyeDisplay.enable){
+				_mouseInteraction.resetValues();
+				_fishEyeDisplay.applyDisplay();
+			}else{
+				_graphGraphics.setDisplayVars(_mouseInteraction.x,_mouseInteraction.y,_mouseInteraction.ratio);
+				
+			}
 			
 			_graphGraphics.drawGraph(edgesGraphics,_nodesSprite.graphics,_edgesRatio*_mouseInteraction.ratio,_nodesRatio,stage.stageWidth,stage.stageHeight,labelContainer,_textSize,_textThreshold);
 		}

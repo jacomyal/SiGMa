@@ -50,8 +50,8 @@ package com.ofnodesandedges.y2010.display{
 				dist = Math.sqrt(xDist*xDist + yDist*yDist);
 				
 				if(dist<_radius){
-					newDist = Math.pow(Math.E,_power)/(Math.pow(Math.E,_power)-1)*_radius*(1-Math.exp(-dist/_radius*_power));
-					newSize = Math.pow(Math.E,_power)/(Math.pow(Math.E,_power)-1)*_radius*(1-Math.exp(-dist/_radius*_power));
+					newDist = Math.exp(_power)/(Math.exp(_power)-1)*_radius*(1-Math.exp(-dist/_radius*_power));
+					newSize = Math.exp(_power)/(Math.exp(_power)-1)*_radius*(1-Math.exp(-dist/_radius*_power));
 					
 					node.displayX = _sprite.mouseX + xDist*(newDist/dist*3/4 + 1/4);
 					node.displayY = _sprite.mouseY + yDist*(newDist/dist*3/4 + 1/4);

@@ -20,6 +20,7 @@
 
 package com.ofnodesandedges.y2010.mouseinteraction{
 	
+	import com.ofnodesandedges.y2010.graphics.GraphGraphics;
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
 	
 	import flash.display.Sprite;
@@ -31,11 +32,12 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		private static const ZOOM_RATIO:Number = 1.5;
 		private static const ZOOM_SPEED:Number = 3/4;
 		
+		private var _graphGraphics:GraphGraphics;
+		
 		private var _sprite:Sprite;
 		private var _ratio:Number;
 		private var _x:Number;
 		private var _y:Number;
-		
 		
 		private var _tempX:Number;
 		private var _tempY:Number;
@@ -43,7 +45,8 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		private var _mouseY:Number;
 		private var _zoomRatio:Number;
 		
-		public function MouseInteraction(sprite:Sprite){
+		public function MouseInteraction(sprite:Sprite, graphGraphics:GraphGraphics){
+			_graphGraphics = graphGraphics;
 			_sprite = sprite;
 			
 			_sprite.graphics.beginFill(0xFFAA55,0);
@@ -115,6 +118,10 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 			}else{
 				_sprite.stage.removeEventListener(Event.ENTER_FRAME,zoomOut);
 			}
+		}
+		
+		public function mouseOverNode():void{
+			
 		}
 		
 		public function enable():void{

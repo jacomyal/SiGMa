@@ -38,6 +38,7 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _nodes:Vector.<NodeGraphics>;
 		
 		private var _defaultEdgeType:String;
+		private var _defaultEdgeThickness:Number;
 		
 		private var _width:Number;
 		private var _height:Number;
@@ -47,18 +48,19 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			// Construct each node from the original data:
 			for each(var nodeData:NodeData in graphData.nodes){
-				var nodeGraphics:NodeGraphics = new NodeGraphics(nodeData);
+				var nodeGraphics:NodeGraphics = new NodeGraphics(nodeData,graphData.nodeAttributes);
 				_nodes.push(nodeGraphics);
 			}
 			
 			// Construct each node from the original data:
 			for(var i:int = 0; i<graphData.nodes.length; i++){
 				for(var sourceID:String in graphData.nodes[i].outNeighbors){
-					_nodes[i].addNeighbor(getNode(sourceID));
+					_nodes[i].addOutNeighbor(getNode(sourceID),graphData.nodes[i].outNeighbors[sourceID],graphData.edgeAttributes);
 				}
 			}
 			
 			_defaultEdgeType = graphData.defaultEdgeType;
+			_defaultEdgeThickness = 0.3;
 		}
 		
 		public function addNode(node:NodeGraphics):void{
@@ -164,9 +166,9 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			// Check the neighbors, delete the unexisting ones:
 			for each(node in _nodes){
-				for(var id:String in node.neighbors){
+				for(var id:String in node.outNeighbors){
 					if(!ids.hasOwnProperty(id)){
-						delete node.neighbors[id];
+						delete node.outNeighbors[id];
 					}
 				}
 			}
@@ -186,8 +188,8 @@ package com.ofnodesandedges.y2010.graphics{
 			// Draw edges:
 			edgesGraphics.clear();
 			for each(var source:NodeGraphics in _nodes){
-				for each(var target:NodeGraphics in source.neighbors){
-					drawEdge(source,target,edgesGraphics,ratio);
+				for(var i:int = 0;i<source.outNeighbors.length;i++){
+					drawEdge(source,i,edgesGraphics,ratio);
 				}
 			}
 		}
@@ -250,7 +252,7 @@ package com.ofnodesandedges.y2010.graphics{
 		}
 		
 		private function drawNode(node:NodeGraphics,nodesGraphics:Graphics,ratio:Number):void{
-			if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
+			if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness*ratio,node.borderColor,node.alpha);
 			else nodesGraphics.lineStyle(0,0,0);
 			nodesGraphics.beginFill(node.color,node.alpha);
 			if(isOnScreen(node)){
@@ -266,7 +268,7 @@ package com.ofnodesandedges.y2010.graphics{
 						break;
 					default:
 						nodesGraphics.drawCircle(node.displayX,node.displayY,node.displaySize*ratio-node.borderThickness);
-						//nodesGraphics.drawRect(-Math.SQRT2*node.displaySize/2+node.displayX,-Math.SQRT2*node.displaySize/2+node.displayY,node.displaySize,node.displaySize);
+						//drawPoly(node.displaySize*ratio-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
 						break;
 				}
 			}
@@ -274,14 +276,19 @@ package com.ofnodesandedges.y2010.graphics{
 			nodesGraphics.endFill();
 		}
 		
-		private function drawEdge(source:NodeGraphics,target:NodeGraphics,edgesGraphics:Graphics,ratio:Number):void{
-			var thickness:Number = 1*Math.sqrt(ratio);
+		private function drawEdge(source:NodeGraphics,targetIndex:int,edgesGraphics:Graphics,ratio:Number):void{
 			var color:uint = source.color;
 			var alpha:Number = 1;
 			
-			edgesGraphics.lineStyle(thickness,color,alpha);
+			var target:NodeGraphics = source.outNeighbors[targetIndex];
+			var edgeValues:Object = source.edgesValues[targetIndex];
+			
+			var edgeType:String = (edgeValues["type"]!=undefined) ? edgeValues["type"] : _defaultEdgeType;
+			var edgeThickness:Number = (edgeValues["size"]!=undefined) ? edgeValues["size"]*Math.sqrt(ratio) : _defaultEdgeThickness*Math.sqrt(ratio); 
+				
+			edgesGraphics.lineStyle(edgeThickness,color,alpha);
 			if((isOnScreen(source))||(isOnScreen(target))){
-				switch(_defaultEdgeType){
+				switch(edgeType){
 					case "arrows":
 						
 						break;

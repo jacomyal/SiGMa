@@ -43,17 +43,17 @@ package com.ofnodesandedges.y2010.data{
 			_nodes.push(node);
 		}
 		
-		public function addEdge(sourceID:String,targetID:String):void{
+		public function addEdge(sourceID:String,targetID:String,edgeAttributeValues:Object):void{
 			var nodeFrom:NodeData = getNode(sourceID);
 			var nodeTo:NodeData = getNode(targetID);
 			
 			if((nodeFrom!=null)&&(nodeTo!=null)){
-				nodeFrom.addOutNeighbor(targetID,edgeAttributes);
-				nodeTo.addInNeighbor(sourceID,edgeAttributes);
+				nodeFrom.addOutNeighbor(targetID,edgeAttributeValues);
+				nodeTo.addInNeighbor(sourceID,edgeAttributeValues);
 				
-				if(_defaultEdgeType == "undirected"){
-					nodeTo.addOutNeighbor(sourceID,edgeAttributes);
-					nodeFrom.addInNeighbor(targetID,edgeAttributes);
+				if((_defaultEdgeType == "undirected")&&(edgeAttributeValues["type"]!="directed")){
+					nodeTo.addOutNeighbor(sourceID,edgeAttributeValues);
+					nodeFrom.addInNeighbor(targetID,edgeAttributeValues);
 				}
 			}
 		}

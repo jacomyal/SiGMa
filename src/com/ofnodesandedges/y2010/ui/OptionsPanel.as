@@ -92,55 +92,41 @@ package com.ofnodesandedges.y2010.ui{
 			var button:Button;
 			var parameters:Object;
 			
-			// Rescale graph:
+			// Buttons parameters:
 			parameters = new Object();
 			parameters['_mainDisplayElement'] = _mainDisplayElement;
 			
+			// Rescale graph:
 			button = new ResetStagePositionButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
 			_buttonsIndex['ResetStagePositionButton'] = indexParser++;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			
 			// FishEye management:
-			parameters = new Object();
-			parameters['_mainDisplayElement'] = _mainDisplayElement;
-			
 			button = new FishEyeButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
 			_buttonsIndex['FishEyeButton'] = indexParser++;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			
 			// Edges displaying:
-			parameters = new Object();
-			parameters['_mainDisplayElement'] = _mainDisplayElement;
-			
 			button = new DisplayEdgesButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
 			_buttonsIndex['DisplayEdgesButton'] = indexParser++;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			
 			// Layout management:
-			parameters = new Object();
-			parameters['_mainDisplayElement'] = _mainDisplayElement;
-			
 			button = new LayoutButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
 			_buttonsIndex['LayoutButton'] = indexParser++;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			
 			// Labels displaying:
-			parameters = new Object();
-			parameters['_mainDisplayElement'] = _mainDisplayElement;
-			
 			button = new DisplayTextButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
 			_buttonsIndex['DisplayTextButton'] = indexParser++;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			
-			// Labels displaying:
-			parameters = new Object();
-			parameters['_mainDisplayElement'] = _mainDisplayElement;
-			
+			// Settings:
 			button = new SettingsButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
 			_buttonsIndex['SettingsButton'] = indexParser++;
 			_buttons.push(button);

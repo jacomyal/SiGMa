@@ -46,10 +46,24 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _borderColor:uint;
 		private var _borderThickness:Number;
 		
-		private var _neighbors:Vector.<NodeGraphics>;
+		private var _attributes:Object;
 		
-		public function NodeGraphics(nodeData:NodeData){
-			_neighbors = new Vector.<NodeGraphics>();
+		private var _outNeighbors:Vector.<NodeGraphics>;
+		private var _edgesValues:Vector.<Object>;
+		
+		public function NodeGraphics(nodeData:NodeData,attributesDefinition:Object){
+			_outNeighbors = new Vector.<NodeGraphics>();
+			_edgesValues = new Vector.<Object>();
+			
+			var correctedAttributesValue:Object = new Object();
+			
+			for(var key:String in nodeData.attributes){
+				if(attributesDefinition[key]!=undefined){
+					correctedAttributesValue[key] = nodeData.attributes[key];
+				}
+			}
+			
+			_attributes = correctedAttributesValue;
 			
 			_label = nodeData.label;
 			_id = nodeData.id;
@@ -76,14 +90,23 @@ package com.ofnodesandedges.y2010.graphics{
 			_freeze = 0;
 		}
 
-		public function addNeighbor(neighbor:NodeGraphics):void{
-			_neighbors.push(neighbor);
+		public function addOutNeighbor(neighbor:NodeGraphics,edgeValue:Object,edgeAttributes:Object):void{
+			var correctedEdgeValue:Object = new Object();
+			
+			for(var key:String in edgeValue){
+				if(edgeAttributes[key]!=undefined){
+					correctedEdgeValue[key] = edgeValue[key];
+				}
+			}
+			
+			_outNeighbors.push(neighbor);
+			_edgesValues.push(correctedEdgeValue);
 		}
 		
 		public function getNeighborsCount():int{
 			var res:int = 0;
 			
-			for(var key:String in _neighbors){
+			for(var key:String in _outNeighbors){
 				res++;
 			}
 			
@@ -222,12 +245,12 @@ package com.ofnodesandedges.y2010.graphics{
 			_displaySize = value;
 		}
 		
-		public function get neighbors():Vector.<NodeGraphics>{
-			return _neighbors;
+		public function get outNeighbors():Vector.<NodeGraphics>{
+			return _outNeighbors;
 		}
 		
-		public function set neighbors(value:Vector.<NodeGraphics>):void{
-			_neighbors = value;
+		public function get edgesValues():Vector.<Object>{
+			return _edgesValues;
 		}
 		
 		public function get shape():String{
@@ -277,6 +300,7 @@ package com.ofnodesandedges.y2010.graphics{
 		public function set size(value:Number):void{
 			_size = value;
 		}
+
 
 	}
 }

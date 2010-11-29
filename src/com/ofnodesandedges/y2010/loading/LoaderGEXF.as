@@ -258,7 +258,7 @@ package com.ofnodesandedges.y2010.loading{
 					}
 					
 					if(xmlCursor.@target){
-						_graphData.addEdge(xmlCursor.@source,xmlCursor.@target);
+						_graphData.addEdge(xmlCursor.@source,xmlCursor.@target,edgeAttributes);
 					}
 					
 					edgesCounter++;

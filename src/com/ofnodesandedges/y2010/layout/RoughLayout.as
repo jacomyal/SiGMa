@@ -100,9 +100,9 @@ package com.ofnodesandedges.y2010.layout{
 					repulsionDirected(nodeFrom,nodeTo);
 				}
 				
-				l = nodeFrom.neighbors.length;
+				l = nodeFrom.outNeighbors.length;
 				for(j=0;j<l;j++){
-					nodeTo = nodeFrom.neighbors[j];
+					nodeTo = nodeFrom.outNeighbors[j];
 					attractionDirected(nodeFrom,nodeTo);
 				}
 				
@@ -140,7 +140,7 @@ package com.ofnodesandedges.y2010.layout{
 		
 		private function repulsionDirected(nodeFrom:NodeGraphics,nodeTo:NodeGraphics):void{
 			var distance:Number = Math.sqrt(Math.pow(nodeFrom.x-nodeTo.x,2)+Math.pow(nodeFrom.y-nodeTo.y,2));
-			var f:Number = _repulsion/(nodeFrom.neighbors.length+1)/(nodeTo.neighbors.length+1)/Math.log(distance);
+			var f:Number = _repulsion/(nodeFrom.outNeighbors.length+1)/(nodeTo.outNeighbors.length+1)/Math.log(distance);
 			
 			nodeFrom.dx += (nodeFrom.x-nodeTo.x)*f;
 			nodeFrom.dy += (nodeFrom.y-nodeTo.y)*f;

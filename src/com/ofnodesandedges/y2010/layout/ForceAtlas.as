@@ -106,7 +106,7 @@ package com.ofnodesandedges.y2010.layout{
 				}
 				
 				// attraction
-				for each(n2 in n1.neighbors) {
+				for each(n2 in n1.outNeighbors) {
 					
 					// REPETITION POSSIBLY A PROBLEM
 					fcBiAttractor_noCollide(n1, n2, _attractionStrength / (1 + n1.getNeighborsCount()));
@@ -115,7 +115,7 @@ package com.ofnodesandedges.y2010.layout{
 			
 			//attraction from the last node:
 			n1 = _graph.nodes[l-1];
-			for each(n2 in n1.neighbors) {
+			for each(n2 in n1.outNeighbors) {
 				
 				// REPETITION POSSIBLY A PROBLEM
 				fcBiAttractor_noCollide(n1, n2, _attractionStrength / (1 + n1.getNeighborsCount()));
