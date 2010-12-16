@@ -48,10 +48,12 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		private var _attributes:Object;
 		
+		private var _inNeighbors:Vector.<NodeGraphics>;
 		private var _outNeighbors:Vector.<NodeGraphics>;
 		private var _edgesValues:Vector.<Object>;
 		
 		public function NodeGraphics(nodeData:NodeData,attributesDefinition:Object){
+			_inNeighbors = new Vector.<NodeGraphics>();
 			_outNeighbors = new Vector.<NodeGraphics>();
 			_edgesValues = new Vector.<Object>();
 			
@@ -93,20 +95,63 @@ package com.ofnodesandedges.y2010.graphics{
 		public function addOutNeighbor(neighbor:NodeGraphics,edgeValue:Object,edgeAttributes:Object):void{
 			var correctedEdgeValue:Object = new Object();
 			
-			for(var key:String in edgeValue){
-				if(edgeAttributes[key]!=undefined){
-					correctedEdgeValue[key] = edgeValue[key];
+			if(_outNeighbors.indexOf(neighbor)<0){
+				for(var key:String in edgeValue){
+					if(edgeAttributes[key]){
+						correctedEdgeValue[edgeAttributes[key]] = edgeValue[key];
+					}
+				}
+				
+				_outNeighbors.push(neighbor);
+				_edgesValues.push(correctedEdgeValue);
+			}
+		}
+		
+		public function removeOutNeighbor(neighborID:String):void{
+			var newOutNeighbors:Vector.<NodeGraphics> = new Vector.<NodeGraphics>();
+			var newEdgesValues:Vector.<Object> = new Vector.<Object>();
+			
+			for(var i:int = 0; i<_outNeighbors.length;i++){
+				if(_outNeighbors[i].id != neighborID){
+					newOutNeighbors.push(_outNeighbors[i]);
+					newEdgesValues.push(_edgesValues[i]);
 				}
 			}
 			
-			_outNeighbors.push(neighbor);
-			_edgesValues.push(correctedEdgeValue);
+			_outNeighbors = newOutNeighbors;
+			_edgesValues = newEdgesValues;
 		}
 		
-		public function getNeighborsCount():int{
+		public function addInNeighbor(neighbor:NodeGraphics,edgeValue:Object):void{
+			if(_inNeighbors.indexOf(neighbor)<0) _inNeighbors.push(neighbor);
+		}
+		
+		public function removeInNeighbor(neighborID:String):void{
+			var newInNeighbors:Vector.<NodeGraphics> = new Vector.<NodeGraphics>();
+			
+			for(var i:int = 0; i<_inNeighbors.length;i++){
+				if(_inNeighbors[i].id != neighborID){
+					newInNeighbors.push(_inNeighbors[i]);
+				}
+			}
+			
+			_inNeighbors = newInNeighbors;
+		}
+		
+		public function getOutNeighborsCount():int{
 			var res:int = 0;
 			
 			for(var key:String in _outNeighbors){
+				res++;
+			}
+			
+			return res;
+		}
+		
+		public function getInNeighborsCount():int{
+			var res:int = 0;
+			
+			for(var key:String in _inNeighbors){
 				res++;
 			}
 			
@@ -249,6 +294,10 @@ package com.ofnodesandedges.y2010.graphics{
 			return _outNeighbors;
 		}
 		
+		public function get inNeighbors():Vector.<NodeGraphics>{
+			return _inNeighbors;
+		}
+		
 		public function get edgesValues():Vector.<Object>{
 			return _edgesValues;
 		}
@@ -295,10 +344,6 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		public function get size():Number{
 			return _size;
-		}
-		
-		public function set size(value:Number):void{
-			_size = value;
 		}
 
 

@@ -52,7 +52,9 @@ package com.ofnodesandedges.y2010.buttons{
 				addChild(_settingsPopUp);
 				_settingsPopUp.open(_actionButton.width/2,-6);
 				
-				switchAction();
+				customSwitchAction();
+				
+				dispatchEvent(new Event(OPEN_POP_UP));
 			}
 		}
 		
@@ -61,7 +63,46 @@ package com.ofnodesandedges.y2010.buttons{
 				removeChild(_settingsPopUp);
 				_settingsPopUp.close();
 				
-				switchAction();
+				customSwitchAction();
+				
+				dispatchEvent(new Event(CLOSE_POP_UP));
+			}
+		}
+		
+		private function customSwitchAction():void{
+			if(contains(_actionButton)){
+				removeChild(_actionButton);
+				
+				_actionButton2 = new CloseSettings();
+				_actionButton2.width = _actionButton.width;
+				_actionButton2.height = _actionButton.height;
+				
+				_actionButton2.addEventListener(MouseEvent.CLICK,action2Click);
+				_actionButton2.addEventListener(MouseEvent.MOUSE_OVER,action2Over);
+				_actionButton2.addEventListener(MouseEvent.MOUSE_OUT,action2Out);
+				
+				addChildAt(_actionButton2,0);
+			}else if(contains(_actionButton2)){
+				removeChild(_actionButton2);
+				
+				_actionButton = new OpenSettings();
+				_actionButton.width = _actionButton2.width;
+				_actionButton.height = _actionButton2.height;
+				
+				_actionButton.addEventListener(MouseEvent.CLICK,actionClick);
+				_actionButton.addEventListener(MouseEvent.MOUSE_OVER,actionOver);
+				_actionButton.addEventListener(MouseEvent.MOUSE_OUT,actionOut);
+				
+				addChildAt(_actionButton,0);
+			}
+		}
+		
+		public function close():void{
+			if((_settingsPopUp != null)&&(this.contains(_settingsPopUp))){
+				removeChild(_settingsPopUp);
+				_settingsPopUp.close();
+				
+				customSwitchAction();
 			}
 		}
 	}

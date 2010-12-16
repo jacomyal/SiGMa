@@ -52,11 +52,11 @@ package com.ofnodesandedges.y2010.layout{
 			// Force vector parameters:
 			_inertia = 0.5;
 			_attractionStrength = 0.1;
-			_maxDisplacement = 500;
+			_maxDisplacement = 5000;
 			_freezeStrength = 8;
 			_freezeInertia = 0.5;
 			_gravity = 0.0000;
-			_speed = 1000;
+			_speed = 100;
 			_cooling = 1;
 			_nodeOverlap = true;
 			
@@ -102,14 +102,14 @@ package com.ofnodesandedges.y2010.layout{
 				for (j=i+1;j<l;j++) {
 					n2 = _graph.nodes[j];
 					
-					fcBiRepulsor_noCollide(n1, n2, 2 * (1 + n1.getNeighborsCount()) * (1 + n2.getNeighborsCount()));
+					fcBiRepulsor_noCollide(n1, n2, 2 * (1 + n1.getOutNeighborsCount()) * (1 + n2.getOutNeighborsCount()));
 				}
 				
 				// attraction
 				for each(n2 in n1.outNeighbors) {
 					
 					// REPETITION POSSIBLY A PROBLEM
-					fcBiAttractor_noCollide(n1, n2, _attractionStrength / (1 + n1.getNeighborsCount()));
+					fcBiAttractor_noCollide(n1, n2, _attractionStrength / (1 + n1.getOutNeighborsCount()));
 				}
 			}
 			
@@ -118,7 +118,7 @@ package com.ofnodesandedges.y2010.layout{
 			for each(n2 in n1.outNeighbors) {
 				
 				// REPETITION POSSIBLY A PROBLEM
-				fcBiAttractor_noCollide(n1, n2, _attractionStrength / (1 + n1.getNeighborsCount()));
+				fcBiAttractor_noCollide(n1, n2, _attractionStrength / (1 + n1.getOutNeighborsCount()));
 			}
 			
 			// gravity

@@ -20,12 +20,14 @@
 
 package com.ofnodesandedges.y2010.graphics{
 	
+	import com.ofnodesandedges.y2010.data.GraphData;
 	import com.ofnodesandedges.y2010.data.NodeData;
 	import com.ofnodesandedges.y2010.display.FishEyeDisplay;
 	import com.ofnodesandedges.y2010.graphics.*;
 	import com.ofnodesandedges.y2010.layout.*;
 	import com.ofnodesandedges.y2010.mouseinteraction.MouseInteraction;
 	import com.ofnodesandedges.y2010.ui.Main;
+	import com.ofnodesandedges.y2010.ui.MapCaption;
 	
 	import flash.display.Graphics;
 	import flash.display.Sprite;
@@ -38,6 +40,8 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		private var _main:Main;
 		private var _graphGraphics:GraphGraphics;
+		private var _graphData:GraphData;
+		private var _mapCaption:MapCaption;
 		
 		// Layouts:
 		private var _layout:Layout;
@@ -49,10 +53,6 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _labelSprite:Sprite;
 		private var _miscSprite:Sprite;
 		private var _mouseSprite:Sprite;
-		
-		// Mouse and spatial properties:
-		private var _mouseX:Number;
-		private var _mouseY:Number;
 		
 		// Display vars:
 		private var _displayEdges:Boolean;
@@ -68,7 +68,11 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		public function MainDisplayElement(main:Main){
 			_main = main;
+			_graphData = _main.graph;
 			_main.stage.addChild(this);
+			
+			_mapCaption = new MapCaption();
+			stage.addChild(_mapCaption);
 			
 			// Build graph to display:
 			initGraph();
@@ -88,8 +92,12 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			// Display classes:
 			_fishEyeDisplay = new FishEyeDisplay(_graphGraphics,_miscSprite);
+			
+			// Mouse interaction:
 			_mouseInteraction = new MouseInteraction(_mouseSprite,_graphGraphics);
 			_mouseInteraction.enable();
+			_mouseInteraction.addEventListener(MouseInteraction.CLICK_NODE,clickNode);
+			_mouseInteraction.addEventListener(MouseInteraction.CLICK_STAGE,clickStage);
 			
 			// Display vars:
 			_displayEdges = false;
@@ -122,11 +130,29 @@ package com.ofnodesandedges.y2010.graphics{
 		}
 		
 		private function initGraph():void{
+			var title:String = "";
+			var author:String = "";
+			
+			for(var key:String in _graphData.metaData){
+				switch(key.toLowerCase()){
+					case "title":
+						title = _graphData.metaData[key];
+						break;
+					case "author":
+					case "creator":
+						author = _graphData.metaData[key];
+						break;
+					default:
+						break;
+				}
+			} 
+			
+			_mapCaption.draw(title,author,"");
+			
 			_graphGraphics = new GraphGraphics(_main.graph);
 			_graphGraphics.refreshEdges();
 			
-			_graphGraphics.resizeNodes(0,15);
-			_graphGraphics.rescaleNodes(stage.stageWidth,stage.stageHeight);
+			_graphGraphics.rescaleNodes(stage.stageWidth,stage.stageHeight,0,15);
 			
 			_isPlaying = !_main.graph.hasCoordinates;
 		}
@@ -134,6 +160,8 @@ package com.ofnodesandedges.y2010.graphics{
 		private function roughLayoutFinished(e:Event):void{
 			_layout.removeEventListener(Layout.FINISH,roughLayoutFinished);
 			this.removeEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+			
+			dispatchEvent(new Event(LAYOUT_FINISHED));
 			
 			launchNodeOverlap();
 		}
@@ -156,12 +184,16 @@ package com.ofnodesandedges.y2010.graphics{
 			_layout.init(_graphGraphics);
 			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
 			_layout.addEventListener(Layout.FINISH,nodeOverlapFinished);
+			
+			dispatchEvent(new Event(LAYOUT_STARTED));
 		}
 		
 		private function launchForceAtlas():void{
 			_layout = new ForceAtlas();
 			_layout.init(_graphGraphics);
 			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+			
+			dispatchEvent(new Event(LAYOUT_STARTED));
 		}
 		
 		private function enterFrameHandler(e:Event):void{
@@ -177,24 +209,85 @@ package com.ofnodesandedges.y2010.graphics{
 				_fishEyeDisplay.applyDisplay();
 			}else{
 				_graphGraphics.setDisplayVars(_mouseInteraction.x,_mouseInteraction.y,_mouseInteraction.ratio);
-				
+			}
+			_mouseInteraction.mouseOverNode();
+			_mouseInteraction.applyValues(_nodesRatio);
+			
+			_graphGraphics.drawGraph(edgesGraphics,_nodesSprite.graphics,_edgesRatio*_mouseInteraction.ratio,stage.stageWidth,stage.stageHeight,labelContainer,_textSize,_textThreshold);
+		}
+		
+		private function clickNode(e:Event):void{
+			var ID:String = MouseInteraction (e.target).clickedNodeID;
+			_graphGraphics.getNeighborhood1(_graphData,ID);
+			
+			var title:String = "";
+			var author:String = "";
+			var subtitle:String = "";
+			
+			for(var key:String in _graphData.metaData){
+				switch(key.toLowerCase()){
+					case "title":
+						title = _graphData.metaData[key];
+						break;
+					case "author":
+					case "creator":
+						author = _graphData.metaData[key];
+						break;
+					default:
+						break;
+				}
+			} 
+			
+			subtitle = _graphData.getNode(ID).label+"'s neighborhood";
+			
+			_mapCaption.draw(title,author,subtitle);
+			_mouseInteraction.resetValues();
+			
+			startLayout(true);
+		}
+		
+		private function clickStage(e:Event):void{
+			stopLayout(true);
+			
+			var title:String = "";
+			var author:String = "";
+			
+			for(var key:String in _graphData.metaData){
+				switch(key.toLowerCase()){
+					case "title":
+						title = _graphData.metaData[key];
+						break;
+					case "author":
+					case "creator":
+						author = _graphData.metaData[key];
+						break;
+					default:
+						break;
+				} 
 			}
 			
-			_graphGraphics.drawGraph(edgesGraphics,_nodesSprite.graphics,_edgesRatio*_mouseInteraction.ratio,_nodesRatio,stage.stageWidth,stage.stageHeight,labelContainer,_textSize,_textThreshold);
+			_mapCaption.draw(title,author,"");
+			
+			_graphGraphics.getFullGraph(_graphData);
+			_mouseInteraction.resetValues();
 		}
 		
 		public function rescaleGraph():void{
 			_mouseInteraction.resetValues();
 		}
 		
-		public function startLayout():void{
+		public function startLayout(isLocal:Boolean = false):void{
 			_isPlaying = true;
 			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+			
+			if(isLocal) dispatchEvent(new Event(LAYOUT_STARTED));
 		}
 		
-		public function stopLayout():void{
+		public function stopLayout(isLocal:Boolean = false):void{
 			_isPlaying = false;
 			this.removeEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+			
+			if(isLocal) dispatchEvent(new Event(LAYOUT_FINISHED));
 		}
 		
 		public function get displayEdges():Boolean{

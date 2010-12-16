@@ -1,7 +1,7 @@
 /**
  *
  * SiGMa, the Simple Graph Mapper
- * Copyright (C) 2010, Alexis Jacomy
+ * Copyright (C) 2010, Alexis Jacomy and the CNRS
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +32,14 @@ package com.ofnodesandedges.y2010.layout{
 		
 		public override function init(graphGraphics:GraphGraphics):void{
 			_graph = graphGraphics;
-			_stepsMax = 90;
+			_stepsMax = 100;
 			_stepsNumber = 0;
 			_autoStop = true;
 			
 			// Transition uses NodeGraphics.dx as initial position.
 			var n:NodeGraphics;
 			
-			for (i=0;i<l;i++){
+			for each(n in graphGraphics.nodes){
 				n.dx = n.x;
 				n.dy = n.y;
 			}
@@ -63,8 +63,8 @@ package com.ofnodesandedges.y2010.layout{
 			for (i=0;i<l;i++){
 				n = _graph.nodes[i];
 				
-				n.displayX = (n.x-n.dx)*(1-Math.cos(Math.PI*_stepsNumber/_stepsMax));
-				n.displayY = (n.y-n.dy)*(1-Math.cos(Math.PI*_stepsNumber/_stepsMax));
+				n.displayX = (n.x-n.dx)*(1-Math.cos(Math.PI*_stepsNumber/_stepsMax))/2+n.dx;
+				n.displayY = (n.y-n.dy)*(1-Math.cos(Math.PI*_stepsNumber/_stepsMax))/2+n.dy;
 			}
 		}
 	}

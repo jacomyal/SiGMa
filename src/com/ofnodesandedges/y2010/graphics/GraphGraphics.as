@@ -45,6 +45,11 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		public function GraphGraphics(graphData:GraphData){
 			_nodes = new Vector.<NodeGraphics>();
+			getFullGraph(graphData);
+		}
+		
+		public function getFullGraph(graphData:GraphData):void{
+			_nodes.length = 0;
 			
 			// Construct each node from the original data:
 			for each(var nodeData:NodeData in graphData.nodes){
@@ -52,10 +57,14 @@ package com.ofnodesandedges.y2010.graphics{
 				_nodes.push(nodeGraphics);
 			}
 			
-			// Construct each node from the original data:
+			// Construct each edge from the original data:
 			for(var i:int = 0; i<graphData.nodes.length; i++){
-				for(var sourceID:String in graphData.nodes[i].outNeighbors){
-					_nodes[i].addOutNeighbor(getNode(sourceID),graphData.nodes[i].outNeighbors[sourceID],graphData.edgeAttributes);
+				for(var targetID:String in graphData.nodes[i].outNeighbors){
+					var node1:NodeGraphics = getNode(graphData.nodes[i].id);
+					var node2:NodeGraphics = getNode(targetID);
+					
+					node1.addOutNeighbor(node2,graphData.nodes[i].outNeighbors[targetID],graphData.edgeAttributes);
+					node2.addInNeighbor(node1,graphData.getNode(targetID).inNeighbors[node1.id]);
 				}
 			}
 			
@@ -63,8 +72,157 @@ package com.ofnodesandedges.y2010.graphics{
 			_defaultEdgeThickness = 0.3;
 		}
 		
+		public function restoreGraph(graphData:GraphData):void{
+			var newIDs:Vector.<String> = new Vector.<String>();
+			var nodeGraphics:NodeGraphics;
+			
+			// Check which nodes are already existing:
+			for each(nodeGraphics in _nodes){
+				if(newIDs.indexOf(nodeGraphics.id)<0){
+					newIDs.push(nodeGraphics.id);
+				}
+			}
+			
+			// Construct each node from the original data:
+			for each(var nodeData:NodeData in graphData.nodes){
+				if(newIDs.indexOf(nodeData.id)<0){
+					nodeGraphics = new NodeGraphics(nodeData,graphData.nodeAttributes);
+					_nodes.push(nodeGraphics);
+				}
+			}
+			
+			// Construct each edge from the original data:
+			for(var i:int = 0; i<graphData.nodes.length; i++){
+				for(var targetID:String in graphData.nodes[i].outNeighbors){
+					if((newIDs.indexOf(graphData.nodes[i])<0)||(newIDs.indexOf(targetID)<0)){
+						var node1:NodeGraphics = getNode(graphData.nodes[i].id);
+						var node2:NodeGraphics = getNode(targetID);
+						
+						node1.addOutNeighbor(node2,graphData.nodes[i].outNeighbors[targetID],graphData.edgeAttributes);
+						node2.addInNeighbor(node1,graphData.getNode(targetID).inNeighbors[node1.id]);
+					}
+				}
+			}
+			
+			_defaultEdgeType = graphData.defaultEdgeType;
+			_defaultEdgeThickness = 0.3;
+		}
+		
+		public function getNeighborhood1(graphData:GraphData,centerID:String):void{
+			// REMOVE NODES:
+			var newIDs:Vector.<String> = new Vector.<String>();
+			
+			var nodeId:String;
+			var nodeGraphics:NodeGraphics;
+			var nodeData:NodeData = graphData.getNode(centerID);
+			var nodeData2:NodeData
+			
+			for(nodeId in nodeData.outNeighbors){
+				if(newIDs.indexOf(nodeId)<0){
+					newIDs.push(nodeId);
+				}
+			}
+			
+			for(nodeId in nodeData.inNeighbors){
+				if(newIDs.indexOf(nodeId)<0){
+					newIDs.push(nodeId);
+				}
+			}
+			
+			if(newIDs.indexOf(centerID)<0){
+				newIDs.push(centerID);
+			}
+			
+			var newNodes:Vector.<NodeGraphics> = new Vector.<NodeGraphics>();
+			for each(nodeGraphics in _nodes){
+				if(newIDs.indexOf(nodeGraphics.id)>=0){
+					newNodes.push(nodeGraphics);
+				}
+			}
+			
+			_nodes.length = 0;
+			_nodes = newNodes;
+			
+			// ADD NODES:
+			// Construct each node from the original data:
+			for(nodeId in nodeData.inNeighbors){
+				nodeData2 = graphData.getNode(nodeId);
+				
+				if(!getNode(nodeId)){
+					nodeGraphics = new NodeGraphics(nodeData2,graphData.nodeAttributes);
+					_nodes.push(nodeGraphics);
+				}
+			}
+			
+			for(nodeId in nodeData.outNeighbors){
+				nodeData2 = graphData.getNode(nodeId);
+				
+				if(!getNode(nodeId)){
+					nodeGraphics = new NodeGraphics(nodeData2,graphData.nodeAttributes);
+					_nodes.push(nodeGraphics);
+				}
+			}
+			
+			var node1:NodeGraphics;
+			var node2:NodeGraphics;
+			var targetID:String;
+			
+			// Construct each edge from the original data:
+			for(nodeId in nodeData.inNeighbors){
+				nodeData2 = graphData.getNode(nodeId);
+				
+				for(targetID in nodeData2.outNeighbors){
+					node1 = getNode(nodeData2.id);
+					node2 = getNode(targetID);
+					
+					if(node1&&node2){
+						node1.addOutNeighbor(node2,nodeData2.outNeighbors[targetID],graphData.edgeAttributes);
+						node2.addInNeighbor(node1,graphData.getNode(targetID).inNeighbors[node1.id]);
+					}
+				}
+			}
+			
+			for(nodeId in nodeData.outNeighbors){
+				nodeData2 = graphData.getNode(nodeId);
+				
+				for(targetID in nodeData2.inNeighbors){
+					node1 = getNode(nodeData2.id);
+					node2 = getNode(targetID);
+					
+					if(node1&&node2){
+						node1.addOutNeighbor(node2,nodeData2.inNeighbors[targetID],graphData.edgeAttributes);
+						node2.addInNeighbor(node1,graphData.getNode(targetID).outNeighbors[node1.id]);
+					}
+				}
+			}
+			
+			refreshEdges();
+		}
+		
 		public function addNode(node:NodeGraphics):void{
 			_nodes.push(node);
+		}
+		
+		public function removeNode(nodeID:String):void{
+			var newNodes:Vector.<NodeGraphics> = new Vector.<NodeGraphics>();
+			
+			for(var i:int = 0; i<_nodes.length;i++){
+				if(_nodes[i].id != nodeID){
+					newNodes.push(_nodes[i]);
+				}
+			}
+			
+			_nodes = newNodes;
+		}
+		
+		public function addEdge(source:NodeData,target:NodeData,edgeAttributes:Object):void{
+			var node1:NodeGraphics = getNode(source.id);
+			var node2:NodeGraphics = getNode(target.id);
+			
+			if(node1&&node2){
+				node1.addOutNeighbor(node2,source.outNeighbors[target.id],edgeAttributes);
+				node2.addInNeighbor(node1,target.inNeighbors[source.id]);
+			}
 		}
 		
 		public function getNode(nodeID:String):NodeGraphics{
@@ -97,6 +255,37 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 		}
 		
+		public function circularNeighborhood(centerID:String):void{
+			var center:NodeGraphics = getNode(centerID);
+			
+			if(center){
+				var angle:Number = 0;
+				var nodesCount:int = _nodes.length-1;
+				var perimeter:Number = 0;
+				
+				for each(var node:NodeGraphics in _nodes){
+					if(node.id!=centerID){
+						perimeter += node.size;
+					}
+				}
+				
+				var radius:Number = perimeter*2/Math.PI;
+				
+				for each(node in _nodes){
+					if(node.id!=centerID){
+						node.dx = radius*Math.cos(angle);
+						node.dy = radius*Math.sin(angle);
+						angle += Math.PI*2/nodesCount;
+					}else{
+						node.dx = 0;
+						node.dy = 0;
+					}
+				}
+			}else{
+				circularize();
+			}
+		}
+		
 		public function setDisplayVars(stageX:Number=0,stageY:Number=0,stageRatio:Number=1):void{
 			for each(var node:NodeGraphics in _nodes){
 				node.displayX = node.displayX*stageRatio+stageX;
@@ -104,20 +293,6 @@ package com.ofnodesandedges.y2010.graphics{
 				node.displaySize = node.displaySize*Math.sqrt(stageRatio);
 				
 				node.borderThickness = 0;
-			}
-		}
-		
-		public function resizeNodes(newMin:Number,newMax:Number):void{
-			// Find current maxima:
-			var max:Number = _nodes[0].size;
-			
-			for each(var node:NodeGraphics in _nodes){
-				if(node.size>max) max=node.size;
-			}
-			
-			// Apply homothetic transformation:
-			for each(node in _nodes){
-				node.size = node.size*(newMax-newMin)/max + newMin;
 			}
 		}
 		
@@ -129,7 +304,7 @@ package com.ofnodesandedges.y2010.graphics{
 			
 		}
 		
-		public function rescaleNodes(areaWidth:Number,areaHeight:Number):void{
+		public function rescaleNodes(areaWidth:Number,areaHeight:Number,displaySizeMin:Number = 0,displaySizeMax:Number = 15):void{
 			var i:int,l:int = _nodes.length; 
 			
 			var xMin:Number = _nodes[0].x;
@@ -137,12 +312,20 @@ package com.ofnodesandedges.y2010.graphics{
 			var yMin:Number = _nodes[0].y;
 			var yMax:Number = _nodes[0].y;
 			
+			// Find current maxima:
+			var sizeMax:Number = _nodes[0].size;
+			
+			for each(var node:NodeGraphics in _nodes){
+				if(node.size>sizeMax) sizeMax=node.size;
+			}
+			
 			// Recenter the nodes:
 			for(i=1;i<l;i++){
 				if(_nodes[i].x>xMax) xMax = _nodes[i].x;
 				if(_nodes[i].x<xMin) xMin = _nodes[i].x;
 				if(_nodes[i].y>yMax) yMax = _nodes[i].y;
 				if(_nodes[i].y<yMin) yMin = _nodes[i].y; 
+				if(_nodes[i].size>sizeMax) sizeMax = _nodes[i].size;
 			}
 			
 			var scale:Number = Math.min(0.9*areaWidth/(xMax-xMin),0.9*areaHeight/(yMax-yMin));
@@ -151,35 +334,51 @@ package com.ofnodesandedges.y2010.graphics{
 			for(i=0;i<l;i++){
 				_nodes[i].displayX = (_nodes[i].x-(xMax+xMin)/2)*scale + areaWidth/2;
 				_nodes[i].displayY = (_nodes[i].y-(yMax+yMin)/2)*scale + areaHeight/2;
-				_nodes[i].displaySize = _nodes[i].size*scale;
+				_nodes[i].displaySize = (_nodes[i].size*(displaySizeMax-displaySizeMin)/sizeMax + displaySizeMin);
 			}
 		}
 		
 		public function refreshEdges():void{
 			// List the ids:
-			var ids:Object = new Object();
+			var ids:Vector.<String> = new Vector.<String>();
 			var node:NodeGraphics;
 			
 			for each(node in _nodes){
-				ids[node.id] = 1;
+				ids.push(node.id);
 			}
 			
-			// Check the neighbors, delete the unexisting ones:
+			// Check the outgoing neighbors, delete the unexisting ones:
 			for each(node in _nodes){
-				for(var id:String in node.outNeighbors){
-					if(!ids.hasOwnProperty(id)){
-						delete node.outNeighbors[id];
+				var outIDs:Vector.<String> = new Vector.<String>();
+				for(var i:int=0;i<node.outNeighbors.length;i++){
+					if(ids.indexOf(node.outNeighbors[i].id)<0){
+						outIDs.push(node.outNeighbors[i].id);
 					}
+				}
+				
+				for each(var outID:String in outIDs){
+					node.removeOutNeighbor(outID);
+				}
+				
+				var inIDs:Vector.<String> = new Vector.<String>();
+				for(i=0;i<node.inNeighbors.length;i++){
+					if(ids.indexOf(node.inNeighbors[i].id)>=0){
+						inIDs.push(node.inNeighbors[i].id);
+					}
+				}
+				
+				for each(var inID:String in inIDs){
+					node.removeInNeighbor(inID);
 				}
 			}
 		}
 		
-		public function drawGraph(edgesGraphics:Graphics,nodesGraphics:Graphics,edgesRatio:Number,nodesRatio:Number,width:Number,height:Number,labelSprite:Sprite=null,textSize:Number=0,textThreshold:Number=0):void{
+		public function drawGraph(edgesGraphics:Graphics,nodesGraphics:Graphics,edgesRatio:Number,width:Number,height:Number,labelSprite:Sprite,textSize:Number=0,textThreshold:Number=0):void{
 			_width = width;
 			_height = height;
 			
 			if(edgesGraphics != null) drawEdges(edgesGraphics,edgesRatio);
-			if(nodesGraphics != null) drawNodes(nodesGraphics,nodesRatio);
+			if(nodesGraphics != null) drawNodes(nodesGraphics);
 			if(labelSprite != null) drawLabels(textSize,textThreshold,labelSprite);
 			//if(labelSprite != null) drawLabelsOnBitmap(textSize,textThreshold,labelSprite);
 		}
@@ -194,11 +393,11 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 		}
 		
-		private function drawNodes(nodesGraphics:Graphics,ratio:Number):void{
+		private function drawNodes(nodesGraphics:Graphics):void{
 			// Draw nodes:
 			nodesGraphics.clear();
 			for each(var node:NodeGraphics in _nodes){
-				drawNode(node,nodesGraphics,ratio);
+				drawNode(node,nodesGraphics);
 			}
 		}
 		
@@ -251,24 +450,24 @@ package com.ofnodesandedges.y2010.graphics{
 			labelContainer.addChild(bitmap);
 		}
 		
-		private function drawNode(node:NodeGraphics,nodesGraphics:Graphics,ratio:Number):void{
-			if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness*ratio,node.borderColor,node.alpha);
+		private function drawNode(node:NodeGraphics,nodesGraphics:Graphics):void{
+			if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
 			else nodesGraphics.lineStyle(0,0,0);
 			nodesGraphics.beginFill(node.color,node.alpha);
 			if(isOnScreen(node)){
 				switch(node.shape.toLowerCase()){
 					case "square":
-						nodesGraphics.drawRect(-Math.SQRT2*node.displaySize*ratio/2+node.displayX,-Math.SQRT2*node.displaySize*ratio/2+node.displayY,node.displaySize*ratio-node.borderThickness,node.displaySize*ratio-node.borderThickness);
+						nodesGraphics.drawRect(-Math.SQRT2*node.displaySize/2+node.displayX,-Math.SQRT2*node.displaySize/2+node.displayY,node.displaySize-node.borderThickness,node.displaySize-node.borderThickness);
 						break;
 					case "hexagon":
-						drawPoly(node.displaySize*ratio-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
+						drawPoly(node.displaySize-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
 						break;
 					case "triangle":
-						drawPoly(node.displaySize*ratio-node.borderThickness,3,node.displayX,node.displayY,nodesGraphics);
+						drawPoly(node.displaySize-node.borderThickness,3,node.displayX,node.displayY,nodesGraphics);
 						break;
 					default:
-						nodesGraphics.drawCircle(node.displayX,node.displayY,node.displaySize*ratio-node.borderThickness);
-						//drawPoly(node.displaySize*ratio-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
+						nodesGraphics.drawCircle(node.displayX,node.displayY,node.displaySize-node.borderThickness);
+						//drawPoly(node.displaySize-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
 						break;
 				}
 			}
@@ -283,8 +482,8 @@ package com.ofnodesandedges.y2010.graphics{
 			var target:NodeGraphics = source.outNeighbors[targetIndex];
 			var edgeValues:Object = source.edgesValues[targetIndex];
 			
-			var edgeType:String = (edgeValues["type"]!=undefined) ? edgeValues["type"] : _defaultEdgeType;
-			var edgeThickness:Number = (edgeValues["size"]!=undefined) ? edgeValues["size"]*Math.sqrt(ratio) : _defaultEdgeThickness*Math.sqrt(ratio); 
+			var edgeType:String = /*(edgeValues&&edgeValues["edgeType"]) ? edgeValues["edgeType"] :*/ _defaultEdgeType;
+			var edgeThickness:Number = (edgeValues&&edgeValues["displaySize"]) ? new Number(edgeValues["displaySize"])*Math.sqrt(ratio) : _defaultEdgeThickness*Math.sqrt(ratio); 
 				
 			edgesGraphics.lineStyle(edgeThickness,color,alpha);
 			if((isOnScreen(source))||(isOnScreen(target))){

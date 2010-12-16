@@ -1,7 +1,7 @@
 /**
  *
  * SiGMa, the Simple Graph Mapper
- * Copyright (C) 2010, Alexis Jacomy
+ * Copyright (C) 2010, Alexis Jacomy and the CNRS
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,56 +21,40 @@
 package com.ofnodesandedges.y2010.buttons{
 	
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
+	import com.ofnodesandedges.y2010.popups.FishEyePopUp;
 	
 	import flash.display.DisplayObjectContainer;
+	import flash.display.StageDisplayState;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
-	public class LayoutButton extends DoubleButton{
+	public class FullScreenButton extends DoubleButton{
 		
 		private var _mainDisplayElement:MainDisplayElement;
 		
-		public function LayoutButton(root:DisplayObjectContainer,x:Number,y:Number,width:Number,height:Number=-1,options:Object=null){
-			_description = 'Start layout';
-			_description2 = 'Stop layout';
+		public function FullScreenButton(root:DisplayObjectContainer,x:Number,y:Number,width:Number,height:Number=-1,options:Object=null){
+			_description = 'Go to fullscreen view';
+			_description2 = 'Back to normal view';
 			
-			_actionButton = new StartLayout();
-			_actionButton2 = new StopLayout();
+			_actionButton = new SetFullScreen();
+			_actionButton2 = new NotFullScreen();
 			
 			_mainDisplayElement = options["_mainDisplayElement"];
-			_mainDisplayElement.addEventListener(MainDisplayElement.LAYOUT_FINISHED,whenLayoutFinished);
 			
 			super(root,x,y,width,height,options);
 			
-			if(_mainDisplayElement.isPlaying == true){
+			if(_mainDisplayElement.fishEyeDisplay.enable){
 				switchAction();
 			}
 			
-			_mainDisplayElement.addEventListener(MainDisplayElement.LAYOUT_FINISHED,layoutStopped);
-			_mainDisplayElement.addEventListener(MainDisplayElement.LAYOUT_STARTED,layoutStarted);
-		}
-		
-		public function whenLayoutFinished(e:Event):void{
-			if(_mainDisplayElement.isPlaying == false){
-				switchAction();
-			}
-		}
-		
-		private function layoutStopped(e:Event):void{
-			if(contains(_actionButton2)){
-				switchAction();
-			}
-		}
-		
-		private function layoutStarted(e:Event):void{
-			if(contains(_actionButton)){
-				switchAction();
-			}
+			_mainDisplayElement.stage.addEventListener(Event.RESIZE,onScreenRescaling);
 		}
 		
 		protected override function actionClick(m:MouseEvent):void{
 			if(_actionButton.enabled==true){
-				_mainDisplayElement.startLayout();
+				if(_mainDisplayElement.stage.displayState == StageDisplayState.NORMAL){
+					_mainDisplayElement.stage.displayState = StageDisplayState.FULL_SCREEN;
+				}
 				
 				switchAction();
 			}
@@ -78,8 +62,16 @@ package com.ofnodesandedges.y2010.buttons{
 		
 		protected override function action2Click(m:MouseEvent):void{
 			if(_actionButton2.enabled==true){
-				_mainDisplayElement.stopLayout();
+				if(_mainDisplayElement.stage.displayState == StageDisplayState.FULL_SCREEN){
+					_mainDisplayElement.stage.displayState = StageDisplayState.NORMAL;
+				}
 				
+				switchAction();
+			}
+		}
+		
+		private function onScreenRescaling(e:Event):void{
+			if(contains(_actionButton2)){
 				switchAction();
 			}
 		}

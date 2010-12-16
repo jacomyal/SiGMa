@@ -22,15 +22,22 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 	
 	import com.ofnodesandedges.y2010.graphics.GraphGraphics;
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
+	import com.ofnodesandedges.y2010.graphics.NodeGraphics;
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
+	import flash.utils.getTimer;
 	
-	public class MouseInteraction{
+	public class MouseInteraction extends EventDispatcher{
+		
+		public static const CLICK_NODE:String = "click node";
+		public static const CLICK_STAGE:String = "click stage";
 		
 		private static const ZOOM_RATIO:Number = 1.5;
 		private static const ZOOM_SPEED:Number = 3/4;
+		private static const CLICK_TIME:uint = 250;
 		
 		private var _graphGraphics:GraphGraphics;
 		
@@ -45,6 +52,11 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		private var _mouseY:Number;
 		private var _zoomRatio:Number;
 		
+		private var _clickTime:uint;
+		private var _isMouseDown:Boolean
+		
+		private var _clickedNodeID:String;
+		
 		public function MouseInteraction(sprite:Sprite, graphGraphics:GraphGraphics){
 			_graphGraphics = graphGraphics;
 			_sprite = sprite;
@@ -57,17 +69,19 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		}
 		
 		private function mouseDown(m:MouseEvent):void{
-			_mouseX = m.stageX;
-			_mouseY = m.stageY;
-			
 			_tempX = _x;
 			_tempY = _y;
+			_clickTime = getTimer();
 			
-			_sprite.addEventListener(Event.ENTER_FRAME,mouseMove);
+			_isMouseDown = true;
 		}
 		
 		private function mouseUp(m:MouseEvent):void{
-			_sprite.removeEventListener(Event.ENTER_FRAME,mouseMove);
+			_isMouseDown = false;
+			
+			if(getTimer() - _clickTime<CLICK_TIME){
+				click();
+			}
 		}
 		
 		private function mouseWheel(m:MouseEvent):void{
@@ -81,9 +95,38 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 			}
 		}
 		
-		private function mouseMove(e:Event):void{
-			_x = _sprite.stage.mouseX - _mouseX + _tempX;
-			_y = _sprite.stage.mouseY - _mouseY + _tempY;
+		private function mouseMove(m:MouseEvent):void{
+			if(_isMouseDown){
+				_x = m.stageX - _mouseX + _tempX;
+				_y = m.stageY - _mouseY + _tempY;
+			}else{
+				_mouseX = m.stageX;
+				_mouseY = m.stageY;
+			}
+		}
+		
+		private function click():void{
+			// Check if it clicks on a node:
+			var node:NodeGraphics = null;
+			
+			for each(var parser:NodeGraphics in _graphGraphics.nodes){
+				var dist:Number = Math.sqrt(Math.pow(_mouseX-parser.displayX,2)+Math.pow(_mouseY-parser.displayY,2));
+				
+				if(dist<parser.displaySize){
+					node = parser;
+					break;
+				}
+			}
+			
+			if(node){
+				// If clicks a node:
+				_clickedNodeID = node.id;
+				dispatchEvent(new Event(CLICK_NODE));
+			}else{
+				// If clicks the stage:
+				_clickedNodeID = null;
+				dispatchEvent(new Event(CLICK_STAGE));
+			}
 		}
 		
 		private function startZoomIn():void{
@@ -121,19 +164,35 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		}
 		
 		public function mouseOverNode():void{
-			
+			for each(var node:NodeGraphics in _graphGraphics.nodes){
+				var dist:Number = Math.sqrt(Math.pow(_mouseX-node.displayX,2)+Math.pow(_mouseY-node.displayY,2));
+				
+				if(dist<node.displaySize){
+					node.displaySize *= 1.2;
+					node.borderThickness = node.displaySize/3;
+				}
+			}
+		}
+		
+		public function applyValues(ratio:Number):void{
+			for each(var node:NodeGraphics in _graphGraphics.nodes){
+				node.displaySize *= Math.sqrt(ratio);
+				node.borderThickness *= Math.sqrt(ratio);
+			}
 		}
 		
 		public function enable():void{
 			_sprite.addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
 			_sprite.addEventListener(MouseEvent.MOUSE_UP,mouseUp);
 			_sprite.addEventListener(MouseEvent.MOUSE_WHEEL,mouseWheel);
+			_sprite.addEventListener(MouseEvent.MOUSE_MOVE,mouseMove);
 		}
 		
 		public function disable():void{
 			_sprite.removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
 			_sprite.removeEventListener(MouseEvent.MOUSE_UP,mouseUp);
 			_sprite.removeEventListener(MouseEvent.MOUSE_WHEEL,mouseWheel);
+			_sprite.removeEventListener(MouseEvent.MOUSE_MOVE,mouseMove);
 		}
 		
 		public function resetValues():void{
@@ -156,6 +215,10 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		
 		public function get y():Number{
 			return _y;
+		}
+		
+		public function get clickedNodeID():String{
+			return _clickedNodeID;
 		}
 		
 	}

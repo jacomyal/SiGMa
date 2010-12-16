@@ -97,6 +97,12 @@ package com.ofnodesandedges.y2010.ui{
 			parameters['_mainDisplayElement'] = _mainDisplayElement;
 			
 			// Rescale graph:
+			button = new FullScreenButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
+			_buttonsIndex['FullScreenButton'] = indexParser++;
+			_buttons.push(button);
+			xParser += button.getWidth()+10;
+			
+			// Rescale graph:
 			button = new ResetStagePositionButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
 			_buttonsIndex['ResetStagePositionButton'] = indexParser++;
 			_buttons.push(button);
@@ -146,6 +152,8 @@ package com.ofnodesandedges.y2010.ui{
 			this.addChildAt(_backgroundSprite,0);
 			_backgroundSprite.x = -2/3*stage.stageWidth;
 			_backgroundSprite.y = stage.stageHeight;
+			
+			stage.addEventListener(Event.RESIZE,onScreenRescaling);
 		}
 		
 		private function close(e:MouseEvent):void{
@@ -154,7 +162,7 @@ package com.ofnodesandedges.y2010.ui{
 				removeChild(_closeOptionsPanel);
 				addChild(_openOptionsPanel);
 				
-				//closeAllPopUps();
+				closeAllPopUps();
 				
 				removeEventListener(Event.ENTER_FRAME,openingFrameHandler);
 				addEventListener(Event.ENTER_FRAME,closingFrameHandler);
@@ -208,17 +216,44 @@ package com.ofnodesandedges.y2010.ui{
 		
 		private function closeAllPopUps():void{
 			for each(var button:Button in _buttons){
-				button.closePopUp();
+				if(button is SettingsButton){
+					SettingsButton (button).close();
+				}else{
+					button.closePopUp();
+				}
 			}
 		}
 		
 		private function popUpOpening(e:Event):void{
-			//var buttonTarget:Button = e.target as Button;
+			var buttonTarget:Button = e.target as Button;
 			
 			for each(var button:Button in _buttons){
-				//if(button!=buttonTarget){
-					button.closePopUp();
-				//}
+				if(button!=buttonTarget){
+					if(button is SettingsButton){
+						SettingsButton (button).close();
+					}else{
+						button.closePopUp();
+					}
+				}
+			}
+		}
+		
+		private function onScreenRescaling(e:Event):void{
+			_optionsPanelButton.x = 0;
+			_optionsPanelButton.y = stage.stageHeight;
+			
+			_openOptionsPanel.x = 0;
+			_openOptionsPanel.y = stage.stageHeight;
+			
+			_closeOptionsPanel.x = 0;
+			_closeOptionsPanel.y = stage.stageHeight;
+			
+			if(contains(_openOptionsPanel)){
+				_backgroundSprite.x = -2/3*stage.stageWidth;
+				_backgroundSprite.y = stage.stageHeight;
+			}else if(contains(_closeOptionsPanel)){
+				_backgroundSprite.x = 0;
+				_backgroundSprite.y = stage.stageHeight;
 			}
 		}
 	}

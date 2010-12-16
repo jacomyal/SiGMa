@@ -144,9 +144,31 @@ package com.ofnodesandedges.y2010.buttons{
 		public function switchPopUpButton():void{
 			if(contains(_openPopUpButton)){
 				removeChild(_openPopUpButton);
+				
+				_closePopUpButton = new CloseParameters();
+				_closePopUpButton.x = _openPopUpButton.x;
+				_closePopUpButton.y = _openPopUpButton.y;
+				_closePopUpButton.width = _openPopUpButton.width;
+				_closePopUpButton.height = _openPopUpButton.height;
+				
+				_closePopUpButton.addEventListener(MouseEvent.CLICK,closePopUpClick);
+				_closePopUpButton.addEventListener(MouseEvent.MOUSE_OVER,closePopUpOver);
+				_closePopUpButton.addEventListener(MouseEvent.MOUSE_OUT,closePopUpOut);
+				
 				addChild(_closePopUpButton);
 			}else if(contains(_closePopUpButton)){
 				removeChild(_closePopUpButton);
+				
+				_openPopUpButton = new OpenParameters();
+				_openPopUpButton.x = _closePopUpButton.x;
+				_openPopUpButton.y = _closePopUpButton.y;
+				_openPopUpButton.width = _closePopUpButton.width;
+				_openPopUpButton.height = _closePopUpButton.height;
+				
+				_openPopUpButton.addEventListener(MouseEvent.CLICK,openPopUpClick);
+				_openPopUpButton.addEventListener(MouseEvent.MOUSE_OVER,openPopUpOver);
+				_openPopUpButton.addEventListener(MouseEvent.MOUSE_OUT,openPopUpOut);
+				
 				addChild(_openPopUpButton);
 			}
 		}
@@ -198,6 +220,11 @@ package com.ofnodesandedges.y2010.buttons{
 		protected function openPopUpClick(m:MouseEvent):void{
 			if(_openPopUpButton.enabled==true){
 				addChild(_popUp);
+				
+				if(_popUp != null){
+					_popUp.addEventListener(PopUp.OPEN,popUpOpening);
+					_popUp.addEventListener(PopUp.CLOSE,popUpClosing);
+				}
 				_popUp.open(_actionButton.width/2,-6);
 				
 				switchPopUpButton();

@@ -92,7 +92,7 @@ package com.ofnodesandedges.y2010.loading{
 					if(xmlCursor.name().localName=="attribute"){
 						attId = (xmlCursor.@id!=undefined) ? xmlCursor.@id : null;
 						attTitle = (xmlCursor.@title!=undefined) ? xmlCursor.@title : null;
-						attId = (xmlCursor.@type!=undefined) ? xmlCursor.@type : "String";
+						attType = (xmlCursor.@type!=undefined) ? xmlCursor.@type : "String";
 						attDefault = null;
 						
 						for each(xmlSubCursor in xmlCursor.children()){
