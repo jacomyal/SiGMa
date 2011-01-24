@@ -29,6 +29,8 @@ package com.ofnodesandedges.y2010.display{
 	
 	public class PieChartDrawer{
 		
+		public static const SIZE_THRESHOLD:Number = 10;
+		
 		public static const DELIM:String = ";";
 		
 		public static const VALUES_ID:String = "piechart_values";
@@ -46,7 +48,7 @@ package com.ofnodesandedges.y2010.display{
 			}
 			
 			var thickness:Number = node.borderThickness;
-			var radius:Number = node.displaySize-node.borderThickness;
+			var radius:Number = node.displaySize;
 			var centerX:Number = node.displayX;
 			var centerY:Number = node.displayY;
 			
@@ -66,7 +68,7 @@ package com.ofnodesandedges.y2010.display{
 				nodesGraphics.lineTo(centerX+radius*Math.cos(angle),centerY+radius*Math.sin(angle));
 				
 				if(thickness>0){
-					nodesGraphics.lineStyle(thickness,0x000000);
+					nodesGraphics.lineStyle(thickness,node.borderColor);
 				}
 				
 				while(radian-step<2*Math.PI*values[index]/sum){
@@ -85,19 +87,24 @@ package com.ofnodesandedges.y2010.display{
 			angle = 0;
 			var size:Number = 0.8*node.displaySize;
 			
-			for(index=0;index<labels.length;index++){
-				angle += Math.PI*values[index]/sum;
-				
-				var tf:TextField = new TextField();
-				labelSprite.addChild(tf);
-				
-				tf.htmlText = "<font face=\"Lucida Console\" size=\""+size+"\">"+labels[index]+"</font>";
-				tf.autoSize = TextFieldAutoSize.LEFT;
-				tf.x = centerX+radius*Math.cos(angle)*1.05;
-				tf.y = centerY+radius*Math.sin(angle)*1.05;
-				tf.rotationZ = angle*180/Math.PI;
-				
-				angle += Math.PI*values[index]/sum;
+			if(size>SIZE_THRESHOLD){
+				for(index=0;index<labels.length;index++){
+					angle += Math.PI*values[index]/sum;
+					
+					var tf:TextField = new TextField();
+					labelSprite.addChild(tf);
+					
+					tf.htmlText = "<font face=\"Lucida Console\" size=\""+size+"\">"+labels[index]+"</font>";
+					tf.autoSize = TextFieldAutoSize.LEFT;
+					
+					var h:Number = tf.height;
+					
+					tf.x = centerX+(radius+thickness)*Math.cos(angle)*1.05 + Math.cos(angle-Math.PI/2)*h/2;
+					tf.y = centerY+(radius+thickness)*Math.sin(angle)*1.05 + Math.sin(angle-Math.PI/2)*h/2;
+					tf.rotationZ = angle*180/Math.PI;
+					
+					angle += Math.PI*values[index]/sum;
+				}
 			}
 		}
 		
