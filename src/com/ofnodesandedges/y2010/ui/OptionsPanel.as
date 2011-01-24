@@ -95,6 +95,7 @@ package com.ofnodesandedges.y2010.ui{
 			// Buttons parameters:
 			parameters = new Object();
 			parameters['_mainDisplayElement'] = _mainDisplayElement;
+			parameters['_mouseInteraction'] = _mainDisplayElement.mouseInteraction;
 			
 			// Rescale graph:
 			button = new FullScreenButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
@@ -105,6 +106,12 @@ package com.ofnodesandedges.y2010.ui{
 			// Rescale graph:
 			button = new ResetStagePositionButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
 			_buttonsIndex['ResetStagePositionButton'] = indexParser++;
+			_buttons.push(button);
+			xParser += button.getWidth()+10;
+			
+			// Navigation:
+			button = new NavigationButton(_backgroundSprite,xParser,-44,-1,BUTTONS_SIZE,parameters);
+			_buttonsIndex['NavigationButton'] = indexParser++;
 			_buttons.push(button);
 			xParser += button.getWidth()+10;
 			

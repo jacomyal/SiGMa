@@ -68,6 +68,19 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 			resetValues();
 		}
 		
+		public function backToGlobalView():void{
+			_clickedNodeID = null;
+			dispatchEvent(new Event(CLICK_STAGE));
+		}
+		
+		public function selectRandomNode():void{
+			var index:int = Math.floor(_graphGraphics.nodes.length*Math.random());
+			var node:NodeGraphics = _graphGraphics.nodes[index];
+			
+			_clickedNodeID = node.id;
+			dispatchEvent(new Event(CLICK_NODE));
+		}
+		
 		private function mouseDown(m:MouseEvent):void{
 			_tempX = _x;
 			_tempY = _y;
@@ -124,8 +137,8 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 				dispatchEvent(new Event(CLICK_NODE));
 			}else{
 				// If clicks the stage:
-				_clickedNodeID = null;
-				dispatchEvent(new Event(CLICK_STAGE));
+				//_clickedNodeID = null;
+				//dispatchEvent(new Event(CLICK_STAGE));
 			}
 		}
 		

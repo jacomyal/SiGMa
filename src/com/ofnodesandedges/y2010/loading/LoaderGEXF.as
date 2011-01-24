@@ -145,6 +145,7 @@ package com.ofnodesandedges.y2010.loading{
 			var y:Number;
 			
 			var size:Number;
+			var shape:String;
 			var b:String;
 			var g:String;
 			var r:String;
@@ -197,6 +198,14 @@ package com.ofnodesandedges.y2010.loading{
 							node.size = size;
 						}else{
 							_hasNodeSizes++;
+						}
+					}
+					
+					// Shape:
+					if(xmlSubCursor.name().localName=='shape'){
+						if(xmlSubCursor.@value!=undefined){
+							shape = xmlSubCursor.@value;
+							node.shape = shape;
 						}
 					}
 					

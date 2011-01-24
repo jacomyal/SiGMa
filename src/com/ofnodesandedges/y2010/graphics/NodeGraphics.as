@@ -72,7 +72,7 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			_color = nodeData.color;
 			_size = nodeData.size;
-			_shape = "disc";
+			_shape = nodeData.shape;
 			_alpha = 1;
 			
 			_displaySize = 1;
@@ -344,6 +344,14 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		public function get size():Number{
 			return _size;
+		}
+
+		public function get attributes():Object{
+			return _attributes;
+		}
+
+		public function set attributes(value:Object):void{
+			_attributes = value;
 		}
 
 

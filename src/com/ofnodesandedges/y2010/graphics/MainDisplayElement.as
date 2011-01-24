@@ -357,6 +357,10 @@ package com.ofnodesandedges.y2010.graphics{
 			_edgesRatio = value;
 		}
 
+		public function get mouseInteraction():MouseInteraction{
+			return _mouseInteraction;
+		}
+
 
 	}
 }

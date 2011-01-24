@@ -36,7 +36,7 @@ package com.ofnodesandedges.y2010.display{
 			_sprite = sprite;
 			
 			_enable = false;
-			_radius = Math.min(_sprite.stage.stageWidth,_sprite.stage.stageHeight)/2;
+			_radius = Math.max(_sprite.stage.stageWidth,_sprite.stage.stageHeight)/4;
 			_power = 5;
 		}
 		

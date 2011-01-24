@@ -4,10 +4,13 @@
 <Creator>ofNodesAndEdges.com</Creator>
 <Title>Les Misérables, the characters coappearance weighted graph</Title>
 </meta>
-<graph defaultedgetype="directed" idtype="string" type="static">
+<graph defaultedgetype="undirected" idtype="string" type="static">
 <attributes class="node" mode="static">
 <attribute id="authority" title="Authority" type="float"/>
 <attribute id="hub" title="Hub" type="float"/>
+<attribute id="piechart_values" title="piechart_values" type="string"/>
+<attribute id="piechart_colors" title="piechart_colors" type="string"/>
+<attribute id="piechart_labels" title="piechart_labels" type="string"/>
 </attributes>
 <nodes count="77">
 <node id="0.0" label="Myriel">
@@ -248,7 +251,11 @@
 <attvalues>
 <attvalue for="authority" value="0.020512821"/>
 <attvalue for="hub" value="0.020512821"/>
+<attvalue for="piechart_values" value="1;2;1;5;22"/>
+<attvalue for="piechart_colors" value="0x12DA67;0xD35892;0x1206DD;0xFF5533;0x228822"/>
+<attvalue for="piechart_labels" value="Paris;Dublin;Madrid;Londres;Barcelone"/>
 </attvalues>
+<viz:shape value="piechart"/>
 <viz:size value="23.57143"/>
 <viz:color b="50" g="80" r="220"/>
 <viz:position x="-69.92912" y="-15.777599" z="0.0"/>
@@ -912,7 +919,7 @@
 <edge id="204" source="67.0" target="57.0" weight="3.0"/>
 <edge id="206" source="68.0" target="11.0"/>
 <edge id="207" source="68.0" target="24.0"/>
-<edge id="205" source="68.0" target="25.0" weight="5.0"/>
+<edge id="205" source="68.0" target="25.0" weight="5.0" type="arrow"/>
 <edge id="208" source="68.0" target="27.0"/>
 <edge id="210" source="68.0" target="41.0"/>
 <edge id="209" source="68.0" target="48.0"/>

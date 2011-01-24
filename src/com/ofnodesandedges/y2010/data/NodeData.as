@@ -30,6 +30,7 @@ package com.ofnodesandedges.y2010.data{
 		private var _id:String;
 		private var _color:uint;
 		private var _size:Number;
+		private var _shape:String;
 		
 		private var _x:Number;
 		private var _y:Number;
@@ -37,6 +38,7 @@ package com.ofnodesandedges.y2010.data{
 		public function NodeData(label:String,id:String){
 			_label = label;
 			_id = id;
+			_shape = "";
 			
 			_outNeighbors = new Object();
 			_inNeighbors = new Object();
@@ -126,5 +128,14 @@ package com.ofnodesandedges.y2010.data{
 		public function set y(value:Number):void{
 			_y = value;
 		}
+
+		public function get shape():String{
+			return _shape;
+		}
+
+		public function set shape(value:String):void{
+			_shape = value;
+		}
+
 	}
 }

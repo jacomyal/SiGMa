@@ -20,7 +20,7 @@
 
 package com.ofnodesandedges.y2010.buttons{
 	
-	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
+	import com.ofnodesandedges.y2010.mouseinteraction.MouseInteraction;
 	import com.ofnodesandedges.y2010.popups.FishEyePopUp;
 	
 	import flash.display.DisplayObjectContainer;
@@ -28,49 +28,48 @@ package com.ofnodesandedges.y2010.buttons{
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
-	public class FullScreenButton extends DoubleButton{
+	public class NavigationButton extends DoubleButton{
 		
-		private var _mainDisplayElement:MainDisplayElement;
+		private var _mouseInteraction:MouseInteraction;
 		
-		public function FullScreenButton(root:DisplayObjectContainer,x:Number,y:Number,width:Number,height:Number=-1,options:Object=null){
-			_description = 'Go to fullscreen view';
-			_description2 = 'Back to normal view';
+		public function NavigationButton(root:DisplayObjectContainer,x:Number,y:Number,width:Number,height:Number=-1,options:Object=null){
+			_description = 'Go to a random node';
+			_description2 = 'Back to the global view';
 			
-			_actionButton = new SetFullScreen();
-			_actionButton2 = new NotFullScreen();
+			_actionButton = new GoToRandomNode();
+			_actionButton2 = new BackToGlobalView();
 			
-			_mainDisplayElement = options["_mainDisplayElement"];
+			_mouseInteraction = options["_mouseInteraction"];
 			
 			super(root,x,y,width,height,options);
 			
-			if(_mainDisplayElement.stage.displayState == StageDisplayState.FULL_SCREEN){
+			if(_mouseInteraction.clickedNodeID != null){
 				switchAction();
 			}
 			
-			_mainDisplayElement.stage.addEventListener(Event.RESIZE,onScreenRescaling);
+			_mouseInteraction.addEventListener(MouseInteraction.CLICK_NODE,onSelectNode);
+			_mouseInteraction.addEventListener(MouseInteraction.CLICK_STAGE,onBackToGlobalView);
 		}
 		
 		protected override function actionClick(m:MouseEvent):void{
 			if(_actionButton.enabled==true){
-				if(_mainDisplayElement.stage.displayState == StageDisplayState.NORMAL){
-					_mainDisplayElement.stage.displayState = StageDisplayState.FULL_SCREEN;
-				}
-				
-				switchAction();
+				_mouseInteraction.selectRandomNode();
 			}
 		}
 		
 		protected override function action2Click(m:MouseEvent):void{
 			if(_actionButton2.enabled==true){
-				if(_mainDisplayElement.stage.displayState == StageDisplayState.FULL_SCREEN){
-					_mainDisplayElement.stage.displayState = StageDisplayState.NORMAL;
-				}
-				
+				_mouseInteraction.backToGlobalView();
+			}
+		}
+		
+		private function onSelectNode(e:Event):void{
+			if(contains(_actionButton)){
 				switchAction();
 			}
 		}
 		
-		private function onScreenRescaling(e:Event):void{
+		private function onBackToGlobalView(e:Event):void{
 			if(contains(_actionButton2)){
 				switchAction();
 			}

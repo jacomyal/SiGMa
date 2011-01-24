@@ -22,6 +22,7 @@ package com.ofnodesandedges.y2010.graphics{
 	
 	import com.ofnodesandedges.y2010.data.GraphData;
 	import com.ofnodesandedges.y2010.data.NodeData;
+	import com.ofnodesandedges.y2010.display.PieChartDrawer;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -377,8 +378,10 @@ package com.ofnodesandedges.y2010.graphics{
 			_width = width;
 			_height = height;
 			
+			removeLabels(labelSprite);
+			
 			if(edgesGraphics != null) drawEdges(edgesGraphics,edgesRatio);
-			if(nodesGraphics != null) drawNodes(nodesGraphics);
+			if(nodesGraphics != null) drawNodes(nodesGraphics,labelSprite);
 			if(labelSprite != null) drawLabels(textSize,textThreshold,labelSprite);
 			//if(labelSprite != null) drawLabelsOnBitmap(textSize,textThreshold,labelSprite);
 		}
@@ -393,19 +396,21 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 		}
 		
-		private function drawNodes(nodesGraphics:Graphics):void{
+		private function drawNodes(nodesGraphics:Graphics,labelSprite:Sprite):void{
 			// Draw nodes:
 			nodesGraphics.clear();
 			for each(var node:NodeGraphics in _nodes){
-				drawNode(node,nodesGraphics);
+				drawNode(node,nodesGraphics,labelSprite);
+			}
+		}
+		
+		private function removeLabels(container:Sprite):void{
+			for(var i:int=container.numChildren;i>0;i--){
+				container.removeChildAt(i-1);
 			}
 		}
 		
 		private function drawLabels(size:Number,threshold:Number,container:Sprite):void{
-			for(var i:int=container.numChildren;i>0;i--){
-				container.removeChildAt(i-1);
-			}
-			
 			for each(var displayNode:NodeGraphics in _nodes){
 				if((displayNode.displaySize>=threshold)&&(isOnScreen(displayNode))){
 					var label:TextField = new TextField();
@@ -450,22 +455,34 @@ package com.ofnodesandedges.y2010.graphics{
 			labelContainer.addChild(bitmap);
 		}
 		
-		private function drawNode(node:NodeGraphics,nodesGraphics:Graphics):void{
-			if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
-			else nodesGraphics.lineStyle(0,0,0);
-			nodesGraphics.beginFill(node.color,node.alpha);
+		private function drawNode(node:NodeGraphics,nodesGraphics:Graphics,labelSprite:Sprite):void{
 			if(isOnScreen(node)){
 				switch(node.shape.toLowerCase()){
 					case "square":
-						nodesGraphics.drawRect(-Math.SQRT2*node.displaySize/2+node.displayX,-Math.SQRT2*node.displaySize/2+node.displayY,node.displaySize-node.borderThickness,node.displaySize-node.borderThickness);
+						if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
+						else nodesGraphics.lineStyle(0,0,0);
+						nodesGraphics.beginFill(node.color,node.alpha);
+						nodesGraphics.drawRect(-Math.SQRT2*node.displaySize/2+node.displayX,-Math.SQRT2*node.displaySize/2+node.displayY,Math.SQRT2*node.displaySize,Math.SQRT2*node.displaySize);
 						break;
 					case "hexagon":
+						if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
+						else nodesGraphics.lineStyle(0,0,0);
+						nodesGraphics.beginFill(node.color,node.alpha);
 						drawPoly(node.displaySize-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
 						break;
 					case "triangle":
+						if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
+						else nodesGraphics.lineStyle(0,0,0);
+						nodesGraphics.beginFill(node.color,node.alpha);
 						drawPoly(node.displaySize-node.borderThickness,3,node.displayX,node.displayY,nodesGraphics);
 						break;
+					case "piechart":
+						PieChartDrawer.draw(node,nodesGraphics,labelSprite);
+						break;
 					default:
+						if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
+						else nodesGraphics.lineStyle(0,0,0);
+						nodesGraphics.beginFill(node.color,node.alpha);
 						nodesGraphics.drawCircle(node.displayX,node.displayY,node.displaySize-node.borderThickness);
 						//drawPoly(node.displaySize-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
 						break;
