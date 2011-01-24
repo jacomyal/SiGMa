@@ -18,7 +18,7 @@
  *
  */
 
-package com.ofnodesandedges.y2010.display{
+package com.ofnodesandedges.y2010.drawing{
 	
 	import com.ofnodesandedges.y2010.graphics.NodeGraphics;
 	
@@ -30,6 +30,7 @@ package com.ofnodesandedges.y2010.display{
 	public class PieChartDrawer{
 		
 		public static const SIZE_THRESHOLD:Number = 10;
+		public static const SIZE_RATIO:Number = 0.5;
 		
 		public static const DELIM:String = ";";
 		
@@ -85,7 +86,7 @@ package com.ofnodesandedges.y2010.display{
 			
 			// Labels:
 			angle = 0;
-			var size:Number = 0.8*node.displaySize;
+			var size:Number = SIZE_RATIO*node.displaySize;
 			
 			if(size>SIZE_THRESHOLD){
 				for(index=0;index<labels.length;index++){

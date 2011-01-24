@@ -22,7 +22,7 @@ package com.ofnodesandedges.y2010.graphics{
 	
 	import com.ofnodesandedges.y2010.data.GraphData;
 	import com.ofnodesandedges.y2010.data.NodeData;
-	import com.ofnodesandedges.y2010.display.PieChartDrawer;
+	import com.ofnodesandedges.y2010.drawing.PieChartDrawer;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
