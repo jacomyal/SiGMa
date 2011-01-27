@@ -251,11 +251,7 @@
 <attvalues>
 <attvalue for="authority" value="0.020512821"/>
 <attvalue for="hub" value="0.020512821"/>
-<attvalue for="piechart_values" value="1;2;1;5;22"/>
-<attvalue for="piechart_colors" value="0x12DA67;0xD35892;0x1206DD;0xFF5533;0x228822"/>
-<attvalue for="piechart_labels" value="Paris;Dublin;Madrid;Londres;Barcelone"/>
 </attvalues>
-<viz:shape value="piechart"/>
 <viz:size value="23.57143"/>
 <viz:color b="50" g="80" r="220"/>
 <viz:position x="-69.92912" y="-15.777599" z="0.0"/>

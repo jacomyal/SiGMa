@@ -51,7 +51,7 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _edgesSprite:Sprite;
 		private var _nodesSprite:Sprite;
 		private var _labelSprite:Sprite;
-		private var _miscSprite:Sprite;
+		private var _miscSprite:Sprite; // This one is currently only used by the FishEye circle.
 		private var _mouseSprite:Sprite;
 		
 		// Display vars:

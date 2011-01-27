@@ -20,9 +20,11 @@
 
 package com.ofnodesandedges.y2010.graphics{
 	
+	import com.ofnodesandedges.y2010.computing.Color;
 	import com.ofnodesandedges.y2010.data.GraphData;
 	import com.ofnodesandedges.y2010.data.NodeData;
 	import com.ofnodesandedges.y2010.drawing.PieChartDrawer;
+	import com.ofnodesandedges.y2010.drawing.PolygonDrawer;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -35,6 +37,10 @@ package com.ofnodesandedges.y2010.graphics{
 	import spark.primitives.Graphic;
 	
 	public class GraphGraphics{
+		
+		private static const STATUS_SELECTED:String = "selected";
+		
+		private static const LABEL_ELLIPSE_RADIUS:Number = 1;
 		
 		private var _nodes:Vector.<NodeGraphics>;
 		
@@ -137,6 +143,12 @@ package com.ofnodesandedges.y2010.graphics{
 			var newNodes:Vector.<NodeGraphics> = new Vector.<NodeGraphics>();
 			for each(nodeGraphics in _nodes){
 				if(newIDs.indexOf(nodeGraphics.id)>=0){
+					if(nodeGraphics.id == centerID){
+						nodeGraphics.status = STATUS_SELECTED;
+					}else{
+						nodeGraphics.status = "";
+					}
+					
 					newNodes.push(nodeGraphics);
 				}
 			}
@@ -294,6 +306,11 @@ package com.ofnodesandedges.y2010.graphics{
 				node.displaySize = node.displaySize*Math.sqrt(stageRatio);
 				
 				node.borderThickness = 0;
+				node.labelBackgroundColor = 0;
+				
+				if(node.status == STATUS_SELECTED){
+					node.labelBackgroundColor = node.color;
+				}
 			}
 		}
 		
@@ -302,7 +319,6 @@ package com.ofnodesandedges.y2010.graphics{
 				node.x = Math.random()*areaWidth - areaWidth/2;
 				node.y = Math.random()*areaHeight - areaHeight/2;
 			}
-			
 		}
 		
 		public function rescaleNodes(areaWidth:Number,areaHeight:Number,displaySizeMin:Number = 0,displaySizeMax:Number = 15):void{
@@ -405,8 +421,12 @@ package com.ofnodesandedges.y2010.graphics{
 		}
 		
 		private function removeLabels(container:Sprite):void{
-			for(var i:int=container.numChildren;i>0;i--){
-				container.removeChildAt(i-1);
+			if(container!=null){
+				container.graphics.clear();
+				
+				for(var i:int=container.numChildren;i>0;i--){
+					container.removeChildAt(i-1);
+				}
 			}
 		}
 		
@@ -420,6 +440,13 @@ package com.ofnodesandedges.y2010.graphics{
 					label.autoSize = TextFieldAutoSize.LEFT;
 					label.x = displayNode.displayX+displayNode.displaySize*1.5;
 					label.y = displayNode.displayY-label.height/2;
+					
+					if(displayNode.labelBackgroundColor != 0){
+						container.graphics.lineStyle(0,0,0);
+						container.graphics.beginFill(displayNode.labelBackgroundColor);
+						container.graphics.drawRoundRect(label.x,label.y,label.width,label.height,size,size);
+						container.graphics.endFill();
+					}
 					
 					container.addChild(label);
 				}
@@ -468,13 +495,13 @@ package com.ofnodesandedges.y2010.graphics{
 						if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
 						else nodesGraphics.lineStyle(0,0,0);
 						nodesGraphics.beginFill(node.color,node.alpha);
-						drawPoly(node.displaySize-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
+						PolygonDrawer.draw(node.displaySize-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
 						break;
 					case "triangle":
 						if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
 						else nodesGraphics.lineStyle(0,0,0);
 						nodesGraphics.beginFill(node.color,node.alpha);
-						drawPoly(node.displaySize-node.borderThickness,3,node.displayX,node.displayY,nodesGraphics);
+						PolygonDrawer.draw(node.displaySize-node.borderThickness,3,node.displayX,node.displayY,nodesGraphics);
 						break;
 					case "piechart":
 						PieChartDrawer.draw(node,nodesGraphics,labelSprite);
@@ -483,8 +510,7 @@ package com.ofnodesandedges.y2010.graphics{
 						if(node.borderThickness>0) nodesGraphics.lineStyle(node.borderThickness,node.borderColor,node.alpha);
 						else nodesGraphics.lineStyle(0,0,0);
 						nodesGraphics.beginFill(node.color,node.alpha);
-						nodesGraphics.drawCircle(node.displayX,node.displayY,node.displaySize-node.borderThickness);
-						//drawPoly(node.displaySize-node.borderThickness,6,node.displayX,node.displayY,nodesGraphics);
+						nodesGraphics.drawCircle(node.displayX,node.displayY,node.displaySize);
 						break;
 				}
 			}
@@ -532,28 +558,6 @@ package com.ofnodesandedges.y2010.graphics{
 							&&(node.displayY-node.displaySize<_height*4/3);
 			
 			return res;
-		}
-		
-		private function drawPoly(r:int,seg:int,cx:Number,cy:Number,container:Graphics):void{
-			var poly_id:int = 0;
-			var coords:Array = new Array();
-			var ratio:Number = 360/seg;
-			
-			for(var i:int=0;i<=360;i+=ratio){
-				var px:Number=cx+Math.sin(Math.PI/180*i)*r;
-				var py:Number=cy+Math.cos(Math.PI/180*i)*r;
-				coords[poly_id]=new Array(px,py);
-				
-				if(poly_id>=1){
-					container.lineTo(coords[poly_id][0],coords[poly_id][1]);
-				}else{
-					container.moveTo(coords[poly_id][0],coords[poly_id][1]);
-				}
-				
-				poly_id++;
-			}
-			
-			poly_id=0;
 		}
 		
 		public function getMinSize():Number{

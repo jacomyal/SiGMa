@@ -68,8 +68,8 @@ package com.ofnodesandedges.y2010.popups{
 			if(_edgesSizeLabel.width>_contentWidth) _contentWidth = _edgesSizeLabel.width;
 			
 			_edgesSizeSlider = new Slider();
-			_edgesSizeSlider.minimum = _mainDisplayElement.edgesRatio/10;
-			_edgesSizeSlider.maximum = _mainDisplayElement.edgesRatio*4;
+			_edgesSizeSlider.minimum = 0;
+			_edgesSizeSlider.maximum = _mainDisplayElement.edgesRatio*100;
 			_edgesSizeSlider.value = _mainDisplayElement.edgesRatio;
 			_edgesSizeSlider.snapInterval = 0.05;
 			_edgesSizeSlider.addEventListener(SliderEvent.CHANGE,edgesSizeChange);

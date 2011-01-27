@@ -137,8 +137,7 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 				dispatchEvent(new Event(CLICK_NODE));
 			}else{
 				// If clicks the stage:
-				//_clickedNodeID = null;
-				//dispatchEvent(new Event(CLICK_STAGE));
+				
 			}
 		}
 		

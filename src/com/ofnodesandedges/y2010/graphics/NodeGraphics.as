@@ -20,12 +20,14 @@
 
 package com.ofnodesandedges.y2010.graphics{
 	
+	import com.ofnodesandedges.y2010.computing.Color;
 	import com.ofnodesandedges.y2010.data.NodeData;
 
 	public class NodeGraphics{
 		
 		private var _label:String;
 		private var _id:String;
+		private var _labelBackgroundColor:uint;
 		
 		private var _displayX:Number;
 		private var _displayY:Number;
@@ -47,6 +49,7 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _borderThickness:Number;
 		
 		private var _attributes:Object;
+		private var _status:String;
 		
 		private var _inNeighbors:Vector.<NodeGraphics>;
 		private var _outNeighbors:Vector.<NodeGraphics>;
@@ -79,7 +82,7 @@ package com.ofnodesandedges.y2010.graphics{
 			_displayX = 0;
 			_displayY = 0;
 			
-			_borderColor = brightenColor(_color,30);
+			_borderColor = Color.brightenColor(_color,30);
 			_borderThickness = 0;
 			
 			_x = (nodeData.x) ? nodeData.x : 0;
@@ -90,6 +93,8 @@ package com.ofnodesandedges.y2010.graphics{
 			_old_dy = 0;
 			
 			_freeze = 0;
+			
+			_status = "";
 		}
 
 		public function addOutNeighbor(neighbor:NodeGraphics,edgeValue:Object,edgeAttributes:Object):void{
@@ -156,42 +161,6 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 			
 			return res;
-		}
-		
-		/**
-		 * Makes a uint color become brigther or darker, depending of the parameter.
-		 * If the <code>perc</code> parameter is above 50, it will brighten the color.
-		 * If the parameter is below 50, it will darken it.
-		 * 
-		 * @param color Original color value, such as 0x88AACC.
-		 * @param perc Value between 0 and 100 to modify original color.
-		 * @return New color value (still such as 0x113355)
-		 * 
-		 * @author Martin Legris
-		 * @see http://blog.martinlegris.com
-		 */
-		private function brightenColor(color:Number, perc:Number):Number{
-			var factor:Number;
-			var blueOffset:Number = color % 256;
-			var greenOffset:Number = ( color >> 8 ) % 256;
-			var redOffset:Number = ( color >> 16 ) % 256;
-			
-			if(perc > 50 && perc <= 100) {
-				factor = ( ( perc-50 ) / 50 );
-				
-				redOffset += ( 255 - redOffset ) * factor;
-				blueOffset += ( 255 - blueOffset ) * factor;
-				greenOffset += ( 255 - greenOffset ) * factor;
-			}
-			else if( perc < 50 && perc >= 0 ){
-				factor = ( ( 50 - perc ) / 50 );
-				
-				redOffset -= redOffset * factor;
-				blueOffset -= blueOffset * factor;
-				greenOffset -= greenOffset * factor;
-			}
-			
-			return (redOffset<<16|greenOffset<<8|blueOffset);
 		}
 
 		public function get color():uint{
@@ -352,6 +321,22 @@ package com.ofnodesandedges.y2010.graphics{
 
 		public function set attributes(value:Object):void{
 			_attributes = value;
+		}
+
+		public function get labelBackgroundColor():uint{
+			return _labelBackgroundColor;
+		}
+
+		public function set labelBackgroundColor(value:uint):void{
+			_labelBackgroundColor = value;
+		}
+
+		public function get status():String{
+			return _status;
+		}
+
+		public function set status(value:String):void{
+			_status = value;
 		}
 
 
