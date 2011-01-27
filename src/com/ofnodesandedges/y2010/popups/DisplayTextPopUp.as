@@ -61,7 +61,7 @@ package com.ofnodesandedges.y2010.popups{
 			if(_thresholdLabel.width>_contentWidth) _contentWidth = _thresholdLabel.width;
 			
 			_thresholdSlider = new Slider();
-			_thresholdSlider.minimum = _mainDisplayElement.graphGraphics.getMinSize();
+			_thresholdSlider.minimum = 0;
 			_thresholdSlider.maximum = _mainDisplayElement.graphGraphics.getMaxSize();
 			_thresholdSlider.value = _mainDisplayElement.textThreshold;
 			_thresholdSlider.addEventListener(SliderEvent.CHANGE,thresholdChange);

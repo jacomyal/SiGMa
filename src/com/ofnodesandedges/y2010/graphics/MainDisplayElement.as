@@ -24,8 +24,8 @@ package com.ofnodesandedges.y2010.graphics{
 	import com.ofnodesandedges.y2010.data.NodeData;
 	import com.ofnodesandedges.y2010.display.FishEyeDisplay;
 	import com.ofnodesandedges.y2010.graphics.*;
+	import com.ofnodesandedges.y2010.interaction.Interaction;
 	import com.ofnodesandedges.y2010.layout.*;
-	import com.ofnodesandedges.y2010.mouseinteraction.MouseInteraction;
 	import com.ofnodesandedges.y2010.ui.Main;
 	import com.ofnodesandedges.y2010.ui.MapCaption;
 	
@@ -51,7 +51,7 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _edgesSprite:Sprite;
 		private var _nodesSprite:Sprite;
 		private var _labelSprite:Sprite;
-		private var _miscSprite:Sprite; // This one is currently only used by the FishEye circle.
+		private var _miscSprite:Sprite; // This one is currently used only by the FishEye circle.
 		private var _mouseSprite:Sprite;
 		
 		// Display vars:
@@ -64,7 +64,7 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		// Display and interaction classes:
 		private var _fishEyeDisplay:FishEyeDisplay;
-		private var _mouseInteraction:MouseInteraction;
+		private var _mouseInteraction:Interaction;
 		
 		public function MainDisplayElement(main:Main){
 			_main = main;
@@ -94,10 +94,10 @@ package com.ofnodesandedges.y2010.graphics{
 			_fishEyeDisplay = new FishEyeDisplay(_graphGraphics,_miscSprite);
 			
 			// Mouse interaction:
-			_mouseInteraction = new MouseInteraction(_mouseSprite,_graphGraphics);
+			_mouseInteraction = new Interaction(_mouseSprite,_graphGraphics);
 			_mouseInteraction.enable();
-			_mouseInteraction.addEventListener(MouseInteraction.CLICK_NODE,clickNode);
-			_mouseInteraction.addEventListener(MouseInteraction.CLICK_STAGE,clickStage);
+			_mouseInteraction.addEventListener(Interaction.CLICK_NODE,clickNode);
+			_mouseInteraction.addEventListener(Interaction.CLICK_STAGE,clickStage);
 			
 			// Display vars:
 			_displayEdges = false;
@@ -130,8 +130,16 @@ package com.ofnodesandedges.y2010.graphics{
 		}
 		
 		private function initGraph():void{
+			_graphGraphics = new GraphGraphics(_main.graph);
+			_graphGraphics.refreshEdges();
+			
+			_graphGraphics.rescaleNodes(stage.stageWidth,stage.stageHeight,0,15);
+			
+			_isPlaying = !_main.graph.hasCoordinates;
+			
 			var title:String = "";
 			var author:String = "";
+			var graphContent:String = "";
 			
 			for(var key:String in _graphData.metaData){
 				switch(key.toLowerCase()){
@@ -145,16 +153,11 @@ package com.ofnodesandedges.y2010.graphics{
 					default:
 						break;
 				}
-			} 
+			}
 			
-			_mapCaption.draw(title,author,"");
+			graphContent = "("+_graphGraphics.getNodesCount()+" nodes and "+_graphGraphics.getEdgesCount()+" edges)";
 			
-			_graphGraphics = new GraphGraphics(_main.graph);
-			_graphGraphics.refreshEdges();
-			
-			_graphGraphics.rescaleNodes(stage.stageWidth,stage.stageHeight,0,15);
-			
-			_isPlaying = !_main.graph.hasCoordinates;
+			_mapCaption.draw(title,author,graphContent,"");
 		}
 		
 		private function roughLayoutFinished(e:Event):void{
@@ -204,12 +207,13 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			// Adapt display:
 			_graphGraphics.rescaleNodes(stage.stageWidth,stage.stageHeight);
+			_graphGraphics.setDisplayVars(_mouseInteraction.x,_mouseInteraction.y,_mouseInteraction.ratio);
+			
 			if(_fishEyeDisplay.enable){
-				_mouseInteraction.resetValues();
+				//_mouseInteraction.resetValues();
 				_fishEyeDisplay.applyDisplay();
-			}else{
-				_graphGraphics.setDisplayVars(_mouseInteraction.x,_mouseInteraction.y,_mouseInteraction.ratio);
 			}
+			
 			_mouseInteraction.mouseOverNode();
 			_mouseInteraction.applyValues(_nodesRatio);
 			
@@ -217,11 +221,12 @@ package com.ofnodesandedges.y2010.graphics{
 		}
 		
 		private function clickNode(e:Event):void{
-			var ID:String = MouseInteraction (e.target).clickedNodeID;
+			var ID:String = Interaction (e.target).clickedNodeID;
 			_graphGraphics.getNeighborhood1(_graphData,ID);
 			
 			var title:String = "";
 			var author:String = "";
+			var graphContent:String = "";
 			var subtitle:String = "";
 			
 			for(var key:String in _graphData.metaData){
@@ -238,9 +243,11 @@ package com.ofnodesandedges.y2010.graphics{
 				}
 			} 
 			
+			graphContent = "("+_graphGraphics.getNodesCount()+" nodes and "+_graphGraphics.getEdgesCount()+" edges)";
+			
 			subtitle = _graphData.getNode(ID).label+"'s neighborhood";
 			
-			_mapCaption.draw(title,author,subtitle);
+			_mapCaption.draw(title,author,graphContent,subtitle);
 			_mouseInteraction.resetValues();
 			
 			startLayout(true);
@@ -251,6 +258,7 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			var title:String = "";
 			var author:String = "";
+			var graphContent:String = "";
 			
 			for(var key:String in _graphData.metaData){
 				switch(key.toLowerCase()){
@@ -266,7 +274,9 @@ package com.ofnodesandedges.y2010.graphics{
 				} 
 			}
 			
-			_mapCaption.draw(title,author,"");
+			graphContent = "("+_graphGraphics.getNodesCount()+" nodes and "+_graphGraphics.getEdgesCount()+" edges)";
+			
+			_mapCaption.draw(title,author,graphContent,"");
 			
 			_graphGraphics.getFullGraph(_graphData);
 			_mouseInteraction.resetValues();
@@ -357,7 +367,7 @@ package com.ofnodesandedges.y2010.graphics{
 			_edgesRatio = value;
 		}
 
-		public function get mouseInteraction():MouseInteraction{
+		public function get mouseInteraction():Interaction{
 			return _mouseInteraction;
 		}
 

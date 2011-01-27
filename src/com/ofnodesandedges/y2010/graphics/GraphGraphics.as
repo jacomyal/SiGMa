@@ -432,11 +432,12 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		private function drawLabels(size:Number,threshold:Number,container:Sprite):void{
 			for each(var displayNode:NodeGraphics in _nodes){
-				if((displayNode.displaySize>=threshold)&&(isOnScreen(displayNode))){
+				if(((displayNode.status==STATUS_SELECTED)||(displayNode.displaySize>=threshold))&&(isOnScreen(displayNode))){
 					var label:TextField = new TextField();
 					var newSize:Number = size*displayNode.displaySize/10;
+					var color:String = Color.brightenColor(displayNode.color,25).toString(16);
 					
-					label.htmlText = '<font face="Lucida Console" size="'+newSize+'" color="#000000">'+displayNode.label+'</font>';
+					label.htmlText = '<font face="Lucida Console" size="'+newSize+'" color="#'+color+'">'+displayNode.label+'</font>';
 					label.autoSize = TextFieldAutoSize.LEFT;
 					label.x = displayNode.displayX+displayNode.displaySize*1.5;
 					label.y = displayNode.displayY-label.height/2;
@@ -580,6 +581,25 @@ package com.ofnodesandedges.y2010.graphics{
 			}
 			
 			return result;
+		}
+		
+		public function getEdgesCount():Number{
+			var count:Number = 0;
+			var i:int, l:int = _nodes.length;
+			
+			for(i=0;i<l;i++){
+				count += _nodes[i].outNeighbors.length; 
+			}
+			
+			return count;
+		}
+		
+		public function getNodesCount():Number{
+			var count:Number = 0;
+			
+			if(_nodes) count = _nodes.length;
+			
+			return count;
 		}
 		
 		public function get nodes():Vector.<NodeGraphics>{

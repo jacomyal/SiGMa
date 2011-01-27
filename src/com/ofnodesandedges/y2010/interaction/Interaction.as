@@ -18,7 +18,7 @@
  *
  */
 
-package com.ofnodesandedges.y2010.mouseinteraction{
+package com.ofnodesandedges.y2010.interaction{
 	
 	import com.ofnodesandedges.y2010.graphics.GraphGraphics;
 	import com.ofnodesandedges.y2010.graphics.MainDisplayElement;
@@ -27,17 +27,22 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.ui.Keyboard;
 	import flash.utils.getTimer;
 	
-	public class MouseInteraction extends EventDispatcher{
+	public class Interaction extends EventDispatcher{
+		
+		public static const MOVING_STEP:Number = 15;
+		public static const ZOOMING_STEP:Number = 2;
 		
 		public static const CLICK_NODE:String = "click node";
 		public static const CLICK_STAGE:String = "click stage";
 		
-		private static const ZOOM_RATIO:Number = 1.5;
-		private static const ZOOM_SPEED:Number = 3/4;
-		private static const CLICK_TIME:uint = 250;
+		public static const ZOOM_RATIO:Number = 1.5;
+		public static const ZOOM_SPEED:Number = 3/4;
+		public static const CLICK_TIME:uint = 250;
 		
 		private var _graphGraphics:GraphGraphics;
 		
@@ -57,7 +62,7 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 		
 		private var _clickedNodeID:String;
 		
-		public function MouseInteraction(sprite:Sprite, graphGraphics:GraphGraphics){
+		public function Interaction(sprite:Sprite, graphGraphics:GraphGraphics){
 			_graphGraphics = graphGraphics;
 			_sprite = sprite;
 			
@@ -198,6 +203,7 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 			_sprite.addEventListener(MouseEvent.MOUSE_UP,mouseUp);
 			_sprite.addEventListener(MouseEvent.MOUSE_WHEEL,mouseWheel);
 			_sprite.addEventListener(MouseEvent.MOUSE_MOVE,mouseMove);
+			_sprite.stage.addEventListener(KeyboardEvent.KEY_DOWN,keyDownHandler);
 		}
 		
 		public function disable():void{
@@ -205,6 +211,7 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 			_sprite.removeEventListener(MouseEvent.MOUSE_UP,mouseUp);
 			_sprite.removeEventListener(MouseEvent.MOUSE_WHEEL,mouseWheel);
 			_sprite.removeEventListener(MouseEvent.MOUSE_MOVE,mouseMove);
+			_sprite.stage.removeEventListener(KeyboardEvent.KEY_DOWN,keyDownHandler);
 		}
 		
 		public function resetValues():void{
@@ -215,6 +222,36 @@ package com.ofnodesandedges.y2010.mouseinteraction{
 			_sprite.stage.removeEventListener(Event.ENTER_FRAME,zoomIn);
 			_sprite.stage.removeEventListener(Event.ENTER_FRAME,zoomOut);
 			_sprite.stage.removeEventListener(Event.ENTER_FRAME,mouseMove);
+		}
+		
+		private function keyDownHandler(k:KeyboardEvent):void{
+			switch(k.keyCode){
+				case Keyboard.LEFT:
+					_x += MOVING_STEP;
+					break;
+				case Keyboard.RIGHT:
+					_x -= MOVING_STEP;
+					break;
+				case Keyboard.UP:
+					_y += MOVING_STEP;
+					break;
+				case Keyboard.DOWN:
+					_y -= MOVING_STEP;
+					break;
+				case Keyboard.SPACE:
+					resetValues();
+					break;
+				case Keyboard.PAGE_UP:
+				case "187": // Plus
+					_ratio *= ZOOMING_STEP;
+					break;
+				case Keyboard.PAGE_DOWN:
+				case "189": // Minus
+					_ratio /= ZOOMING_STEP;
+					break;
+				default:
+					break;
+			}
 		}
 		
 		public function get ratio():Number{

@@ -28,21 +28,27 @@ package com.ofnodesandedges.y2010.ui{
 		
 		private var _title:TextField;
 		private var _author:TextField;
+		private var _graphContent:TextField;
 		private var _subtitle:TextField;
 		
 		public function MapCaption(){
 			_title = new TextField();
 			_author = new TextField();
+			_graphContent = new TextField();
 			_subtitle = new TextField();
 		}
 		
-		public function draw(title:String,author:String,subtitle:String):void{
+		public function draw(title:String,author:String,graphContent:String,subtitle:String):void{
 			if(contains(_title)){
 				removeChild(_title);
 			}
 			
 			if(contains(_author)){
 				removeChild(_author);
+			}
+			
+			if(contains(_graphContent)){
+				removeChild(_graphContent);
 			}
 			
 			if(contains(_subtitle)){
@@ -54,7 +60,7 @@ package com.ofnodesandedges.y2010.ui{
 			
 			if(title){
 				_title = new TextField();
-				_title.htmlText = '<font face="Lucida Console" size="+5" color="#000000">'+title+'</font>';
+				_title.htmlText = '<font face="Lucida Console" size="+8" color="#000000">'+title+'</font>';
 				_title.autoSize = TextFieldAutoSize.LEFT;
 				_title.x = 10;
 				_title.y = yParser;
@@ -65,12 +71,12 @@ package com.ofnodesandedges.y2010.ui{
 			
 			if(author){
 				_author = new TextField();
-				_author.htmlText = '<font face="Lucida Console" size="+2" color="#000000">Created by '+author+'</font>';
+				_author.htmlText = '<font face="Lucida Console" size="+4" color="#000000">Created by '+author+'</font>';
 				_author.autoSize = TextFieldAutoSize.LEFT;
 				_author.x = 10;
 				_author.y = yParser;
 				
-				yParser += _author.height+step;
+				yParser += _author.height+3*step;
 				addChild(_author);
 			}
 			
@@ -83,6 +89,17 @@ package com.ofnodesandedges.y2010.ui{
 				
 				yParser += _subtitle.height+step;
 				addChild(_subtitle);
+			}
+			
+			if(graphContent){
+				_graphContent = new TextField();
+				_graphContent.htmlText = '<font face="Lucida Console" size="+1" color="#000000"><i>'+graphContent+'</i></font>';
+				_graphContent.autoSize = TextFieldAutoSize.LEFT;
+				_graphContent.x = 10;
+				_graphContent.y = yParser;
+				
+				yParser += _graphContent.height+step;
+				addChild(_graphContent);
 			}
 		}
 	}

@@ -48,12 +48,8 @@ package com.ofnodesandedges.y2010.ui{
 			s.addChild(this);
 			
 			// Set file path:
-			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./les_miserables.gexf";
+			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./graphs/erdos2.gexf";
 			else _filePath = root.loaderInfo.parameters["filePath"];
-			
-			// Add the FPSCounter:
-			_fpsCounter = new FPSCounter(stage.stageWidth-100,10,0x000000);
-			addChild(_fpsCounter);
 			
 			// Load the file:
 			var fileExtension:String = _filePath.substr(_filePath.lastIndexOf('.')+1);
@@ -81,6 +77,8 @@ package com.ofnodesandedges.y2010.ui{
 			
 			// Init Options Panel:
 			_optionsPanel = new OptionsPanel(_mDE);
+			
+			addFPSCounter();
 		}
 		
 		public function get graph():GraphData{
@@ -90,6 +88,11 @@ package com.ofnodesandedges.y2010.ui{
 		public function set graph(value:GraphData):void{
 			_graph = value;
 		}
-
+		
+		private function addFPSCounter():void{
+			// Add the FPSCounter:
+			_fpsCounter = new FPSCounter(stage.stageWidth-100,10,0x000000);
+			stage.addChild(_fpsCounter);
+		}
 	}
 }

@@ -20,7 +20,7 @@
 
 package com.ofnodesandedges.y2010.buttons{
 	
-	import com.ofnodesandedges.y2010.mouseinteraction.MouseInteraction;
+	import com.ofnodesandedges.y2010.interaction.Interaction;
 	import com.ofnodesandedges.y2010.popups.FishEyePopUp;
 	
 	import flash.display.DisplayObjectContainer;
@@ -30,7 +30,7 @@ package com.ofnodesandedges.y2010.buttons{
 	
 	public class NavigationButton extends DoubleButton{
 		
-		private var _mouseInteraction:MouseInteraction;
+		private var _mouseInteraction:Interaction;
 		
 		public function NavigationButton(root:DisplayObjectContainer,x:Number,y:Number,width:Number,height:Number=-1,options:Object=null){
 			_description = 'Go to a random node';
@@ -47,8 +47,8 @@ package com.ofnodesandedges.y2010.buttons{
 				switchAction();
 			}
 			
-			_mouseInteraction.addEventListener(MouseInteraction.CLICK_NODE,onSelectNode);
-			_mouseInteraction.addEventListener(MouseInteraction.CLICK_STAGE,onBackToGlobalView);
+			_mouseInteraction.addEventListener(Interaction.CLICK_NODE,onSelectNode);
+			_mouseInteraction.addEventListener(Interaction.CLICK_STAGE,onBackToGlobalView);
 		}
 		
 		protected override function actionClick(m:MouseEvent):void{
