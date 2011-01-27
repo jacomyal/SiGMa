@@ -245,7 +245,7 @@ package com.ofnodesandedges.y2010.graphics{
 			
 			graphContent = "("+_graphGraphics.getNodesCount()+" nodes and "+_graphGraphics.getEdgesCount()+" edges)";
 			
-			subtitle = _graphData.getNode(ID).label+"'s neighborhood";
+			subtitle = "Neighborhood of <i>"+_graphData.getNode(ID).label+"</i>";
 			
 			_mapCaption.draw(title,author,graphContent,subtitle);
 			_mouseInteraction.resetValues();
@@ -255,6 +255,9 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		private function clickStage(e:Event):void{
 			stopLayout(true);
+			
+			_graphGraphics.getFullGraph(_graphData);
+			_mouseInteraction.resetValues();
 			
 			var title:String = "";
 			var author:String = "";
@@ -277,9 +280,6 @@ package com.ofnodesandedges.y2010.graphics{
 			graphContent = "("+_graphGraphics.getNodesCount()+" nodes and "+_graphGraphics.getEdgesCount()+" edges)";
 			
 			_mapCaption.draw(title,author,graphContent,"");
-			
-			_graphGraphics.getFullGraph(_graphData);
-			_mouseInteraction.resetValues();
 		}
 		
 		public function rescaleGraph():void{

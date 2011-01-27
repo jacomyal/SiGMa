@@ -1,6 +1,7 @@
 package com.ofnodesandedges.y2010.computing{
 	
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
@@ -11,20 +12,20 @@ package com.ofnodesandedges.y2010.computing{
 		private var ticks:uint = 0;
 		private var tf:TextField;
 		
-		public function FPSCounter(xPos:int=0, yPos:int=0, color:uint=0xffffff, fillBackground:Boolean=false, backgroundColor:uint=0x000000) {
-			x = xPos;
-			y = yPos;
+		public function FPSCounter(s:Stage){
+			s.addChild(this);
+			resize(null);
+			
 			tf = new TextField();
-			tf.textColor = color;
+			tf.textColor = 0x000000;
 			tf.text = "----- fps";
 			tf.selectable = false;
-			tf.background = fillBackground;
-			tf.backgroundColor = backgroundColor;
 			tf.autoSize = TextFieldAutoSize.LEFT;
 			addChild(tf);
 			width = tf.textWidth;
 			height = tf.textHeight;
-			addEventListener(Event.ENTER_FRAME, tick);
+			stage.addEventListener(Event.ENTER_FRAME, tick);
+			stage.addEventListener(Event.RESIZE, resize);
 		}
 		
 		public function tick(evt:Event):void {
@@ -38,6 +39,11 @@ package com.ofnodesandedges.y2010.computing{
 				ticks = 0;
 				last = now;
 			}
+		}
+		
+		public function resize(e:Event):void{
+			this.x = stage.stageWidth-55;
+			this.y = 10;
 		}
 	}
 }

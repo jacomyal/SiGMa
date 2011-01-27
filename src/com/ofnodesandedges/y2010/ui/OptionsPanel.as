@@ -157,7 +157,7 @@ package com.ofnodesandedges.y2010.ui{
 			
 			// Finish:
 			this.addChildAt(_backgroundSprite,0);
-			_backgroundSprite.x = -2/3*stage.stageWidth;
+			_backgroundSprite.x = -_backgroundSprite.width;
 			_backgroundSprite.y = stage.stageHeight;
 			
 			stage.addEventListener(Event.RESIZE,onScreenRescaling);
@@ -256,7 +256,7 @@ package com.ofnodesandedges.y2010.ui{
 			_closeOptionsPanel.y = stage.stageHeight;
 			
 			if(contains(_openOptionsPanel)){
-				_backgroundSprite.x = -2/3*stage.stageWidth;
+				_backgroundSprite.x = -_backgroundSprite.width;
 				_backgroundSprite.y = stage.stageHeight;
 			}else if(contains(_closeOptionsPanel)){
 				_backgroundSprite.x = 0;

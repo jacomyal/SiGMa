@@ -70,6 +70,7 @@ package com.ofnodesandedges.y2010.interaction{
 			_sprite.graphics.drawRect(-10,-10,_sprite.stage.stageWidth+20,_sprite.stage.stageHeight+20);
 			_sprite.graphics.endFill();
 			
+			_sprite.stage.addEventListener(Event.RESIZE,onScreenRescaling);
 			resetValues();
 		}
 		
@@ -252,6 +253,12 @@ package com.ofnodesandedges.y2010.interaction{
 				default:
 					break;
 			}
+		}
+		
+		private function onScreenRescaling(e:Event):void{
+			_sprite.graphics.beginFill(0xFFAA55,0);
+			_sprite.graphics.drawRect(-10,-10,_sprite.stage.stageWidth+20,_sprite.stage.stageHeight+20);
+			_sprite.graphics.endFill();
 		}
 		
 		public function get ratio():Number{

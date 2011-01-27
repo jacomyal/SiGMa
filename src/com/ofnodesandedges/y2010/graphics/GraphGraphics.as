@@ -444,7 +444,7 @@ package com.ofnodesandedges.y2010.graphics{
 					
 					if(displayNode.labelBackgroundColor != 0){
 						container.graphics.lineStyle(0,0,0);
-						container.graphics.beginFill(displayNode.labelBackgroundColor);
+						container.graphics.beginFill(Color.brightenColor(displayNode.labelBackgroundColor,75));
 						container.graphics.drawRoundRect(label.x,label.y,label.width,label.height,size,size);
 						container.graphics.endFill();
 					}
@@ -536,8 +536,8 @@ package com.ofnodesandedges.y2010.graphics{
 						
 						break;
 					case "directed":
-						var x_controle:Number = (source.displayX+target.displayX)/2 - (target.displayY-source.displayY)/4;
-						var y_controle:Number = (source.displayY+target.displayY)/2 - (source.displayX-target.displayX)/4;
+						var x_controle:Number = (source.displayX+target.displayX)/2 + (target.displayY-source.displayY)/4;
+						var y_controle:Number = (source.displayY+target.displayY)/2 + (source.displayX-target.displayX)/4;
 						
 						edgesGraphics.moveTo(source.displayX,source.displayY);
 						edgesGraphics.curveTo(x_controle,y_controle,target.displayX,target.displayY);

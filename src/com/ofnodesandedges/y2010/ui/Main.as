@@ -48,7 +48,7 @@ package com.ofnodesandedges.y2010.ui{
 			s.addChild(this);
 			
 			// Set file path:
-			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./graphs/erdos2.gexf";
+			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./graphs/erdos_clusters.gexf";
 			else _filePath = root.loaderInfo.parameters["filePath"];
 			
 			// Load the file:
@@ -91,8 +91,7 @@ package com.ofnodesandedges.y2010.ui{
 		
 		private function addFPSCounter():void{
 			// Add the FPSCounter:
-			_fpsCounter = new FPSCounter(stage.stageWidth-100,10,0x000000);
-			stage.addChild(_fpsCounter);
+			_fpsCounter = new FPSCounter(stage);
 		}
 	}
 }
