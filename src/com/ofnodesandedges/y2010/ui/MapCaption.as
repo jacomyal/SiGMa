@@ -71,7 +71,7 @@ package com.ofnodesandedges.y2010.ui{
 			
 			if(author){
 				_author = new TextField();
-				_author.htmlText = '<font face="Lucida Console" size="+4" color="#000000">Created by '+author+'</font>';
+				_author.htmlText = '<font face="Lucida Console" size="+4" color="#000000">by '+author+'</font>';
 				_author.autoSize = TextFieldAutoSize.LEFT;
 				_author.x = 10;
 				_author.y = yParser;

@@ -322,6 +322,8 @@ package com.ofnodesandedges.y2010.graphics{
 		public function set displayText(value:Boolean):void{
 			_displayText = value;
 			
+			_labelSprite.graphics.clear();
+			
 			for(var i:int=_labelSprite.numChildren;i>0;i--){
 				_labelSprite.removeChildAt(i-1);
 			}
