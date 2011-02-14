@@ -188,6 +188,10 @@ package com.ofnodesandedges.y2010.interaction{
 				if(dist<node.displaySize){
 					node.displaySize *= 1.2;
 					node.borderThickness = node.displaySize/3;
+					
+					node.stopped = true;
+				}else{
+					node.stopped = false;
 				}
 			}
 		}

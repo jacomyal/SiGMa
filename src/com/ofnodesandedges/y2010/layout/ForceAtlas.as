@@ -58,7 +58,7 @@ package com.ofnodesandedges.y2010.layout{
 			_freezeInertia = 0.5;
 			_gravity = 0;
 			_speed = 500;
-			_cooling = 3;
+			_cooling = 1;
 			_nodeOverlap = true;
 			
 			_graph = graphGraphics;
@@ -79,6 +79,14 @@ package com.ofnodesandedges.y2010.layout{
 		public override function stepHandler(e:Event):void{
 			computeForceVectorOneStep();
 			_stepsNumber = _stepsNumber+1;
+			
+			var maxCooling:Number = 10;
+			var coeff:Number = 0.995;
+			var stepsBeforeCooling:int = 180;
+			
+			if(_stepsNumber>stepsBeforeCooling){
+				_cooling = maxCooling-(maxCooling-_cooling)*coeff;
+			}
 			
 			dispatchEvent(new Event(ONE_STEP));
 		}
@@ -147,8 +155,10 @@ package com.ofnodesandedges.y2010.layout{
 				n.dx *= ratio / _cooling;
 				n.dy *= ratio / _cooling;
 				
-				n.x = n.x + n.dx;
-				n.y = n.y + n.dy;
+				if(!n.stopped){
+					n.x = n.x + n.dx;
+					n.y = n.y + n.dy;
+				}
 			}
 			
 			// rotation

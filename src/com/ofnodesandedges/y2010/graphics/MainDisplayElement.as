@@ -250,7 +250,7 @@ package com.ofnodesandedges.y2010.graphics{
 			_mapCaption.draw(title,author,graphContent,subtitle);
 			_mouseInteraction.resetValues();
 			
-			startLayout(true);
+			restartLayout(true);
 		}
 		
 		private function clickStage(e:Event):void{
@@ -288,6 +288,14 @@ package com.ofnodesandedges.y2010.graphics{
 		
 		public function startLayout(isLocal:Boolean = false):void{
 			_isPlaying = true;
+			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
+			
+			if(isLocal) dispatchEvent(new Event(LAYOUT_STARTED));
+		}
+		
+		public function restartLayout(isLocal:Boolean = false):void{
+			_isPlaying = true;
+			_layout.init(_graphGraphics);
 			this.addEventListener(Event.ENTER_FRAME,_layout.stepHandler);
 			
 			if(isLocal) dispatchEvent(new Event(LAYOUT_STARTED));

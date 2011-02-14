@@ -38,6 +38,7 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _old_dx:Number;
 		private var _old_dy:Number;
 		private var _freeze:Number;
+		private var _stopped:Boolean;
 		
 		private var _color:uint;
 		private var _size:Number;
@@ -93,6 +94,7 @@ package com.ofnodesandedges.y2010.graphics{
 			_old_dy = 0;
 			
 			_freeze = 0;
+			_stopped = false;
 			
 			_status = "";
 		}
@@ -337,6 +339,14 @@ package com.ofnodesandedges.y2010.graphics{
 
 		public function set status(value:String):void{
 			_status = value;
+		}
+
+		public function get stopped():Boolean{
+			return _stopped;
+		}
+
+		public function set stopped(value:Boolean):void{
+			_stopped = value;
 		}
 
 

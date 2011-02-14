@@ -8,6 +8,7 @@
 			import com.ofnodesandedges.y2010.ui.Main;
 			
 			public function init():void{
+				stage.frameRate = 60;
 				var m:Main = new Main(stage);
 			}
 		]]>

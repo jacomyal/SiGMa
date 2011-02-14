@@ -31,7 +31,7 @@ package com.ofnodesandedges.y2010.drawing{
 			
 			for(var i:int=0;i<=360;i+=ratio){
 				var px:Number=cx+Math.sin(Math.PI/180*i)*r;
-				var py:Number=cy+Math.cos(Math.PI/180*i)*r;
+				var py:Number=cy-Math.cos(Math.PI/180*i)*r;
 				coords[poly_id]=new Array(px,py);
 				
 				if(poly_id>=1){
