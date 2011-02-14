@@ -49,7 +49,7 @@ package com.ofnodesandedges.y2010.ui{
 			s.addChild(this);
 			
 			// Set file path:
-			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./graphs/cos724.gexf";
+			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./graphs/les_miserables.gexf";
 			else _filePath = root.loaderInfo.parameters["filePath"];
 			
 			// Load the file:
@@ -71,7 +71,7 @@ package com.ofnodesandedges.y2010.ui{
 		private function graphLoadedHandler(e:Event):void{
 			// Get the graph:
 			_graph = _fileLoader.graphData;
-			_graph.removeOrphelins();
+			//_graph.removeOrphelins();
 			
 			// Init Main Display Element:
 			//if(root.loaderInfo.parameters["param"]==undefined) _param = ParametersManager.stringToObject(null);
