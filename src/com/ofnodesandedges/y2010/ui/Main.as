@@ -37,6 +37,7 @@ package com.ofnodesandedges.y2010.ui{
 	public class Main extends Sprite{
 		
 		private var _filePath:String;
+		private var _param:Object;
 		
 		private var _fpsCounter:FPSCounter;
 		private var _graph:GraphData;
@@ -48,7 +49,7 @@ package com.ofnodesandedges.y2010.ui{
 			s.addChild(this);
 			
 			// Set file path:
-			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./graphs/erdos_clusters.gexf";
+			if(root.loaderInfo.parameters["filePath"]==undefined) _filePath = "./graphs/cos724.gexf";
 			else _filePath = root.loaderInfo.parameters["filePath"];
 			
 			// Load the file:
@@ -73,7 +74,10 @@ package com.ofnodesandedges.y2010.ui{
 			_graph.removeOrphelins();
 			
 			// Init Main Display Element:
-			_mDE = new MainDisplayElement(this);
+			//if(root.loaderInfo.parameters["param"]==undefined) _param = ParametersManager.stringToObject(null);
+			//else _param = ParametersManager.stringToObject(root.loaderInfo.parameters["param"]);
+			_param = null;
+			_mDE = new MainDisplayElement(this,_param);
 			
 			// Init Options Panel:
 			_optionsPanel = new OptionsPanel(_mDE);

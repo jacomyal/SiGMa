@@ -66,7 +66,7 @@ package com.ofnodesandedges.y2010.graphics{
 		private var _fishEyeDisplay:FishEyeDisplay;
 		private var _mouseInteraction:Interaction;
 		
-		public function MainDisplayElement(main:Main){
+		public function MainDisplayElement(main:Main,param:Object){
 			_main = main;
 			_graphData = _main.graph;
 			_main.stage.addChild(this);
