@@ -15,7 +15,7 @@ Finally, SiGMa's interface will be oriented along different tools, from the simp
 
 ##II. Functionalities
 ###1. Current state
-The most basic features have all been implemented, and SiGMa is not usable:
+The most basic features have all been implemented, and SiGMa is now usable:
 
 * *GEXF* and *GDF* loaders
 * *HITS* to set nodes colors/sizes - when not set in the original file
@@ -23,21 +23,7 @@ The most basic features have all been implemented, and SiGMa is not usable:
 * Mouse interaction (zoom in/out, drag and drop the stage, *FishEye* zoom)
 * Display parameters (display/ hide edges or labels, set nodes/labels/edges size)
 
-###2. To be done
-The next features to implement are most about content or to increase the customization potential for the user:
-
-* Nodes/edges attributes display
-* Meta data display
-* Edges labels
-* Nodes filtering/categorization/search
-* Formulary to allow webmasters to customize the options panel and initial settings
-
-When these features will be all implemented, it will then be possible to start implementing new exploration modes:
-* Radial exploration
-* Neighbourhood exploration
-* Circular layout
-
-##III. How to use it
+##II. How to use it
 * Download the last stable version at [GitHub](http://www.github.com/jacomyal/SiGMa/downloads), and put 'SiGMa demo/SiGMa.swf' somewhere on your server.
 * Put also on your server your *GEXF* or *GDF* encoded graph file.
 * Copy the code below in an HTML page, after having replaced the `{}` strings by the corresponding values:
